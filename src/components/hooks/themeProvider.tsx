@@ -14,7 +14,7 @@ export function ThemeProvider({
     <NextThemesProvider
       {...props}
       enableSystem={false}
-      defaultTheme="dark"
+      defaultTheme="rosepine-dark"
       forcedTheme={undefined}
       themes={["light", "dark", "rosepine-dark", "rosepine-light"]}
     >

@@ -18,7 +18,7 @@ export function useTheme() {
   const currentTheme: Theme =
     mounted && (resolvedTheme === "dark" || resolvedTheme === "light" || resolvedTheme === "rosepine-dark" || resolvedTheme === "rosepine-light")
       ? resolvedTheme
-      : "dark";
+      : "rosepine-dark";
 
   const setTheme = (newTheme: Theme) => {
     setNextTheme(newTheme);

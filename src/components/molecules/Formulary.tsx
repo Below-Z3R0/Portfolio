@@ -125,7 +125,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
             <Button
               type="submit"
               disabled={isSubmitting}
-              buttonBody={`w-7/12 p-[2%] mt-[3%] rounded-md bg-primary text-primary-foreground font-bold transition-all inline-flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.2)] ${isSubmitting
+              buttonBody={`w-7/12 p-[2%] mt-[3%] rounded-md bg-primary font-bold transition-all inline-flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.2)] ${isSubmitting
                 ? "opacity-70 cursor-not-allowed"
                 : "hover:opacity-90 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)]"
                 }`}
