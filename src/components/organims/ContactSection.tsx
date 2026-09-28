@@ -12,8 +12,8 @@ import type { ContactSectionProps } from "../types";
 export function ContactSection({ contact_data }: ContactSectionProps) {
   return (
     <section id="Contact" className="flex flex-col gap-4">
-      <div className="rounded-3xl flex qw:flex-row flex-col qw:justify-between gap-10 max-ww:p-0 p-12 bg-card border border-border-subtle shadow-2xl relative overflow-hidden">
-        <div className="absolute -top-24 -right-24 size-64 bg-accent/5 rounded-full blur-3xl"></div>
+      <div className="rounded-3xl flex qw:flex-row flex-col qw:justify-between gap-10 max-ww:p-0 p-12 bg-card border border-border shadow-2xl relative overflow-hidden">
+        <div className="absolute -top-24 -right-24 size-64 bg-primary/5 rounded-full blur-3xl"></div>
 
         <div className="qw:w-[50%] w-full flex flex-col max-ww:px-5 max-ww:pt-5 qw:justify-between justify-center qw:items-start items-center gap-4 relative z-10">
           <div className="w-full flex flex-col items-start gap-4 pb-10">
@@ -21,14 +21,14 @@ export function ContactSection({ contact_data }: ContactSectionProps) {
               txt={contact_data.data.title_sm}
             />
             <Title2 txt={contact_data.data.title_lg}/>
-            <Paragraph className="text-dim" txt={contact_data.data.paragraph} />
+            <Paragraph className="text-muted-foreground" txt={contact_data.data.paragraph} />
           </div>
 
           <div className="flex flex-wrap gap-4">
             {contact_data.meta.map((item) => (
               <LinkButton
                 key={item.id}
-                buttonBody="rounded-xl h-12 w-auto flex flex-row-reverse justify-center items-center px-5 gap-3 bg-surface border border-border-subtle text-main hover:border-accent transition-all hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+                buttonBody="rounded-xl h-12 w-auto flex flex-row-reverse justify-center items-center px-5 gap-3 bg-popover border border-border text-foreground hover:border-primary transition-all hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]"
                 svg={item.icon_key}
                 svgStyle="h-6 w-6"
                 link={item.link}
@@ -43,7 +43,7 @@ export function ContactSection({ contact_data }: ContactSectionProps) {
           {contact_data.data.form && (
             <Formulary
               form_data={contact_data.data.form}
-              className="[&>label]:bg-transparent text-main"
+              className="[&>label]:bg-transparent text-foreground"
             />
           )}
         </div>

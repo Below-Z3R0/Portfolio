@@ -4,7 +4,7 @@ className?: string;
 }) {
     return (
         <h3
-            className={` text-wrap: balance tracking-tight text-left text-xl text-accent uppercase ${className}`}
+            className={`text-wrap-balance tracking-tight text-left text-xl text-primary uppercase ${className ?? ""}`}
         >
             {txt}
         </h3>

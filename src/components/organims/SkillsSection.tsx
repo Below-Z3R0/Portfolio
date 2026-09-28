@@ -17,12 +17,12 @@ export function SkillsSection({ skills_data }: TecnologiesSectionProps) {
         <EyebrowReveal>
           <Title3
             txt={skills_data.data.title_sm}
-            className="uppercase text-accent"
+            className="uppercase text-primary"
           />
         </EyebrowReveal>
-        <Title2 txt={skills_data.data.title_lg} className="text-main" />
+        <Title2 txt={skills_data.data.title_lg} className="text-foreground" />
         <Paragraph
-          className="text-dim max-w-2xl"
+          className="text-muted-foreground max-w-2xl"
           txt={skills_data.data.paragraph}
         />
       </div>
@@ -32,7 +32,7 @@ export function SkillsSection({ skills_data }: TecnologiesSectionProps) {
         <div key={cat.name} className="flex flex-col items-start gap-6">
           <Title3
             txt={cat.name}
-            className="text-accent border-l-2 border-accent/30 pl-4 text-sm"
+            className="text-primary border-l-2 border-primary/30 pl-4 text-sm"
           />
           <StaggerGroup className="flex flex-row flex-wrap justify-start gap-4 px-4 w-full">
             {cat.skills.map((skill) => (

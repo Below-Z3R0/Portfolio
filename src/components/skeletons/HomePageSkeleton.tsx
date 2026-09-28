@@ -7,13 +7,13 @@ import {
 
 const SkeletonPulse = ({ className }: { className?: string }) => (
   <div
-    className={`bg-border-subtle/20 animate-pulse rounded-xl ${className}`}
+    className={`bg-muted animate-pulse rounded-xl ${className}`}
   />
 );
 
 export function HomePageSkeleton() {
   return (
-    <div className="text-main min-h-screen font-display bg-page">
+    <div className="text-foreground min-h-screen font-display bg-background">
       {/* 1. NavBar Skeleton */}
       <NavBarSkeleton />
 
@@ -21,7 +21,7 @@ export function HomePageSkeleton() {
       <section className="py-50 max-w-241.5 mx-auto px-5">
         <div className="gap-4 flex flex-col justify-start items-start h-full">
           <div className="flex items-center gap-3">
-            <SkeletonPulse className="rounded-full size-20 border border-border-subtle" />
+            <SkeletonPulse className="rounded-full size-20 border border-border border border-border" />
             <SkeletonPulse className="w-48 h-8 rounded-full" />
           </div>
           <SkeletonPulse className="w-full max-w-2xl h-16 mb-5" />{" "}
@@ -88,7 +88,7 @@ export function HomePageSkeleton() {
 
       {/* 6. Contact Section Skeleton */}
       <section className="section flex flex-col gap-4 max-w-241.5 mx-auto py-20 px-5">
-        <div className="rounded-3xl flex qw:flex-row flex-col qw:justify-between gap-10 p-12 bg-card border border-border-subtle">
+        <div className="rounded-3xl flex qw:flex-row flex-col qw:justify-between gap-10 p-12 bg-card border border-border border border-border">
           <div className="qw:w-[50%] w-full flex flex-col gap-6">
             <div className="space-y-4">
               <SkeletonPulse className="w-32 h-4" />
@@ -107,7 +107,7 @@ export function HomePageSkeleton() {
       </section>
 
       {/* 7. Footer Skeleton */}
-      <footer className="py-20 flex flex-col items-center gap-8 max-w-241.5 mx-auto border-t border-border-subtle/50 mt-20">
+      <footer className="py-20 flex flex-col items-center gap-8 max-w-241.5 mx-auto border-t border/50 mt-20">
         <div className="flex gap-8">
           {[1, 2, 3, 4].map((i) => (
             <SkeletonPulse key={i} className="w-16 h-4" />

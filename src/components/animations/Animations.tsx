@@ -251,7 +251,7 @@ export function PopReveal({
 export function ExpandLine({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`h-px bg-border-subtle ${className}`}
+      className={`h-px bg-muted ${className}`}
       style={{
         width: "100%",
         animation: "expandLine 1.2s cubic-bezier(0.16, 1, 0.3, 1) both",

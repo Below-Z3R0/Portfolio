@@ -13,7 +13,7 @@ export function TecnologiesCard({
   return (
     <div
       style={{ "--tech-color": color } as React.CSSProperties}
-      className={`w-34 group relative flex flex-col items-center justify-center p-4 bg-mainmuted backdrop-blur-xs border border-slate-800 rounded-3xl transition-all duration-300 hover:-translate-y-2 shadow-xl hover:bg-(--tech-color)/5 ${cardStyle}`}
+      className={`w-34 group relative flex flex-col items-center justify-center p-4 bg-primary-container backdrop-blur-xs border border-border rounded-3xl transition-all duration-300 hover:-translate-y-2 shadow-xl hover:bg-(--tech-color)/5 ${cardStyle}`}
     >
       <div
         className={`absolute inset-0 opacity-0 group-hover:opacity-65 transition-opacity rounded-3xl blur-3xl bg-(--tech-color)`}

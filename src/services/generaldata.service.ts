@@ -45,7 +45,6 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
 
   const [
     hero_meta,
-    themes_meta,
     skills_section_meta,
     aboutme_section_meta,
     centenoadvisory_meta,
@@ -56,7 +55,6 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
     contacts_meta,
   ] = await Promise.all([
     getMetaData("section.hero", supabase, METADATA_SCHEMAS["section.hero"]),
-    getMetaData("general.themes", supabase, METADATA_SCHEMAS["general.themes"]),
     getMetaData("section.skills", supabase, METADATA_SCHEMAS["section.skills"]),
     getMetaData("section.aboutme", supabase, METADATA_SCHEMAS["section.aboutme"]),
     getMetaData("project.centeno-advisory", supabase, PROJECT_METADATA_SCHEMA),
@@ -71,7 +69,7 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
 
   return {
     hero_section: { data: hero_section, meta: { general: hero_meta, contacts: contacts_meta } },
-    navbar_section: { data: navbar_section.data, meta: themes_meta },
+    navbar_section: { data: navbar_section.data },
     skills_section: { data: skills_section, meta: skills_section_meta },
     projects_section,
     aboutme_section: { data: aboutme_section, meta: aboutme_section_meta },

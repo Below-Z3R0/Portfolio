@@ -3,9 +3,9 @@
 import { useTheme as useNextTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-export type Theme = "light" | "dark";
+export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light";
 
-export const ThemeData: Theme[] = ["light", "dark"];
+export const ThemeData: Theme[] = ["light", "dark", "rosepine-dark", "rosepine-light"];
 
 export function useTheme() {
   const { setTheme: setNextTheme, resolvedTheme } = useNextTheme();
@@ -16,7 +16,7 @@ export function useTheme() {
   }, []);
 
   const currentTheme: Theme =
-    mounted && (resolvedTheme === "dark" || resolvedTheme === "light")
+    mounted && (resolvedTheme === "dark" || resolvedTheme === "light" || resolvedTheme === "rosepine-dark" || resolvedTheme === "rosepine-light")
       ? resolvedTheme
       : "dark";
 

@@ -2,7 +2,7 @@ import { SkeletonPulse } from "./SkeletonPulse";
 
 export function ProjectCardSkeleton() {
   return (
-    <div className="qw:h-100 w-full min-h-100 rounded-xl flex qw:flex-row flex-col-reverse justify-between p-5 bg-card border border-border-subtle shadow-lg">
+    <div className="qw:h-100 w-full min-h-100 rounded-xl flex qw:flex-row flex-col-reverse justify-between p-5 bg-card border border-border shadow-lg">
       {/* Contenido Izquierdo/Inferior */}
       <div className="qw:w-[50%] h-full w-full flex flex-col mt-3 qw:mt-0 items-start gap-3">
         <SkeletonPulse className="w-40 h-10 rounded-xl" />{" "}

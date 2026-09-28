@@ -199,7 +199,6 @@ export type HeroSection = {
 export type NavbarItem = NavbarContent["data"][number];
 export type NavbarSection = {
   data: NavbarItem[];
-  meta: GeneralThemes;
 };
 
 // Skills
@@ -280,7 +279,6 @@ export const CONTENT_SCHEMAS = {
 
 export const METADATA_SCHEMAS = {
   "section.hero": HeroMetadataSchema,
-  "general.themes": GeneralThemesSchema,
   "general.contacts": GeneralContactsSchema,
   "section.skills": SkillsMetadataSchema,
   "section.aboutme": AboutMeMetadataSchema,

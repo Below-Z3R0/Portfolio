@@ -7,11 +7,11 @@ export function ErrorPage({
 }: ErrorStateProps) {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-card border border-border-subtle rounded-2xl p-8 shadow-xl flex flex-col items-center text-center space-y-6 animate-in fade-in zoom-in duration-300">
+      <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 shadow-xl flex flex-col items-center text-center space-y-6 animate-in fade-in zoom-in duration-300">
         {/* Icono con resplandor de advertencia */}
         <div className="relative">
-          <div className="absolute inset-0 bg-warning-soft blur-2xl rounded-full" />
-          <div className="relative bg-warning-soft p-4 rounded-full border border-warning/20">
+          <div className="absolute inset-0 bg-destructive-soft blur-2xl rounded-full" />
+          <div className="relative bg-destructive-soft p-4 rounded-full border border-border border-destructive/20">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -20,7 +20,7 @@ export function ErrorPage({
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-12 h-12 text-warning"
+              className="w-12 h-12 text-destructive"
             >
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
@@ -32,10 +32,10 @@ export function ErrorPage({
         {/* Texto informativo */}
         <div className="space-y-2">
           <Title2
-            className="text-2xl font-display font-bold text-main"
+            className="text-2xl font-display font-bold text-foreground"
             txt="¡Ups! Algo salió mal"
           />
-          <Paragraph className="text-dim text-sm" txt={message} />
+          <Paragraph className="text-muted-foreground text-sm" txt={message} />
         </div>
 
         {/* Acciones */}
@@ -43,7 +43,7 @@ export function ErrorPage({
           {onRetry && (
             <Button
               onClick={onRetry}
-              buttonBody="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-accent text-white rounded-lg font-medium hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-accent/20"
+              buttonBody="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20"
               txt="Reintentar"
               svg={"refresh-cw"}
               svgStyle="w-4 h-4"
@@ -52,7 +52,7 @@ export function ErrorPage({
 
           <Button
             onClick={() => (window.location.href = "/")}
-            buttonBody="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-surface border border-border-subtle text-main rounded-lg font-medium hover:bg-card transition-all active:scale-95"
+            buttonBody="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-popover border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-all active:scale-95"
             txt="Inicio"
             svg={"home"}
             svgStyle="w-4 h-4"
@@ -61,7 +61,7 @@ export function ErrorPage({
 
         {/* Detalle sutil de decoración */}
         <div className="pt-4">
-          <div className="h-1 w-12 bg-border-glow-warning/30 rounded-full mx-auto" />
+          <div className="h-1 w-12 bg-destructive/30 rounded-full mx-auto" />
         </div>
       </div>
     </div>

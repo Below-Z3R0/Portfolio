@@ -5,7 +5,7 @@ export function Span({ txt, className, children, role, id }: SpanProps) {
         <span
             id={id}
             role={role}
-            className={`text-dim font-sans text-lg text-balance leading-relaxed font-medium ${className ?? ""}`}
+            className={`text-muted-foreground font-sans text-lg text-balance leading-relaxed font-medium ${className ?? ""}`}
         >
             {children}
             {txt}

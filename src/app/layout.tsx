@@ -28,18 +28,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body
-        className="min-h-full text-[18px] leading-[145%] tracking-[0.18px] zoom-110 text-main bg-page font-display"
-        style={{
-          colorScheme: "light dark",
-          fontSynthesis: "none",
-          textRendering: "optimizeLegibility",
-          WebkitFontSmoothing: "antialiased",
-          MozOsxFontSmoothing: "grayscale",
-        }}
+        className="min-h-full text-[18px] leading-[145%] tracking-[0.18px] zoom-110 text-foreground bg-background font-display"
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
           enableSystem
           disableTransitionOnChange={true}
         >

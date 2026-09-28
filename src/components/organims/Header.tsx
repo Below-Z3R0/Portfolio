@@ -30,7 +30,7 @@ export function Header({
           <Button
             svg={"hamburnav"}
             buttonBody="size-7 "
-            svgStyle="text-main"
+            svgStyle="text-foreground"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={isOpen}
@@ -42,7 +42,7 @@ export function Header({
         <div className="fixed top-20 right-4 z-50 ew:hidden">
           <NavBar
             nav_data={nav_data}
-            GeneralOrganization="flex-col! items-end! bg-page/95! backdrop-blur-xl! border! border-border-subtle! rounded-2xl! shadow-2xl! gap-2! p-3! static! max-w-48!"
+            GeneralOrganization="flex-col! items-end! bg-background/95! backdrop-blur-xl! rounded-2xl! shadow-2xl! gap-2! p-3! static! max-w-48!"
             LinksOrganization="flex! flex-col! items-end! gap-2!"
             ThemeMenuOrganization="right-0! top-0! relative! ml-0! mt-2! w-full!"
           />

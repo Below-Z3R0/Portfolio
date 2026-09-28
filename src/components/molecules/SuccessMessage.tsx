@@ -20,7 +20,7 @@ export function SuccessMessage({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-page/80 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
         onClick={onClose}
         role="dialog"
         aria-modal="true"
@@ -32,7 +32,7 @@ export function SuccessMessage({
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-md rounded-3xl bg-card border border-accent/40 shadow-2xl overflow-hidden"
+          className="relative w-full max-w-md rounded-3xl bg-card border border-border border-success/40 shadow-2xl overflow-hidden"
         >
           {/* Glow decorativo de fondo */}
           <div
@@ -54,10 +54,10 @@ export function SuccessMessage({
                 damping: 15,
                 delay: 0.1,
               }}
-              className="size-20 rounded-full bg-accent-soft border-2 border-accent flex items-center justify-center"
+              className="size-20 rounded-full bg-success-soft border-2 border-success flex items-center justify-center"
             >
               <svg
-                className="size-10 text-accent"
+                className="size-10 text-success"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={3}
@@ -82,7 +82,7 @@ export function SuccessMessage({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.4 }}
-                className="text-2xl font-bold text-main tracking-tight"
+                className="text-2xl font-bold text-foreground tracking-tight"
               >
                 {title}
               </m.h3>
@@ -90,7 +90,7 @@ export function SuccessMessage({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.4 }}
-                className="text-dim text-sm leading-relaxed"
+                className="text-muted-foreground text-sm leading-relaxed"
               >
                 {message}
               </m.p>
@@ -105,7 +105,7 @@ export function SuccessMessage({
               <Button
                 txt="Cerrar"
                 onClick={onClose}
-                buttonBody="h-11 px-6 rounded-xl bg-accent text-page font-semibold hover:opacity-90 transition-opacity"
+                buttonBody="h-11 px-6 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity"
               />
             </m.div>
           </div>

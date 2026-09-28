@@ -2,7 +2,7 @@ import { SkeletonPulse } from "./SkeletonPulse";
 
 export function FormularySkeleton() {
   return (
-    <div className="rounded-3xl size-full flex flex-col p-[5%] bg-card border border-border-subtle shadow-2xl space-y-6">
+    <div className="rounded-3xl size-full flex flex-col p-[5%] bg-card border border-border shadow-2xl space-y-6">
       <SkeletonPulse className="w-1/2 h-8 mb-2" />
 
       {/* Inputs superiores */}

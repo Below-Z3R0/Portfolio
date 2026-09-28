@@ -16,7 +16,7 @@ export function ErrorMessage({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-page/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
           onClick={onClose}
           role="alertdialog"
           aria-modal="true"
@@ -28,7 +28,7 @@ export function ErrorMessage({
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md rounded-3xl bg-card border border-warning/40 shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md rounded-3xl bg-card border border-border border-destructive/40 shadow-2xl overflow-hidden"
           >
             <div
               className="absolute inset-0 opacity-30 blur-2xl"
@@ -44,10 +44,10 @@ export function ErrorMessage({
                 initial={{ scale: 0, rotate: -90 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                className="size-20 rounded-full bg-warning-soft border-2 border-warning flex items-center justify-center"
+                className="size-20 rounded-full bg-destructive-soft border-2 border-destructive flex items-center justify-center"
               >
                 <svg
-                  className="size-10 text-warning"
+                  className="size-10 text-destructive"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={3}
@@ -70,7 +70,7 @@ export function ErrorMessage({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.4 }}
-                  className="text-2xl font-bold text-main tracking-tight"
+                  className="text-2xl font-bold text-foreground tracking-tight"
                 >
                   {title}
                 </m.h3>
@@ -80,7 +80,7 @@ export function ErrorMessage({
                 initial={{ opacity: 0, y: 5}}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.6 }}
-                className="text-xl text-main tracking-tight"
+                className="text-xl text-foreground tracking-tight"
                 >
                   {message}
                 </m.h2>
@@ -95,7 +95,7 @@ export function ErrorMessage({
                 <Button
                   txt="Cerrar"
                   onClick={onClose}
-                  buttonBody="h-11 px-6 rounded-xl bg-surface border border-border-subtle text-main hover:border-accent transition-colors"
+                  buttonBody="h-11 px-6 rounded-xl bg-popover border border-border text-foreground hover:border-primary transition-colors"
                 />
               </m.div>
             </div>

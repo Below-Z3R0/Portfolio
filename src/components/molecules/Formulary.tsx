@@ -57,7 +57,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
       <form
         noValidate
         onSubmit={onSubmit}
-        className={`${bodyStyle} rounded-3xl size-full flex flex-col p-[5%] bg-card border border-border-subtle items-start shadow-2xl relative overflow-hidden`}
+        className={`${bodyStyle} rounded-3xl size-full flex flex-col p-[5%] bg-card border border-border items-start shadow-2xl relative overflow-hidden`}
       >
         {/* Glow decorativo sutil */}
         <div
@@ -68,13 +68,13 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
         <div className="relative w-full">
           <Title4
             txt={form_data.title}
-            className="pb-[2%] text-main font-bold tracking-tight text-lg"
+            className="pb-[2%] text-foreground font-bold tracking-tight text-lg"
           />
 
           {form_data.top.map((field) => (
             <label
               key={field.name}
-              className={`${labelStyle} w-full rounded-xl flex flex-col items-start mb-[2%] text-sm font-medium text-dim gap-2`}
+              className={`${labelStyle} w-full rounded-xl flex flex-col items-start mb-[2%] text-sm font-medium text-muted-foreground gap-2`}
             >
               
               {field.label}
@@ -83,7 +83,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
                 type={field.type}
                 placeholder={field.placeholder}
                 disabled={isSubmitting}
-                className={`${inputStyle} w-full rounded-md flex p-[2%] bg-surface placeholder:text-muted focus:border-accent transition-all disabled:opacity-50`}
+                className={`${inputStyle} w-full rounded-md flex p-[2%] bg-popover placeholder:text-muted-foreground focus:border-primary transition-all disabled:opacity-50`}
                 {...register(field.name as keyof SendEmail)}
               />
 
@@ -92,21 +92,21 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
                   id={`${field.name}-error`}
                   txt={errors[field.name as keyof SendEmail]?.message}
                   role="alert"
-                  className="text-warning text-xs"
+                  className="text-destructive text-xs"
                 />
               )}
 
             </label>
           ))}
 
-          <label className="w-full flex flex-col items-start gap-2 text-sm font-medium text-dim">
+          <label className="w-full flex flex-col items-start gap-2 text-sm font-medium text-muted-foreground">
             {form_data.bottom.label}
 
             <textarea
               required
               placeholder={form_data.bottom.placeholder}
               disabled={isSubmitting}
-              className="w-full rounded-xl p-4 bg-surface text-main focus:border-accent outline-none min-h-40 transition-colors resize-none disabled:opacity-50"
+              className="w-full rounded-xl p-4 bg-popover text-foreground focus:border-primary outline-none min-h-40 transition-colors resize-none disabled:opacity-50"
               {...register(form_data.bottom.name as keyof SendEmail)}
             />
 
@@ -115,7 +115,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
                 id={`${form_data.bottom.name}-error`}
                 txt={errors[form_data.bottom.name as keyof SendEmail]?.message}
                 role="alert"
-                className="text-warning text-xs"
+                className="text-destructive text-xs"
               />
             )}
 
@@ -125,7 +125,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
             <Button
               type="submit"
               disabled={isSubmitting}
-              buttonBody={`w-7/12 p-[2%] mt-[3%] rounded-md bg-accent text-page font-bold transition-all inline-flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.2)] ${isSubmitting
+              buttonBody={`w-7/12 p-[2%] mt-[3%] rounded-md bg-primary text-primary-foreground font-bold transition-all inline-flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.2)] ${isSubmitting
                 ? "opacity-70 cursor-not-allowed"
                 : "hover:opacity-90 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)]"
                 }`}

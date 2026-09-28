@@ -21,7 +21,7 @@ export function LanguageToggle() {
       onClick={toggleLanguage}
       svg={"language"}
       buttonBody="size-7 z-50"
-      svgStyle="text-main hover:text-accent"
+      svgStyle="text-foreground hover:text-primary"
     />
   );
 }

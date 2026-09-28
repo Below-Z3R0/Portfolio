@@ -18,7 +18,7 @@ export function ThemeToggle() {
       <button
         type="button"
         aria-label="Cambiar tema"
-        className="p-2 text-body hover:text-main hover:bg-hover rounded-md transition-all duration-200 border border-border-subtle"
+        className="p-2 text-muted-foreground hover:text-foreground hover:bg-hover rounded-md transition-all duration-200 border border-border border border-border"
       >
         <span className="size-5 inline-block" />
       </button>
@@ -30,8 +30,8 @@ export function ThemeToggle() {
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       aria-label="Cambiar tema"
       svg={"daynight"}
-      svgStyle="text-main"
-      buttonBody="p-2 text-body hover:text-main hover:bg-hover rounded-md transition-all duration-200 border border-border-subtle"
+      svgStyle="text-foreground"
+      buttonBody="p-2 text-muted-foreground hover:text-foreground hover:bg-hover rounded-md transition-all duration-200 border border"
     />
   );
 }
