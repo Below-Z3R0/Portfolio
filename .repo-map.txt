@@ -1,0 +1,91 @@
+.
+├── public
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── src
+│   ├── api
+│   │   ├── projects
+│   │   │   └── projet.service.ts
+│   │   ├── sections
+│   │   │   └── content.service.ts
+│   │   ├── generaldata.service.ts
+│   │   ├── projectsdata.service.ts
+│   │   └── supabaseClient.ts
+│   ├── app
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── assets
+│   │   ├── IconsMap.ts
+│   │   ├── Icons.tsx
+│   │   └── ImgMap.ts
+│   ├── components
+│   │   ├── animations
+│   │   │   ├── animationsindex.ts
+│   │   │   └── Animations.tsx
+│   │   ├── atoms
+│   │   │   ├── BackgroundFX.tsx
+│   │   │   ├── Button.tsx
+│   │   │   ├── LinkButton.tsx
+│   │   │   ├── Paragraph.tsx
+│   │   │   ├── Title1.tsx
+│   │   │   ├── Title2.tsx
+│   │   │   ├── Title3.tsx
+│   │   │   └── Title4.tsx
+│   │   ├── molecules
+│   │   │   ├── ErrorMessage.tsx
+│   │   │   ├── Formulary.tsx
+│   │   │   ├── NavBar.tsx
+│   │   │   ├── ProjectCard.tsx
+│   │   │   ├── SuccessMessage.tsx
+│   │   │   └── TecnologiesCard.tsx
+│   │   ├── organims
+│   │   │   ├── AboutMeSection.tsx
+│   │   │   ├── ContactSection.tsx
+│   │   │   ├── ErrorPage.tsx
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── ProjectsSection.tsx
+│   │   │   └── TecnologiesSection.tsx
+│   │   ├── skeletons
+│   │   │   ├── FormularySkeleton.tsx
+│   │   │   ├── HomePageSkeleton.tsx
+│   │   │   ├── NavBarSkeleton.tsx
+│   │   │   ├── ProjectsCardSkeleton.tsx
+│   │   │   ├── skeletonindex.tsx
+│   │   │   ├── SkeletonPulse.tsx
+│   │   │   └── TecnologiesCardSkeleton.tsx
+│   │   ├── components.ts
+│   │   └── types.ts
+│   ├── hooks
+│   │   ├── useGeneralData.tsx
+│   │   ├── useInView.ts
+│   │   ├── useLanguague.tsx
+│   │   ├── useProjectsData.tsx
+│   │   └── useTheme.tsx
+│   ├── schema
+│   │   ├── projectschema
+│   │   │   └── projects.schema.ts
+│   │   ├── sectionschema
+│   │   │   ├── aboutme.schema.ts
+│   │   │   ├── contact.schema.ts
+│   │   │   ├── footer.schema.ts
+│   │   │   ├── hero.schema.ts
+│   │   │   ├── projects.schema.ts
+│   │   │   └── skills.schema.ts
+│   │   └── schemasindex.ts
+│   └── staticdata
+│       └── dataindex.ts
+├── biome.json
+├── bun.lock
+├── next.config.ts
+├── next-env.d.ts
+├── package.json
+├── postcss.config.mjs
+├── README.md
+└── tsconfig.json
+
+19 directories, 70 files
