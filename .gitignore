@@ -52,4 +52,3 @@ __pycache__/
 /docs/graph/*/.graphify_analysis.json
 /docs/graph/*/graph.json
 /docs/graph/*/report.md
-supabase/
