@@ -83,7 +83,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
                 type={field.type}
                 placeholder={field.placeholder}
                 disabled={isSubmitting}
-                className={`${inputStyle} w-full rounded-md flex p-[2%] bg-popover placeholder:text-muted-foreground focus:border-primary transition-all disabled:opacity-50`}
+                className={`${inputStyle} w-full rounded-md flex p-[2%] bg-popover placeholder:text-muted-foreground/30 focus:border-primary transition-all disabled:opacity-50`}
                 {...register(field.name as keyof SendEmail)}
               />
 
@@ -106,7 +106,7 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
               required
               placeholder={form_data.bottom.placeholder}
               disabled={isSubmitting}
-              className="w-full rounded-xl p-4 bg-popover text-foreground focus:border-primary outline-none min-h-40 transition-colors resize-none disabled:opacity-50"
+              className="w-full rounded-xl p-4 bg-popover placeholder:text-muted-foreground/30 focus:border-primary outline-none min-h-40 transition-colors resize-none disabled:opacity-50"
               {...register(form_data.bottom.name as keyof SendEmail)}
             />
 

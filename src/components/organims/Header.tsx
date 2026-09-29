@@ -44,7 +44,7 @@ export function Header({
             nav_data={nav_data}
             GeneralOrganization="flex-col! items-end! bg-background/95! backdrop-blur-xl! rounded-2xl! shadow-2xl! gap-2! p-3! static! max-w-48!"
             LinksOrganization="flex! flex-col! items-end! gap-2!"
-            ThemeMenuOrganization="right-0! top-0! relative! ml-0! mt-2! w-full!"
+            ThemeMenuOrganization="right-0! top-0! relative! ml-0! mt-2! w-full! z-1"
           />
         </div>
       )}

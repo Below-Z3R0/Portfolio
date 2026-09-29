@@ -24,7 +24,7 @@ export function ThemeSwitcher({
 
             {isOpen && (
                 <div
-                    className={`-z-10 mt-50 ml-70 mx-auto fixed w-40 rounded-md p-2 gap-2 flex flex-col items-end bg-background border border-border shadow-2xl ${ThemeMenuOrganization ?? ""}`}
+                    className={`-z-10 mt-50 ml-70 mx-auto absolute w-40 rounded-md p-2 gap-2 flex flex-col items-end bg-background/98 backdrop-blur-xl border border-border shadow-2xl ${ThemeMenuOrganization ?? ""}`}
                 >
                     {ThemeData.map((cat, index) => (
                         <Button

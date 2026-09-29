@@ -32,8 +32,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       >
         <ThemeProvider
           attribute="class"
-          enableSystem
-          disableTransitionOnChange={true}
+          defaultTheme="dark"
+          enableSystem={false}
+          themes={["light", "dark", "rosepine-dark", "rosepine-light"]}
+          disableTransitionOnChange
         >
           <LazyMotion features={domAnimation} strict>
             <BackgroundFX />

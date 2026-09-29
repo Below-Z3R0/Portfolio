@@ -43,7 +43,6 @@ export function ContactSection({ contact_data }: ContactSectionProps) {
           {contact_data.data.form && (
             <Formulary
               form_data={contact_data.data.form}
-              className="[&>label]:bg-transparent text-foreground"
             />
           )}
         </div>
