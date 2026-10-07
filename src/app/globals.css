@@ -104,7 +104,7 @@
   --popover: #141414;
   --popover-foreground: #d7d7d7;
 
-  --primary: #9466ff;
+  --primary: #976aff;
   --primary-foreground: #ffffff;
   --primary-soft: rgba(139, 92, 246, 0.1);
   --primary-container: rgba(82, 57, 138, 0.18);
@@ -155,10 +155,10 @@
   --highlight-med: rgba(139, 92, 246, 0.08);
   --highlight-high: rgba(139, 92, 246, 0.16);
 
-  --love: #f87171;
+  --love: #fb7185;
   --pine: #34d399;
   --foam: #22d3ee;
-  --iris: #a78bfa;
+  --iris: #008fa8;
 }
 
 /* ===========================================
@@ -222,10 +222,10 @@
   --highlight-med: rgba(124, 58, 237, 0.07);
   --highlight-high: rgba(124, 58, 237, 0.12);
 
-  --love: #dc2626;
+  --love: #e11d48;
   --pine: #059669;
   --foam: #0891b2;
-  --iris: #7c3aed;
+  --iris: #0e7490;
 }
 
 /* ===========================================
@@ -359,10 +359,6 @@
   --pine: #286983;
   --foam: #56949f;
   --iris: #907aa9;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 /* ===========================================

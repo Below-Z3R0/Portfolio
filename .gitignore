@@ -44,11 +44,3 @@ next-env.d.ts
 .venv/
 __pycache__/
 *.pyc
-
-# Graphify output (knowledge graphs, cache, reports)
-/docs/graph/graphify-out/
-/docs/graph/.graphify_analysis.json
-/docs/graph/*/graphify-out/
-/docs/graph/*/.graphify_analysis.json
-/docs/graph/*/graph.json
-/docs/graph/*/report.md

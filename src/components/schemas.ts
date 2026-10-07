@@ -102,6 +102,18 @@ export const ProjectItemSchema = z.object({
       description: z.string(),
     }),
   ),
+  modal: z.object({
+    img_key: z.string().optional(),
+    paragraph: z.string(),
+    tecnologies: z.array(
+    z.object({
+      icon_key: IconNameSchema,
+      name: z.string(),
+      color: z.string(),
+      description: z.string(),
+    }),
+  ),
+  }).optional(),
 });
 
 export const FormSchema = z.object({
@@ -246,6 +258,7 @@ export type SkillsContent = z.infer<typeof SkillsContentSchema>;
 export type AboutMeContent = z.infer<typeof AboutMeContentSchema>;
 export type ProjectsContent = z.infer<typeof ProjectsContentSchema>;
 export type ProjectItem = z.infer<typeof ProjectItemSchema>;
+export type ModalContent = z.infer<typeof ProjectItemSchema>["modal"];
 export type ContactContent = z.infer<typeof ContactContentSchema>;
 export type FooterContent = z.infer<typeof FooterContentSchema>;
 

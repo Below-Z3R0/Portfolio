@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { PopReveal, StaggerGroup, StaggerItem } from "../animations/Animations";
-import { LinkButton, Paragraph, Title1, Title2 } from "../components";
+import { LinkButton, Paragraph, Title2 } from "../components";
 import type { HeroSectionProps } from "../types";
 
 export function HeroSection({ hero_data }: HeroSectionProps) {
   return (
-    <section id="Home" className="qw:pt-45">
+    <section id="Home" className="qw:pt-60">
       <StaggerGroup className="gap-4 flex flex-col justify-start items-start h-full">
         {/* Header: Foto y Status */}
         <StaggerItem>

@@ -1,3 +1,4 @@
+"use server"
 import type {
   ButtonHTMLAttributes,
   HTMLInputTypeAttribute,
@@ -22,6 +23,7 @@ import type {
   HeroContent,
   HeroMetadata,
   HeroSection,
+  ModalContent,
   NavbarContent,
   NavbarSection,
   ProjectItem,
@@ -61,7 +63,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export type TitleProps = {
-  txt: string;
+  txt: string | undefined;
   className?: string;
 }
 
@@ -106,7 +108,24 @@ currentLang: string;
 export interface ProjectCardProps {
 project_data: { meta: ProjectsMetadata; data: ProjectItem };
 labels_data: { featured: string; in_construction: string };
+category: string | undefined;
 }
+
+interface data extends ModalContent{
+  category: string | undefined;
+  title: string;
+}
+
+export interface ModalProps  {
+  img: string | undefined;
+  in_construction: string;
+  data: data;
+  activeTxt: string;
+  setActivetxt: (txt: string) => void;
+  open: boolean;
+  onClose: () => void;
+};
+
 
 export interface TecnologiesConfig {
   svg: IconKey | string;

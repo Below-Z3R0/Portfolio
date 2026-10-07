@@ -1,0 +1,15 @@
+        <SectionReveal>
+          <OSSection
+            project_section_data={general_data.projects_section /* general_data.os_section */}
+            projects_array_data={general_data.projects_array /* general_data.os_array */}
+            currentLang={currentLang}
+          />
+        </SectionReveal>
+
+        <SectionReveal>
+          <IASection
+            project_section_data={general_data.projects_section /* general_data.ia_section */}
+            projects_array_data={general_data.projects_array /* general_data.ia_array */}
+            currentLang={currentLang}
+          />
+        </SectionReveal>

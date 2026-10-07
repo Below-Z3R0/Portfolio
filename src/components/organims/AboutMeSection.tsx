@@ -24,7 +24,7 @@ export function AboutMeSection({ aboutme_data }: AboutMeSectionProps) {
         <div className="w-full h-full flex items-center justify-center">
           <Image
             src={`/${aboutme_data.meta.image_key}`}
-            className="lg:hidden block max-w-60 w-full object-cover rounded-2xl mt-10 shadow-lg border border-border border border-border"
+            className="lg:hidden block max-w-60 w-full object-cover rounded-2xl mt-10 shadow-lg border border-border"
             alt="Emmanuel Centeno"
             width={240}
             height={240}
@@ -49,7 +49,7 @@ export function AboutMeSection({ aboutme_data }: AboutMeSectionProps) {
       >
         <Image
           src={`/${aboutme_data.meta.image_key}`}
-          className="w-full object-cover rounded-2xl shadow-lg border border-border border border-border"
+          className="w-full object-cover rounded-2xl shadow-lg border border-border"
           alt="Emmanuel Centeno"
           width={240}
           height={240}

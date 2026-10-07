@@ -3,11 +3,11 @@ import { Span } from "../components";
 import type { LinkButtonProps } from "../types";
 import { IconRender } from "./IconRender";
 
-export function LinkButton({ link, img, svg, alt, txt, buttonBody, svgStyle, imgStyle, txtStyle, }: LinkButtonProps) {
+export function LinkButton({ link, img, children, svg, alt, txt, buttonBody, svgStyle, imgStyle, txtStyle, }: LinkButtonProps) {
     return (
         <a
             href={link ?? "https://github.com/Below-Z3R0"}
-            className={buttonBody}
+            className={`flex justify-center items-center ${buttonBody}`}
             target={link?.startsWith("#") ? undefined : "_blank"}
             rel={link?.startsWith("#") ? undefined : "noopener noreferrer"}
         >
@@ -24,6 +24,7 @@ export function LinkButton({ link, img, svg, alt, txt, buttonBody, svgStyle, img
                     className={`size-full ${imgStyle}`}
                 />
             )}
+            {children}
         </a>
     );
 }

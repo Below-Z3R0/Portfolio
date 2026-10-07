@@ -26,7 +26,7 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
     centenoadvisory_db,
     centenoadvisory_features,
     portfolio,
-    nincy,
+//   nincy, pending...
   ] = await Promise.all([
     getData("section.hero", lang, supabase, CONTENT_SCHEMAS["section.hero"]),
     getData("section.navbar", lang, supabase, CONTENT_SCHEMAS["section.navbar"]),
@@ -40,7 +40,7 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
     getData("project.centeno-advisory-db", lang, supabase, PROJECT_ITEM_SCHEMA),
     getData("project.centeno-advisory-features", lang, supabase, PROJECT_ITEM_SCHEMA),
     getData("project.portfolio", lang, supabase, PROJECT_ITEM_SCHEMA),
-    getData("project.nincy", lang, supabase, PROJECT_ITEM_SCHEMA),
+//    getData("project.nincy", lang, supabase, PROJECT_ITEM_SCHEMA), pending...
   ]);
 
   const [
@@ -51,7 +51,7 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
     centenoadvisory_db_meta,
     centenoadvisory_features_meta,
     portfolio_meta,
-    nincy_meta,
+//    nincy_meta,
     contacts_meta,
   ] = await Promise.all([
     getMetaData("section.hero", supabase, METADATA_SCHEMAS["section.hero"]),
@@ -61,7 +61,7 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
     getMetaData("project.centeno-advisory-db", supabase, PROJECT_METADATA_SCHEMA),
     getMetaData("project.centeno-advisory-features", supabase, PROJECT_METADATA_SCHEMA),
     getMetaData("project.portfolio", supabase, PROJECT_METADATA_SCHEMA),
-    getMetaData("project.nincy", supabase, PROJECT_METADATA_SCHEMA),
+//    getMetaData("project.nincy", supabase, PROJECT_METADATA_SCHEMA), pending...
     getMetaData("general.contacts", supabase, GeneralContactsSchema),
   ]);
 
@@ -71,16 +71,32 @@ export const getGeneralData = async (lang: string = "es",): Promise<GeneralData>
     hero_section: { data: hero_section, meta: { general: hero_meta, contacts: contacts_meta } },
     navbar_section: { data: navbar_section.data },
     skills_section: { data: skills_section, meta: skills_section_meta },
-    projects_section,
     aboutme_section: { data: aboutme_section, meta: aboutme_section_meta },
     contact_section: { data: contact_section, meta: contacts_meta_array },
     footer_section: { data: footer_section, meta: navbar_section.data },
+    projects_section,
     projects_array: [
+      { key: 1, data: centenoadvisory, meta: centenoadvisory_meta },
+      { key: 2, data: centenoadvisory_db, meta: centenoadvisory_db_meta },
+      { key: 3, data: centenoadvisory_features, meta: centenoadvisory_features_meta },
+      { key: 4, data: portfolio, meta: portfolio_meta },
+ //     { key: 5, data: nincy, meta: nincy_meta }, pending...
+    ],
+/*     os_section,
+    os_array: [
       { key: 1, data: centenoadvisory, meta: centenoadvisory_meta },
       { key: 2, data: centenoadvisory_db, meta: centenoadvisory_db_meta },
       { key: 3, data: centenoadvisory_features, meta: centenoadvisory_features_meta },
       { key: 4, data: portfolio, meta: portfolio_meta },
       { key: 5, data: nincy, meta: nincy_meta },
     ],
+    ia_section,
+    ia_array: [
+      { key: 1, data: centenoadvisory, meta: centenoadvisory_meta },
+      { key: 2, data: centenoadvisory_db, meta: centenoadvisory_db_meta },
+      { key: 3, data: centenoadvisory_features, meta: centenoadvisory_features_meta },
+      { key: 4, data: portfolio, meta: portfolio_meta },
+      { key: 5, data: nincy, meta: nincy_meta },
+    ],*/
   };
 };

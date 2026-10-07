@@ -1,4 +1,3 @@
-import { NoiseTexture } from "@/services/assets/Icons";
 import { ThemeSwitcher } from "../atoms/ThemeSwitcher";
 import { LanguageToggle, LinkButton, Title3, Title4 } from "../components";
 import type { NavBarProps } from "../types";

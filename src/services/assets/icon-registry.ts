@@ -4,6 +4,7 @@ import {
   DayAndNightIcon,
   DockerIcon,
   FigmaIcon,
+  FramerIcon,
   GitHubIcon,
   GitIcon,
   HamburNavIcon,
@@ -12,6 +13,7 @@ import {
   LanguageIcon,
   LinkedInIcon,
   MailIcon,
+  MotionIcon,
   NextIcon,
   NodeIcon,
   PostGresSQLIcon,
@@ -20,6 +22,7 @@ import {
   SupaBaseIcon,
   TailwindIcon,
   TypeScriptIcon,
+  ZodIcon,
 } from "@/services/assets/Icons";
 
 type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -45,6 +48,9 @@ export const ICON_REGISTRY = {
   alert_circle: AlertCircleIcon,
   refresh_cw: RefreshCwIcon,
   home: HomeIcon,
+  zod: ZodIcon,
+  motion: MotionIcon,
+  framer: FramerIcon,
 } as const satisfies Record<string, IconComponent>;
 
 export const IconNameSchema = z

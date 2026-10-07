@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button, NavBar, Title1, Title2, Title3 } from "../components";
+import { Button, NavBar } from "../components";
 import type { NavBarProps } from "../types";
 
 type HeaderProps = {

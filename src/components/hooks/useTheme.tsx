@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light";
 
-export const ThemeData: Theme[] = ["light", "dark", "rosepine-dark", "rosepine-light"];
+export const ThemeData: string[] = ["Light", "Dark", "Rosepine-Dark", "Rosepine-Light"];
 
 export function useTheme() {
   const { setTheme: setNextTheme, resolvedTheme } = useNextTheme();

@@ -2,13 +2,15 @@ import { getGeneralData } from "@/services/generaldata.service";
 import { SectionReveal } from "../components/animations/Animations";
 import {
   AboutMeSection,
-  ContactSection,
   Footer,
   Header,
   HeroSection,
+  IASection,
+  OSSection,
   ProjectsSection,
   SkillsSection,
 } from "../components/components";
+import { ContactSection } from "@/components/organims/ContactSection";
 
 interface PageProps {
   searchParams: Promise<{ lang?: string }>;
@@ -37,8 +39,9 @@ export default async function Home({ searchParams }: PageProps) {
             projects_array_data={general_data.projects_array}
             currentLang={currentLang}
           />
-        </SectionReveal>
 
+        </SectionReveal>
+        
         <SectionReveal>
           <AboutMeSection aboutme_data={general_data.aboutme_section} />
         </SectionReveal>
@@ -46,9 +49,9 @@ export default async function Home({ searchParams }: PageProps) {
         <SectionReveal>
           <ContactSection contact_data={general_data.contact_section} />
         </SectionReveal>
-        
+
       </main>
-      
+
       <Footer footer_data={general_data.footer_section} />
     </>
   );

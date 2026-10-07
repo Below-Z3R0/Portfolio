@@ -2,16 +2,12 @@ import { AnimatePresence, m } from "motion/react";
 import { Button } from "../components";
 import type { SuccessMessageProps } from "../types";
 
-/**
- * SuccessMessage — Modal/toast con checkmark animado
- * Reemplaza alert() nativo con UI profesional
- */
 export function SuccessMessage({
   show,
   onClose,
   title = "¡Mensaje enviado!",
   message = "Gracias por contactarme. Te responderé lo antes posible.",
-}: SuccessMessageProps): React.JSX.Element {
+}: SuccessMessageProps) {
   return (
     <AnimatePresence>
       {show && (
@@ -32,7 +28,7 @@ export function SuccessMessage({
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-md rounded-3xl bg-card border border-border border-success/40 shadow-2xl overflow-hidden"
+          className="relative w-full max-w-md rounded-3xl bg-card border border-success/40 shadow-2xl overflow-hidden"
         >
           {/* Glow decorativo de fondo */}
           <div

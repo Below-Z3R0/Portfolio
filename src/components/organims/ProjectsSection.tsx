@@ -31,6 +31,7 @@ export function ProjectsSection({
             key={`${project.key}-${currentLang}`}
             project_data={project}
             labels_data={project_section_data.labels}
+            category={project_section_data.title_lg}
           />
         ))}
       </div>

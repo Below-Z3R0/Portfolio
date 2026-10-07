@@ -11,7 +11,7 @@ export function ErrorPage({
         {/* Icono con resplandor de advertencia */}
         <div className="relative">
           <div className="absolute inset-0 bg-destructive-soft blur-2xl rounded-full" />
-          <div className="relative bg-destructive-soft p-4 rounded-full border border-border border-destructive/20">
+          <div className="relative bg-destructive-soft p-4 rounded-full border border-destructive/20">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

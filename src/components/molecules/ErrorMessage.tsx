@@ -7,7 +7,7 @@ export function ErrorMessage({
   onClose,
   title = "Algo salió mal",
   message = "No pude enviar tu mensaje. Por favor intenta de nuevo.",
-}: ErrorMessageProps): React.JSX.Element {
+}: ErrorMessageProps) {
   return (
     <AnimatePresence>
       {show && (

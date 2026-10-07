@@ -59,11 +59,6 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
         onSubmit={onSubmit}
         className={`${bodyStyle} rounded-3xl size-full flex flex-col p-[5%] bg-card border border-border items-start shadow-2xl relative overflow-hidden`}
       >
-        {/* Glow decorativo sutil */}
-        <div
-          className="absolute -top-20 -right-20 size-60 rounded-full opacity-20 blur-3xl pointer-events-none"
-          style={{ background: "radial-gradient(circle, var(--glow-accent) 0%, transparent 70%)" }}
-        />
 
         <div className="relative w-full">
           <Title4

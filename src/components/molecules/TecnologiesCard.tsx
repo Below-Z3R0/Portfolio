@@ -1,5 +1,5 @@
 import { IconRender } from "../atoms/IconRender";
-import { Title3, Title4 } from "../components";
+import { Title4 } from "../components";
 import type { TecnologiesConfig } from "../types";
 
 export function TecnologiesCard({
@@ -13,10 +13,10 @@ export function TecnologiesCard({
   return (
     <div
       style={{ "--tech-color": color } as React.CSSProperties}
-      className={`w-34 group relative flex flex-col items-center justify-center p-4 bg-primary-container backdrop-blur-xs border border-border rounded-3xl transition-all duration-300 hover:-translate-y-2 shadow-xl hover:bg-(--tech-color)/5 ${cardStyle}`}
+      className={`w-36 group relative flex flex-col items-center justify-center p-4 bg-primary-container border border-border rounded-3xl transition-transform duration-300 hover:-translate-y-2 shadow-lg hover:bg-(--tech-color)/5 ${cardStyle}`}
     >
       <div
-        className={`absolute inset-0 opacity-0 group-hover:opacity-65 transition-opacity rounded-3xl blur-3xl bg-(--tech-color)`}
+        className={`absolute inset-0 opacity-0 group-hover:opacity-65 rounded-3xl group-hover:blur-2xl bg-(--tech-color)`}
       />
 
       <div
@@ -31,12 +31,12 @@ export function TecnologiesCard({
       </div>
 
       {name && (
-        <Title4 className="transition-colors" txt={name}/>
+        <Title4 txt={name}/>
       )}
 
       {bar && (
         <div
-          className={`absolute bottom-0 h-1 w-0 group-hover:w-1/2 transition-all duration-500 rounded-full bg-(--tech-color)`}
+          className={`absolute bottom-0 h-1 w-0 group-hover:w-1/2 transition-[width] duration-300 rounded-full bg-(--tech-color)`}
         />
       )}
     </div>

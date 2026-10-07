@@ -28,7 +28,7 @@ export function ThemeSwitcher({
                 >
                     {ThemeData.map((cat, index) => (
                         <Button
-                            onClick={() => setTheme(cat as Theme)}
+                            onClick={() => setTheme(cat.toLowerCase() as Theme)}
                             key={index}
                             txt={cat}
                             buttonBody="flex items-start h-8 w-full p-1 rounded-md"
