@@ -277,30 +277,6 @@ export type ContactList = z.infer<typeof ContactListSchema>;
 export type Form = z.infer<typeof FormSchema>;
 
 // =============================================================================
-// MAPS DE SCHEMAS (para los services genéricos getData / getMetaData)
-// =============================================================================
-
-export const CONTENT_SCHEMAS = {
-  "section.hero": HeroContentSchema,
-  "section.navbar": NavbarContentSchema,
-  "section.skills": SkillsContentSchema,
-  "section.aboutme": AboutMeContentSchema,
-  "section.projects": ProjectsContentSchema,
-  "section.contact": ContactContentSchema,
-  "section.footer": FooterContentSchema,
-} as const;
-
-export const METADATA_SCHEMAS = {
-  "section.hero": HeroMetadataSchema,
-  "general.contacts": GeneralContactsSchema,
-  "section.skills": SkillsMetadataSchema,
-  "section.aboutme": AboutMeMetadataSchema,
-} as const;
-
-export const PROJECT_ITEM_SCHEMA = ProjectItemSchema;
-export const PROJECT_METADATA_SCHEMA = ProjectsMetadataSchema;
-
-// =============================================================================
 // ORQUESTADOR: GeneralData (lo que retorna getGeneralData)
 // =============================================================================
 
