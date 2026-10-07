@@ -93,7 +93,7 @@ export const ProjectsContentSchema = z.object({
 
 // Los 5 projects del portfolio comparten este shape
 export const ProjectItemSchema = z.object({
-  paragraph: z.string(),
+  paragraph: z.string().optional(),
   tecnologies: z.array(
     z.object({
       icon_key: IconNameSchema,
@@ -258,7 +258,7 @@ export type SkillsContent = z.infer<typeof SkillsContentSchema>;
 export type AboutMeContent = z.infer<typeof AboutMeContentSchema>;
 export type ProjectsContent = z.infer<typeof ProjectsContentSchema>;
 export type ProjectItem = z.infer<typeof ProjectItemSchema>;
-export type ModalContent = z.infer<typeof ProjectItemSchema>["modal"];
+export type ModalContent = z.input<typeof ProjectItemSchema>["modal"];
 export type ContactContent = z.infer<typeof ContactContentSchema>;
 export type FooterContent = z.infer<typeof FooterContentSchema>;
 

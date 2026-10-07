@@ -111,16 +111,18 @@ labels_data: { featured: string; in_construction: string };
 category: string | undefined;
 }
 
-interface data extends ModalContent{
+type data = ModalContent & {
   category: string | undefined;
   title: string;
-}
+};
+
+
 
 export interface ModalProps  {
   img: string | undefined;
   in_construction: string;
   data: data;
-  activeTxt: string;
+  activeTxt: string | undefined;
   setActivetxt: (txt: string) => void;
   open: boolean;
   onClose: () => void;

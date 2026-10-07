@@ -14,7 +14,7 @@ import { AnimatePresence } from "motion/react";
 
 export function ProjectCard({ project_data, labels_data, category }: ProjectCardProps) {
   const [activeTxt, setActiveTxt] = useState(project_data.data.paragraph);
-  const [activeModalTxt, setActiveModalTxt] = useState(project_data.data.paragraph);
+  const [activeModalTxt, setActiveModalTxt] = useState(project_data.data.modal?.paragraph);
   const handleReset = () => setActiveTxt(project_data.data.paragraph);
   const [isOpen, setIsOpen] = useState(false)
   const in_construction = project_data.meta.is_in_construction
@@ -111,7 +111,7 @@ export function ProjectCard({ project_data, labels_data, category }: ProjectCard
       )}
 
       <AnimatePresence>
-        {isOpen && (
+        {project_data.meta.image_key && project_data.data.modal && isOpen && (
           <Modal
             img={project_data.meta.image_key}
             data={{ ...project_data.data.modal, title: project_data.meta.title, category: category }}
