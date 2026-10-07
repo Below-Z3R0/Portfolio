@@ -30,7 +30,6 @@ export default async function Home({ searchParams }: PageProps) {
     { key: 2, data: content["project.centeno-advisory-db"], meta: metadata["project.centeno-advisory-db"] },
     { key: 3, data: content["project.centeno-advisory-features"], meta: metadata["project.centeno-advisory-features"] },
     { key: 4, data: content["project.portfolio"], meta: metadata["project.portfolio"] },
-    { key: 5, data: content["project.nincy"], meta: metadata["project.nincy"] },
   ];
   return (
     <>

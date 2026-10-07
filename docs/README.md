@@ -9,7 +9,7 @@
 | # | Sistema | Doc | Estado | Comunidad Graphify |
 |---|---|---|---|---|
 | 1 | Base de datos (Postgres schema + RLS + RPC) | [db-supabase.md](./03-systems/db-supabase.md) | ✅ | C3 |
-| 2 | Carga de contenido (RPC + orquestador + fallback) | [orquestador.md](./03-systems/orquestador.md) | ✅ | C2 |
+| 2 | Carga de contenido (RPC + orquestador + cache) | [orquestador.md](./03-systems/orquestador.md) | ✅ | C2 |
 | 3 | Theming v2 (4 paletas, 36 vars, shadcn conventions) | [theming-v2-flow.md](./03-systems/theming-v2-flow.md) + [theming-system.md](./03-systems/theming-system.md) | ✅ | C5, C7, C8 |
 | 4 | Motion (LazyMotion + 7 wrappers level-based) | [motion-integration.md](./03-systems/motion-integration.md) | ✅ | C0 |
 | 5 | UI base (atoms + molecules + barrel) | [ui-base.md](./03-systems/ui-base.md) + [barrel-type-helpers.md](./03-systems/barrel-type-helpers.md) | ✅ | C0, C1 |
@@ -28,7 +28,7 @@
 |---|---|---|---|
 | 1 | `components/types.ts` | 257 | Tipos e interfaces centralizados |
 | 2 | `components/schemas.ts` | 316 | Zod schemas (fuente de verdad de la data) |
-| 3 | `services/generaldata.service.ts` | 102 | Orquestador (17 queries en paralelo) |
+| 3 | `services/data/site.ts` | 90 | `getSiteData(lang)` (1 RPC + Zod anidado + `unstable_cache`) |
 | 4 | `app/globals.css` | — | Theming v2 (4 paletas × 36 vars) |
 | 5 | `components/animations/Animations.tsx` | 311 | 7 wrappers level-based (Motion) |
 | 6 | `components/atoms/Button.tsx` | 25 | Atomo más usado |
@@ -40,7 +40,7 @@ docs/
 ├── README.md (este archivo)
 ├── 01-getting-started/         # Para arrancar el proyecto (próximamente)
 ├── 02-architecture/            # Arquitectura general (próximamente)
-├── 03-systems/                 # 17 docs de sistemas individuales
+└── 03-systems/                 # 18 docs de sistemas individuales (+1 deprecated)
 │   ├── db-supabase.md
 │   ├── orquestador.md
 │   ├── theming-v2-flow.md
@@ -59,7 +59,10 @@ docs/
 │   ├── fonts-next-font.md
 │   ├── error-handling.md
 │   ├── barrel-type-helpers.md
-├── 04-decisions/                # ADRs (próximamente)
+│   └── _deprecated/                  # Patrones viejos, conservados por referencia
+│       └── orquestador-promise-all-pattern.md   # getGeneralData (17 queries) → reemplazado por site.ts
+└── 04-decisions/                # ADRs
+    └── 024-rpc-get-site-payload.md   # RPC + cache vs Promise.all (2026-10-07)
 ├── 05-issues/                  # Issues conocidos
 │   ├── issues.md                # Catálogo maestro de issues (#001-#027)
 │   └── testing-ci-deploy.md     # Gap documentado
@@ -90,19 +93,19 @@ python3 docs/graph/restore-theming-edges.py
 - **Archivos analizados:** ~60 .ts/.tsx/.css en `src/` + 1 doc conceptual (`theming.v2.ts` proxy)
 - **Comunidades detectadas:** 18 (12 principales, 6 thin)
 - **Edges:** 553
-- **Sistemas documentados:** 17 individuales + 1 overview + 1 issues
+- **Sistemas documentados:** 17 individuales + 1 overview + 1 issues + 1 deprecated
 - **Docs en `docs/`:** 20 archivos
 
 ## 🔗 Cómo se conectan los sistemas
 
 ```
-   [DB + Supabase] ← todo depende de la BD
+   [DB + Supabase] ← RPC get_site_payload
        │
-       ├──► [Orquestador] ← hace 17 queries en paralelo
-       │         │
-       │         ├──► [Zod schemas] ← valida cada bloque
-       │         └──► [Orquestador] reensambla en GeneralData
-       │
+       └──► [Orquestador] ← 1 sola query cacheada (unstable_cache 1h)
+                │
+                ├──► [Zod schemas] ← validación declarativa con z.object anidado
+                └──► [SitePayload] ← tipado end-to-end
+                │
        ├──► [i18n] ← multi-idioma (es/en)
        │
        ├──► [Theming v2] ← 4 paletas (dark/light/rosepine-*)

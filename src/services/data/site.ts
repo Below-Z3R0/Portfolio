@@ -30,7 +30,6 @@ const SitePayloadSchema = z.object({
     'project.centeno-advisory-db': ProjectItemSchema,
     'project.centeno-advisory-features': ProjectItemSchema,
     'project.portfolio': ProjectItemSchema,
-    'project.nincy': ProjectItemSchema,
   }),
   metadata: z.object({
     'section.hero': HeroMetadataSchema,
@@ -41,7 +40,6 @@ const SitePayloadSchema = z.object({
     'project.centeno-advisory-db': ProjectsMetadataSchema,
     'project.centeno-advisory-features': ProjectsMetadataSchema,
     'project.portfolio': ProjectsMetadataSchema,
-    'project.nincy': ProjectsMetadataSchema,
   }),
 });
 

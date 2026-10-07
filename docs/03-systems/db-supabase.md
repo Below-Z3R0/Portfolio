@@ -5,12 +5,12 @@ project: portfolio-v2
 scope: project
 status: active
 created: 2026-10-05
-updated: 2026-10-05
-tags: [db, supabase, headless-cms, postgresql, typescript, supabase-js, schemas, zod, portfolio-v2, system]
+updated: 2026-10-07
+tags: [db, supabase, headless-cms, postgresql, typescript, supabase-js, schemas, zod, portfolio-v2, system, rpc]
 verified_with: minimax-m3
 ---
 
-> **TL;DR:** El proyecto usa Supabase como headless CMS con PostgreSQL. Hay **6 tablas en el schema `portfolio`**: `content_blocks` (catálogo semántico de bloques), `translations` (contenido traducible por idioma), `content_blocks_metadata` (datos no traducibles), `general_data` (datos globales del sitio), `languages` (catálogo de idiomas activos), y `projects` (catálogo de proyectos con su content jsonb). El orquestador pide 8 + 9 keys en paralelo con `Promise.all`, valida cada uno con Zod schemas, y reensambla todo en un `GeneralData`. El tipado end-to-end va: SQL → `supabase gen types` → `Database` type → `services/generaldata.service.ts` → Zod schemas → `schemas.ts` → props de componentes.
+> **TL;DR:** El proyecto usa Supabase como headless CMS con PostgreSQL. Hay **6 tablas en el schema `portfolio`**: `content_blocks` (catálogo semántico de bloques), `translations` (contenido traducible por idioma), `content_blocks_metadata` (datos no traducibles), `general_data` (datos globales del sitio), `languages` (catálogo de idiomas activos), y `projects` (catálogo de proyectos con su content jsonb). El orquestador llama a **1 sola RPC** (`portfolio.get_site_payload`) que devuelve todo el contenido + metadata en un único jsonb, valida cada bloque con Zod (declarativamente con `z.object` anidado), y cachea con `unstable_cache(revalidate: 3600)`. El tipado end-to-end va: SQL → `supabase gen types` → `Database` type → `services/data/site.ts` → Zod schemas → `schemas.ts` → props de componentes.
 
 ## 🎯 Filosofía del headless CMS
 
@@ -127,54 +127,149 @@ Cada contenido tiene una **clave semántica** en `content_blocks.key`:
 
 > **Diferencia importante**: `general.contacts` no es un bloque con `key="general.contacts"`, sino un row en `content_blocks_metadata` con `block_id` apuntando a `content_blocks` con `key="general"`. La convención "section.X" vs "general.X" se decide por prefijo.
 
+## 📦 RPC `portfolio.get_site_payload` (Single Source of Truth)
+
+Desde 2026-10-07, todo el contenido del sitio se trae con **1 sola llamada** a esta RPC en vez de 17:
+
+```sql
+CREATE OR REPLACE FUNCTION portfolio.get_site_payload(
+  p_lang text,
+  p_keys text[] DEFAULT NULL
+) RETURNS jsonb
+LANGUAGE sql
+STABLE
+SECURITY INVOKER
+AS $$
+  SELECT jsonb_build_object(
+    'content', COALESCE((
+      SELECT jsonb_object_agg(cb.key, t.content)
+      FROM portfolio.content_blocks cb
+      JOIN portfolio.translations t ON t.block_id = cb.id
+      WHERE t.lang_code = p_lang
+        AND (p_keys IS NULL OR cb.key = ANY(p_keys))
+    ), '{}'::jsonb),
+    'metadata', COALESCE((
+      SELECT jsonb_object_agg(cb.key, m.content)
+      FROM portfolio.content_blocks cb
+      JOIN portfolio.content_blocks_metadata m ON m.block_id = cb.id
+      WHERE p_keys IS NULL OR cb.key = ANY(p_keys)
+    ), '{}'::jsonb)
+  );
+$$;
+```
+
+### Shape de retorno
+
+```json
+{
+  "content": {
+    "section.hero": { "title": "...", "paragraph_1": "...", ... },
+    "section.navbar": { "data": [...] },
+    "project.portfolio": { "modal": {...}, ... },
+    ...
+  },
+  "metadata": {
+    "section.hero": { "image_key": "...", "contact": {...} },
+    "general.contacts": { "github": {...}, "linkedin": {...} },
+    ...
+  }
+}
+```
+
+### Por qué el SQL hace el trabajo
+
+| Operación | En JS (antes) | En SQL (ahora) |
+|---|---|---|
+| JOIN content_blocks ↔ translations | N round-trips (uno por key) | 1 round-trip con JOIN |
+| Agrupar por key | Manual con `Object.fromEntries` | `jsonb_object_agg(cb.key, ...)` |
+| Filtrar keys permitidas | No se filtraba (se transferían todas) | `WHERE cb.key = ANY(p_keys)` |
+| Manejar filas vacías | `if (!data) throw ...` | `COALESCE(..., '{}'::jsonb)` |
+
+### Por qué `security invoker`
+
+Sin esto, la función corre con permisos del **definidor** (generalmente el owner del schema) y se **saltea RLS**. Hoy tu contenido es público y no vas a ver diferencia. Pero el día que metas un borrador en `content_blocks` o restringas lectura por idioma, **te lo filtra a cualquier visitante**. Una línea, gratis, evita un bug imposible de debuggear.
+
+### Cómo lo llama la app
+
+```ts
+// src/services/data/site.ts
+const { data, error } = await supabase.rpc('get_site_payload', {
+  p_lang: lang,
+  p_keys: allowedKeys,
+});
+```
+
+Las `allowedKeys` se construyen desde `SitePayloadSchema.shape.content.shape` y `SitePayloadSchema.shape.metadata.shape`. **Single source of truth**: agregar una key al schema Zod la trae al RPC automáticamente.
+
+### Cómo se invoca desde SQL Editor
+
+```sql
+-- Sin filtro (trae todo el idioma):
+SELECT portfolio.get_site_payload('es');
+
+-- Con filtro (lo que hace la app):
+SELECT portfolio.get_site_payload('es', array['section.hero', 'project.nincy']);
+```
+
+### Por qué `stable` + `language sql`
+
+- `STABLE`: el resultado no cambia entre rows del mismo statement (Postgres puede cachear).
+- `LANGUAGE sql` (no `plpgsql`): el planner inline-a la función, lo que permite optimizaciones que un bloque procedural no.
+
 ## 🔄 Flujo end-to-end de un dato (DB → Componente)
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  1. Supabase (PostgreSQL) — schema "portfolio"               │
-│     tabla translations                                        │
-│     {                                                        │
-│       content: { "title_lg": "...", "paragraph": "..." },   │
-│       lang_code: "es"                                        │
-│       block_id -> content_blocks.key = "section.aboutme"     │
-│     }                                                        │
+│     tablas: content_blocks, content_blocks_metadata,         │
+│     translations                                              │
+│                                                              │
+│     El RPC get_site_payload(p_lang, p_keys):                │
+│       - JOIN content_blocks ↔ translations                   │
+│       - JOIN content_blocks ↔ content_blocks_metadata       │
+│       - jsonb_object_agg(cb.key, content)                    │
+│       - WHERE cb.key = ANY(p_keys)                           │
 └──────────────────────────────────────────────────────────────┘
                             ↓
 ┌──────────────────────────────────────────────────────────────┐
-│  2. supabase-js (data.service.ts)                             │
-│     await supabase                                           │
-│       .from("translations")                                  │
-│       .select("content, content_blocks!inner(key)")         │
-│       .eq("lang_code", lang)                                 │
-│       .eq("content_blocks.key", block_key)                   │
-│       .limit(1).single()                                     │
+│  2. supabase-js (services/data/site.ts)                      │
+│     await supabase.rpc('get_site_payload', {                 │
+│       p_lang: 'es',                                          │
+│       p_keys: allowedKeys,   // derivado de SitePayloadSchema │
+│     })                                                       │
 └──────────────────────────────────────────────────────────────┘
                             ↓
 ┌──────────────────────────────────────────────────────────────┐
-│  3. Zod (schemas.ts)                                          │
-│     AboutMeContentSchema.parse(data.content)                 │
-│     → si no matchea -> throw Error                            │
+│  3. Zod (schemas.ts)                                         │
+│     SitePayloadSchema = z.object({                            │
+│       content: z.object({ 'section.hero': HeroContentSchema, …}),
+│       metadata: z.object({ 'general.contacts': GeneralContactsSchema, …}),
+│     })                                                       │
+│     Validación BLOQUE POR BLOQUE en fetchPayload:            │
+│       for (key, schema) { safeParse(content[key]) }         │
+│       → throw con key + path + valor real si falla           │
 └──────────────────────────────────────────────────────────────┘
                             ↓
 ┌──────────────────────────────────────────────────────────────┐
-│  4. Orquestador (generaldata.service.ts)                      │
-│     {                                                         │
-│       aboutme_section: { data: aboutme, meta: ... }          │
-│     }                                                         │
-│     return Promise<GeneralData>                                │
+│  4. unstable_cache (1 hora, tags: 'site:${lang}')            │
+│     HIT  → devuelve SitePayload cacheado (0 ms)            │
+│     MISS → ejecuta el RPC + valida con Zod                   │
 └──────────────────────────────────────────────────────────────┘
                             ↓
 ┌──────────────────────────────────────────────────────────────┐
 │  5. Server Component (app/page.tsx)                           │
-│     export default async function Home({ searchParams }) {     │
-│       const general_data = await getGeneralData(lang);         │
-│       return <AboutMeSection aboutme_data={...} />             │
-│     }                                                         │
+│     const { content, metadata } = await getSiteData(lang);    │
+│     const hero_data = {                                       │
+│       data: content['section.hero'],                          │
+│       meta: { general: metadata['section.hero'],             │
+│               contacts: metadata['general.contacts'] },       │
+│     };                                                       │
+│     return <HeroSection hero_data={hero_data} />;            │
 └──────────────────────────────────────────────────────────────┘
                             ↓
 ┌──────────────────────────────────────────────────────────────┐
-│  6. Component (AboutMeSection)                                │
-│     <Title2 txt={aboutme_data.data.title_lg} />                │
+│  6. Component (HeroSection)                                   │
+│     <Title2 txt={hero_data.data.title} />                    │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -229,132 +324,11 @@ export async function createClient() {
 
 ## 🔗 Patrón genérico getData / getMetaData
 
-```ts
-// src/services/Data/data.service.ts
-import type { z } from "zod";
-import type { PortfolioClient } from "../supabase/types/types.helper";
-
-export const getData = async <Schema extends z.ZodType>(
-  block_key: string,
-  lang: string,
-  supabase: PortfolioClient,
-  schema: Schema
-): Promise<z.infer<Schema>> => {
-  const { data, error } = await supabase
-    .from("translations")
-    .select("content, content_blocks!inner(key)")
-    .eq("lang_code", lang)
-    .eq("content_blocks.key", block_key)
-    .limit(1)
-    .single();
-
-  if (error || !data)
-    throw new Error(
-      `Error fetching data for block_key ${block_key} and language ${lang}: ${error.message}`
-    );
-
-  return schema.parse(data.content);
-};
-```
-
-```ts
-// src/services/Data/metadata.service.ts (mismo patrón)
-export const getMetaData = async <Schema extends z.ZodType>(
-  block_key: string,
-  supabase: PortfolioClient,
-  schema: Schema
-): Promise<z.infer<Schema>> => {
-  const { data, error } = await supabase
-    .from("content_blocks_metadata")
-    .select("content, content_blocks!inner(key)")
-    .eq("content_blocks.key", block_key)
-    .limit(1)
-    .single();
-
-  if (error || !data)
-    throw new Error(
-      `Error fetching data for block_key ${block_key}: ${error.message}`
-    );
-
-  return schema.parse(data.content);
-};
-```
-
-> **Diferencia clave**: `getData` filtra por `lang_code` (translations tiene idioma), `getMetaData` no (metadata no es traducible). Y `getData` apunta a `translations`, `getMetaData` a `content_blocks_metadata`.
-
-## 🎼 El orquestador: getGeneralData
-
-```ts
-// src/services/generaldata.service.ts (resumido)
-export const getGeneralData = async (lang: string = "es"): Promise<GeneralData> => {
-  const supabase = await createClient();
-
-  // 1) 8 queries de content (paralelo)
-  const [
-    hero_section,
-    navbar_section,
-    skills_section,
-    projects_section,
-    aboutme_section,
-    contact_section,
-    footer_section,
-    centenoadvisory, centenoadvisory_db, centenoadvisory_features,
-    portfolio, nincy,
-  ] = await Promise.all([
-    getData("section.hero", lang, supabase, HeroContentSchema),
-    getData("section.navbar", lang, supabase, NavbarContentSchema),
-    getData("section.skills", lang, supabase, SkillsContentSchema),
-    getData("section.projects", lang, supabase, ProjectsContentSchema),
-    getData("section.aboutme", lang, supabase, AboutMeContentSchema),
-    getData("section.contact", lang, supabase, ContactContentSchema),
-    getData("section.footer", lang, supabase, FooterContentSchema),
-
-    getData("project.centeno-advisory", lang, supabase, ProjectItemSchema),
-    getData("project.centeno-advisory-db", lang, supabase, ProjectItemSchema),
-    getData("project.centeno-advisory-features", lang, supabase, ProjectItemSchema),
-    getData("project.portfolio", lang, supabase, ProjectItemSchema),
-    getData("project.nincy", lang, supabase, ProjectItemSchema),
-  ]);
-
-  // 2) 9 queries de metadata (paralelo)
-  const [
-    hero_meta, skills_section_meta, aboutme_section_meta,
-    centenoadvisory_meta, centenoadvisory_db_meta, centenoadvisory_features_meta,
-    portfolio_meta, nincy_meta, contacts_meta,
-  ] = await Promise.all([
-    getMetaData("section.hero", supabase, HeroMetadataSchema),
-    getMetaData("section.skills", supabase, SkillsMetadataSchema),
-    getMetaData("section.aboutme", supabase, AboutMeMetadataSchema),
-    getMetaData("project.centeno-advisory", supabase, ProjectsMetadataSchema),
-    getMetaData("project.centeno-advisory-db", supabase, ProjectsMetadataSchema),
-    getMetaData("project.centeno-advisory-features", supabase, ProjectsMetadataSchema),
-    getMetaData("project.portfolio", supabase, ProjectsMetadataSchema),
-    getMetaData("project.nincy", supabase, ProjectsMetadataSchema),
-    getMetaData("general.contacts", supabase, GeneralContactsSchema),
-  ]);
-
-  const contacts_meta_array: ContactSectionMetadata = Object.values(contacts_meta);
-
-  return {
-    hero_section: { data: hero_section, meta: { general: hero_meta, contacts: contacts_meta } },
-    navbar_section: { data: navbar_section.data },
-    skills_section: { data: skills_section, meta: skills_section_meta },
-    aboutme_section: { data: aboutme_section, meta: aboutme_section_meta },
-    contact_section: { data: contact_section, meta: contacts_meta_array },
-    footer_section: { data: footer_section, meta: navbar_section.data },
-    projects_section,
-    projects_array: [
-      { key: 1, data: centenoadvisory, meta: centenoadvisory_meta },
-      { key: 2, data: centenoadvisory_db, meta: centenoadvisory_db_meta },
-      { key: 3, data: centenoadvisory_features, meta: centenoadvisory_features_meta },
-      { key: 4, data: portfolio, meta: portfolio_meta },
-      { key: 5, data: nincy, meta: nincy_meta },
-    ],
-  };
-};
-```
-
-**17 queries en paralelo** = ~250-400ms en Supabase (vs ~4-7s en serie).
+> ⚠️ **DEPRECATED 2026-10-07**. Este patrón (`getData`/`getMetaData` con 17 queries paralelas + `getGeneralData`) se reemplazó por `services/data/site.ts` (RPC `get_site_payload` + `unstable_cache`). Ver:
+>
+> - [`./orquestador.md`](./orquestador.md) — orquestador actual
+> - [`./_deprecated/orquestador-promise-all-pattern.md`](./_deprecated/orquestador-promise-all-pattern.md) — código del patrón viejo, conservado por referencia
+> - [`../04-decisions/024-rpc-get-site-payload.md`](../04-decisions/024-rpc-get-site-payload.md) — ADR del cambio
 
 ## 🔗 Tipado end-to-end (de SQL a JSX)
 
@@ -364,11 +338,11 @@ SQL real (Supabase)
 Database (types.ts:1, 191 lines)
     ↓ `import type { Database }`
 PortfolioClient (types.helper.ts)
-    ↓ `getData<Schema>(...)`
-z.infer<Schema> en cada servicio
-    ↓ `import type { GeneralData }`
+    ↓ `supabase.rpc(...)` en site.ts
+z.infer<typeof SitePayloadSchema>
+    ↓ `import type { SitePayload }`
 Page (app/page.tsx) → props tipadas
-    ↓ `<AboutMeSection aboutme_data={...} />`
+    ↓ `<HeroSection hero_data={...} />`
 Components (data.prop, sin any)
 ```
 
@@ -393,33 +367,34 @@ Eso **genera automáticamente** `src/services/supabase/types/types.ts` con el sh
 export default async function Home({ searchParams }: PageProps<"/">) {
   const resolvedParams = await searchParams;
   const currentLang = resolvedParams.lang || "es";
-  const general_data = await getGeneralData(currentLang);
+  const { content, metadata } = await getSiteData(currentLang);
   // ...
 }
 ```
 
-- **Default**: `lang = "es"` (definido en `generaldata.service.ts`).
+- **Default**: `lang = "es"` (definido en `site.ts`).
 - **Override**: `?lang=en` en la URL.
 - **Escalable**: agregar un idioma = nuevo row en `languages` + nuevos rows en `translations` con `lang_code` nuevo + actualizar el `LanguageToggle`.
 
-> **Limitación actual**: la tabla `languages` tiene 2 idiomas (`es`, `en`). El `LanguageToggle.tsx` lee de esta tabla y muestra los disponibles. Si el `lang` query param no matchea una key válida, **`getData` falla con throw** (no hay fallback).
+> **Limitación actual**: la tabla `languages` tiene 2 idiomas (`es`, `en`). El `LanguageToggle.tsx` lee de esta tabla y muestra los disponibles. Si el `lang` query param no matchea una key válida, **el RPC devuelve `{}` y el loop tira `Missing content for "section.hero"`** (no hay fallback).
 
 ## 🚨 Manejo de errores
 
 ```ts
-// data.service.ts
-if (error || !data) {
-  throw new Error(
-    `Error fetching data for block_key ${block_key} and language ${lang}: ${error.message}`,
-  );
-}
+// services/data/site.ts (fetchPayload)
+if (error) throw new Error(`[site] RPC error: ${error.message}`);
 
-return schema.parse(data.content);  // también puede throw si Zod no valida
+const result = (schema as z.ZodType).safeParse(value);
+if (!result.success) {
+  console.error(`[site] Content invalid for "${key}":`, result.error);
+  console.error(`[site] Actual content:`, JSON.stringify(value, null, 2));
+  throw new Error(`[site] Invalid content for "${key}": ...`);
+}
 ```
 
 **Implicaciones**:
-- `data.content` no matchea el schema Zod → `error.tsx` se renderiza (Next.js error boundary).
-- `lang` no existe en la BD → mismo error (no hay fallback).
+- `data.content[key]` no matchea el schema Zod → throw con la key + valor real → `error.tsx` se renderiza.
+- `lang` no existe en la BD → el RPC devuelve `{}`, el loop tira `Missing content for "..."`.
 - Zod validation fail en runtime → propagado como `error.tsx` boundary.
 
 > **Pendiente**: el proyecto no tiene fallback de idioma (si el `lang` no existe, la página se rompe). El idioma solo se puede cambiar via el LanguageToggle si la BD tiene el `lang_code` cargado.
@@ -432,31 +407,50 @@ return schema.parse(data.content);  // también puede throw si Zod no valida
 | `services/supabase/server.ts` | 32 | Cliente server (publishable key + cookies RSC) |
 | `services/supabase/types/types.ts` | 1191 | Tipado de la BD (generado por `supabase gen types`) |
 | `services/supabase/types/types.helper.ts` | corto | `PortfolioClient` type helper |
-| `services/Data/data.service.ts` | 25 | `getData<T>(block_key, lang, supabase, schema)` |
-| `services/Data/metadata.service.ts` | 23 | `getMetaData<T>(block_key, supabase, schema)` |
-| `services/generaldata.service.ts` | 102 | Orquestador (17 queries en paralelo) |
+| `services/data/site.ts` | 90 | `getSiteData(lang)` (1 RPC + Zod anidado + `unstable_cache`) |
+| `services/data/function-example.sql` | 87 | SQL canónico del RPC (doc + backup) |
 
-**Total**: ~1400 líneas (incluyendo types.ts generado).
+**Total**: ~1400 líneas (incluyendo types.ts generado). **Antes**: 3 archivos de servicios (`generaldata.service.ts` + `data.service.ts` + `metadata.service.ts`) + 1 helper. **Ahora**: 1 archivo (`site.ts`) + 1 doc SQL.
 
 ## 🛠️ Cómo agregar contenido (operación cotidiana)
 
 ### Agregar un texto traducible
 
-1. Ir a Supabase Dashboard → Table Editor.
-2. Insert row en `translations`:
-   - FK `content_blocks` → clave que ya existe (ej. `section.hero`)
-   - `lang_code`: `"es"`
-   - `content`: JSON con el shape del schema (ej. `{ "title": "Hola" }`)
-3. Verificar en el frontend.
+1. Ir a Supabase Dashboard → Table Editor → `translations`.
+2. Update del row con `block_id` apuntando al key y `lang_code` deseado.
+3. Cambia el JSON de `content`.
+4. **No necesitás redeploy**. La cache expira en 1 hora (o usá `revalidateTag`).
 
 ### Agregar un nuevo bloque (key)
 
-1. Insert row en `content_blocks` (PK key).
-2. Insert row en `translations` y `content_blocks_metadata` apuntando al nuevo key.
-3. Crear schema Zod en `schemas.ts` con el shape esperado.
-4. Agregar al orquestador (`generaldata.service.ts`).
-5. Agregar al tipo `GeneralData` en `schemas.ts`.
-6. Pasar como prop al componente.
+1. **En Supabase**:
+   - Insert row en `content_blocks` con `key = 'section.testimonials'`.
+   - Insert row en `translations` con `block_id` apuntando al nuevo key.
+   - Insert row en `content_blocks_metadata` si tiene metadata.
+2. **En `components/schemas.ts`**:
+   ```ts
+   export const TestimonialsContentSchema = z.object({
+     title: z.string(),
+     items: z.array(z.object({ name: z.string(), quote: z.string() })),
+   });
+   ```
+3. **En `services/data/site.ts`** — agregar al `SitePayloadSchema`:
+   ```ts
+   content: z.object({
+     // ...existing...
+     'section.testimonials': TestimonialsContentSchema,  // ← nueva línea
+   }),
+   ```
+4. **En `app/page.tsx`**:
+   ```tsx
+   const testimonials_data = { data: content["section.testimonials"] };
+   <TestimonialsSection testimonials_data={testimonials_data} />
+   ```
+5. **Invalidar cache** (opcional, si querés ver el cambio antes de la hora):
+   ```ts
+   import { revalidateTag } from 'next/cache';
+   revalidateTag('site:es');
+   ```
 
 ### Agregar un nuevo idioma
 
@@ -468,7 +462,7 @@ return schema.parse(data.content);  // también puede throw si Zod no valida
 
 | Sistema | Edge con DB | Detalle |
 |---|---|---|
-| Orquestador (comunidad 2) | `getGeneralData()` retorna `GeneralData` | Une DB con UI |
+| Orquestador (comunidad 2) | `getSiteData()` retorna `SitePayload` (cacheado) | Une DB con UI |
 | Formulario (comunidad 5) | ninguno directo | EmailJS usa el form, no la BD |
 | Iconos (comunidad 4) | parcial | `IconNameSchema` valida que `icon_key` exista en `ICON_REGISTRY` (no en DB) |
 | Imágenes (comunidad 10) | parcial | `<Image loader="supabase-image-loader">` apunta a Supabase Storage (no a la DB) |
@@ -485,17 +479,17 @@ return schema.parse(data.content);  // también puede throw si Zod no valida
 
 ## 🔗 Ver también
 
-- [[learning/projects/portfolio-v2/orquestador-generaldata-service]] (siguiente en el orden de docs)
+- [[learning/projects/portfolio-v2/orquestador-site-ts]] (orquestador con RPC + cache, actualizado 2026-10-07)
 - [[learning/projects/portfolio-v2/tipado-zod-end-to-end]] (flujo Supabase → Zod → componente)
 - [[learning/projects/portfolio-v2/sistema-imagenes-svg-image]] (custom loader)
 - [[learning/frontend/css/themes/theme-system-portfolio-v2]] (sistema theming v2, paralelo)
 - [[learning/projects/portfolio-v2/theming-v2-flow]] (flujo end-to-end)
 - ADR-009: `attribute="class"` en next-themes
-- ADR-010: RPC vs query normal
+- **ADR-024: RPC `get_site_payload` + `unstable_cache` vs Promise.all de queries** (nuevo, 2026-10-07)
 - ADR-011: Schema `portfolio` en Supabase
 - ADR-012: Zod para shape de content jsonb
 - ADR-013: Tipado automático con `supabase gen types`
 
 ## Próximo paso
 
-Sigo con el **Orquestador** (`generaldata.service.ts` + `schemas.ts` + cómo se conecta a UI). Decime cuando quieras parar o seguir.
+Sigo con el **Orquestador** (`services/data/site.ts` + `schemas.ts` + cómo se conecta a UI). Decime cuando quieras parar o seguir.
