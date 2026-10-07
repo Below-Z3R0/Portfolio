@@ -89,9 +89,18 @@ const fetchPayload = async (supabase: any, lang: string): Promise<SitePayload> =
 export const getSiteData = async (lang: string = 'es'): Promise<SitePayload> => {
   const supabase = await createClient();
 
-  return unstable_cache(
-    async () => fetchPayload(supabase, lang),
-    ['site-payload', lang],
-    { revalidate: 3600, tags: [`site:${lang}`] },
-  )();
+  // En desarrollo, siempre ir a la BD (sin cache).
+  // En producción, cachear 1 hora con revalidateTag('site:<lang>') para invalidar.
+  const shouldCache = process.env.NODE_ENV === 'production';
+
+  const fetcher = async () => fetchPayload(supabase, lang);
+
+  if (!shouldCache) {
+    return fetcher();
+  }
+
+  return unstable_cache(fetcher, ['site-payload', lang], {
+    revalidate: 0,
+    tags: [`site:${lang}`],
+  })();
 };
