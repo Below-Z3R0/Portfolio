@@ -48,7 +48,16 @@ const SitePayloadSchema = z.object({
 export type SitePayload = z.infer<typeof SitePayloadSchema>;
 
 const fetchPayload = async (supabase: any, lang: string): Promise<SitePayload> => {
-  const { data, error } = await supabase.rpc('get_site_payload', { p_lang: lang });
+  // Solo pedimos al RPC las keys que nuestro schema conoce
+  const allowedKeys = [
+    ...Object.keys(SitePayloadSchema.shape.content.shape),
+    ...Object.keys(SitePayloadSchema.shape.metadata.shape),
+  ];
+
+  const { data, error } = await supabase.rpc('get_site_payload', {
+    p_lang: lang,
+    p_keys: allowedKeys,
+  });
   if (error) throw new Error(`[site] RPC error: ${error.message}`);
 
   // Validar content bloque por bloque
