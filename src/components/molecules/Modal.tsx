@@ -19,7 +19,7 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
         exit={{ opacity: 0, scale: 0.50, y: 30 }}
         transition={{ type: "spring" }}
         onClick={(event) => event.stopPropagation()}
-        className="relative w-232 h-180 rounded-3xl bg-card border border-accent/40 shadow-2xl overflow-hidden flex flex-col items-center justify-center"
+        className="relative w-232 h-210 rounded-3xl bg-card border border-accent/40 shadow-2xl overflow-hidden flex flex-col items-center justify-center"
       >
         <div className="relative h-60 w-full">
           <Button img={img} imgStyle="object-cover mask-b-to-80%" buttonBody="h-100 pointer-events-none w-full" />

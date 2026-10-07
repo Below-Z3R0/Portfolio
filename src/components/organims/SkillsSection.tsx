@@ -10,7 +10,7 @@ export function SkillsSection({ skills_data }: TecnologiesSectionProps) {
   return (
     <section
       id="Tecnologies"
-      className="flex flex-col gap-10"
+      className="flex flex-col gap-10 pt-10"
     >
       {/* Cabecera de la sección */}
       <div className="flex items-start flex-col gap-4">

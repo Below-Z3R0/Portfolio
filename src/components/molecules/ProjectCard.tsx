@@ -65,7 +65,6 @@ export function ProjectCard({ project_data, labels_data, category }: ProjectCard
               txt="GitHub"
               link={project_data.meta.link_github}
             />
-            <span className="text-muted-foreground">·</span>
           </div>
 
           <div className="w-full flex justify-between items-center gap-3 mt-2">
