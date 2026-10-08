@@ -100,7 +100,7 @@ export const getSiteData = async (lang: string = 'es'): Promise<SitePayload> => 
   }
 
   return unstable_cache(fetcher, ['site-payload', lang], {
-    revalidate: 0,
+    revalidate: 3,
     tags: [`site:${lang}`],
   })();
 };

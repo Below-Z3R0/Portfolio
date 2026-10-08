@@ -11,7 +11,7 @@ verified_with: minimax-m3
 replaces: getGeneralData-pattern (Promise.all de 17 queries individuales)
 ---
 
-> **TL;DR:** `services/data/site.ts` es el **único punto de entrada** de toda la data de la DB hacia la UI. Llama a un **RPC en PostgreSQL** (`portfolio.get_site_payload`) que devuelve todo el contenido + metadata en **1 sola query**, valida cada bloque con su Zod schema, y cachea el resultado con `unstable_cache` por **1 hora**. El componente Server `app/page.tsx` lo consume y propaga a las 7 secciones.
+> **TL;DR:** `services/data/site.ts` es el **único punto de entrada** de toda la data de la DB hacia la UI. Llama a un **RPC en PostgreSQL** (`portfolio.get_site_payload`) que devuelve todo el contenido + metadata en **1 sola query** y valida cada bloque con su Zod schema. En desarrollo va siempre a la BD (sin cache); en producción cachea con `unstable_cache` por 1 hora y se invalida con `revalidateTag('site:<lang>')`. El componente Server `app/page.tsx` lo consume y propaga a las 7 secciones.
 
 ## 🎯 Por qué existe este orquestador
 
@@ -19,7 +19,8 @@ Sin él, cada componente haría su propio `await supabase.from(...)` + su propio
 
 - **Un solo lugar** sabe cómo se llama la DB, cómo se valida y cómo se entrega.
 - **Una sola query** trae todo (en vez de N queries paralelas).
-- **Una hora de cache** evita repetir la query en cada request.
+- **Dev**: 1 query por request (sin cache, ves los cambios al instante).
+- **Prod**: 1 query cada 1 hora (cache compartido entre todos los usuarios).
 
 ## 📁 El archivo completo (90 líneas)
 
@@ -158,21 +159,30 @@ for (const [key, schema] of Object.entries(SitePayloadSchema.shape.content.shape
 
 **Por qué no usar `SitePayloadSchema.parse(data)` directo**: porque tira un error genérico que no dice **qué key** falló. El loop te dice exactamente: `[site] Content invalid for "project.centeno-advisory-db": Expected string, received array`.
 
-### Parte 4: Cache (createClient afuera)
+### Parte 4: Cache condicional (dev sin cache, prod 1 hora)
 
 ```ts
 export const getSiteData = async (lang: string = 'es'): Promise<SitePayload> => {
   const supabase = await createClient();   // ← usa cookies() — FUERA del cache
 
-  return unstable_cache(
-    async () => fetchPayload(supabase, lang),  // ← cachea solo la query SQL
-    ['site-payload', lang],
-    { revalidate: 3600, tags: [`site:${lang}`] },
-  )();
+  // Cache solo en producción: en dev vas directo a la BD para ver cambios al instante.
+  const shouldCache = process.env.NODE_ENV === 'production';
+  const fetcher = async () => fetchPayload(supabase, lang);
+
+  if (!shouldCache) return fetcher();
+
+  return unstable_cache(fetcher, ['site-payload', lang], {
+    revalidate: 3600,
+    tags: [`site:${lang}`],
+  })();
 };
 ```
 
 **Por qué `createClient` está afuera**: `createClient()` lee cookies de Next.js, que es **dinámico**. `unstable_cache` prohíbe usar fuentes dinámicas dentro del scope cacheado. La función cacheada solo recibe `supabase` ya creado y `lang`.
+
+**Por qué el cache es condicional (`NODE_ENV`)**: en desarrollo, un cache de 1 hora obliga a esperar o invalidar manualmente cada vez que tocás un `translations.content`. En `NODE_ENV !== 'production'` el wrapper va directo a la BD — siempre ves el último contenido. En producción, el cache vale porque múltiples requests del mismo usuario en la misma ventana repiten la query si no.
+
+**Si querés invalidar el cache en producción manualmente**, llamá `revalidateTag('site:<lang>')` desde una Server Action o un endpoint.
 
 ## 📦 El RPC: portfolio.get_site_payload
 
@@ -235,9 +245,11 @@ $$;
 ┌──────────────────────────────────────────────────────────────┐
 │  3. getSiteData (services/data/site.ts)                      │
 │     a. createClient() ← usa cookies (FUERA del cache)        │
-│     b. unstable_cache(fn)                                    │
-│        - HIT  → devuelve SitePayload cacheado                │
-│        - MISS → ejecuta fetchPayload                          │
+│     b. NODE_ENV === 'production'?                            │
+│        - NO  → ejecuta fetchPayload() directo (dev)          │
+│        - SÍ  → unstable_cache(fn):                          │
+│           · HIT  → devuelve SitePayload cacheado             │
+│           · MISS → ejecuta fetchPayload                     │
 └──────────────────────────────────────────────────────────────┘
                             ↓
 ┌──────────────────────────────────────────────────────────────┐
@@ -296,8 +308,8 @@ export default async function Home({ searchParams }: PageProps) {
 |---|---|---|
 | Queries HTTP | 17 paralelas | 1 RPC |
 | Latencia típica (Supabase) | 250-400ms | 50-150ms |
-| Cache | No | `unstable_cache` 1 hora |
-| Round-trips cuando hay cache hit | 17 (cada request) | 0 (servido por Next.js) |
+| Cache | No | Dev: ninguno · Prod: `unstable_cache` 1 hora |
+| Round-trips cuando hay cache hit (prod) | 17 (cada request) | 0 (servido por Next.js) |
 | Líneas de código (orquestador) | 102 | 90 |
 | Archivos del sistema | 3 (`generaldata.service.ts` + 2 helpers) | 1 (`site.ts`) |
 | Validación Zod | Por bloque, dentro del orquestador | Declarativa con `z.object` anidado |
@@ -340,11 +352,13 @@ export default async function Home({ searchParams }: PageProps) {
    <TestimonialsSection testimonials_data={testimonials_data} />
    ```
 
-5. **Invalidar cache** (opcional, si querés ver el cambio antes de la hora):
+5. **Invalidar cache en producción** (si querés ver el cambio antes de la hora):
    ```ts
    import { revalidateTag } from 'next/cache';
    revalidateTag('site:es');
    ```
+
+   En dev no hace falta — el wrapper ya va directo a la BD.
 
 ## 🚨 Manejo de errores
 
@@ -394,12 +408,14 @@ bunx supabase gen types typescript --project-id <ID> --schema portfolio \
 
 Después se saca el `any` y se tipa correctamente.
 
-### 2. Cache de 1 hora es largo para desarrollo
+### 2. Cache condicional ya está resuelto
 
-Si estás editando contenido y querés ver cambios sin esperar:
+El wrapper detecta `NODE_ENV`:
 
-- **Opción A**: bajar `revalidate` a 60 (1 minuto) durante dev.
-- **Opción B**: invalidar con `revalidateTag('site:es')` después de cada update.
+- `NODE_ENV !== 'production'` (dev): va directo a la BD cada request. Ves los cambios al instante.
+- `NODE_ENV === 'production'` (prod): cachea 1 hora; se invalida con `revalidateTag('site:<lang>')`.
+
+Si querés forzar cache en dev (raro), levantá con `NODE_ENV=production bun run dev`.
 
 ### 3. No hay fallback de idioma
 
