@@ -29,11 +29,19 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
           </div>
         </div>
 
-        <div className="h-full px-20 pt-5">
-          <Paragraph
-            className="text-[0.97rem]"
-            txt={activeTxt}
-          />
+        <div className="h-full px-20 pt-5 space-y-3">
+          {activeTxt
+            ? activeTxt
+                .split(/\n\s*\n/)
+                .filter((p) => p.trim().length > 0)
+                .map((paragraph, i) => (
+                  <Paragraph
+                    key={i}
+                    className="text-[0.97rem]"
+                    txt={paragraph}
+                  />
+                ))
+            : null}
         </div>
 
         <div className="flex gap-4 mb-3">
