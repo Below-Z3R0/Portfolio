@@ -12,6 +12,8 @@ verified_with: minimax-m3
 
 > **TL;DR:** El proyecto tiene **dos capas de manejo de errores** que NO están bien conectadas. La capa 1 está en `data.service.ts` / `metadata.service.ts` / `generaldata.service.ts`: hacen `throw new Error(...)` cuando Supabase falla o cuando Zod no valida. La capa 2 está en `app/error.tsx` que captura el error y renderiza un `<ErrorPage>` con botón de retry. **El gap**: NO hay un `loading.tsx` que se muestre mientras la promesa está pendiente, no hay cache de último valor conocido, y no hay retry exponencial. **El usuario ve la pantalla de error después de ~250-400ms de carga silenciosa**. Esto es funcional pero minimalista.
 
+> **🔴 Problema crítico en producción (2026-10-09)**: en prod Next.js **redacta `error.message`** y solo deja `error.digest`. El código actual hace `error.message ?? "Unknown error"` → el usuario ve solo el digest hash genérico ("react error #441"), sin contexto útil ni manera de correlacionar con Vercel logs. **Documentado como issues #4 y #5; plan de fix propuesto abajo (no implementado)**.
+
 ## 🎯 Filosofía: 2 capas sin coordinación
 
 1. **Capa 1 (data layer)**: throw cuando algo falla (Supabase timeout, Zod no valida, lang no existe).
@@ -361,6 +363,159 @@ bunx @sentry/wizard@latest -i nextjs
 - [[learning/projects/portfolio-v2/sistema-modal-formulario-emailjs]] (error del form, distinto)
 - [[learning/projects/portfolio-v2/sistema-seo-metadata-fonts-errorboundary]] (cómo se renderiza el error)
 - [[learning/projects/portfolio-v2/testing-ci-deploy-gap]] (cómo testear estos errores)
+
+## 🟡 Plan de fix: errores legibles en producción (NO IMPLEMENTADO)
+
+> **Estado (2026-10-09)**: documentado, **no implementado** por decisión del usuario ("por ahora solo dejalo asi y dejalo bien documentado"). El código sigue mostrando el síntoma descrito abajo hasta que se apruebe el plan.
+
+### 🔴 Síntoma exacto
+
+En producción, cuando `fetchPayload` lanza un throw (ej. Zod no valida, Supabase timeout), el usuario ve un mensaje genérico de "react error" sin contexto. Stack trace aproximado:
+
+```
+[site] Invalid content for "project.centeno-advisory-db": Debe ser una key del registry (react, docker...)
+    at fetchPayload (src/services/data/site.ts:71:13)
+    at Home (src/app/page.tsx:20:33)
+```
+
+El usuario reporta "me tira 441 react error" — ese `#441` es la cola del `error.digest` que Next.js expone en el dev tools pero **redacta en prod para no filtrar info del SQL**.
+
+### 🔬 Causa raíz (verificada leyendo `src/app/error.tsx`)
+
+```tsx
+// Estado actual (problemático)
+export default function Err({ error, reset }) {
+  useEffect(() => {
+    console.error("Error crítico en la HomePage:", error);
+  }, [error]);
+  return (
+    <ErrorPage
+      message={`Hubo un problema al conectar con el servidor. ${error.message ?? "Unknown error"}`}
+      onRetry={reset}
+    />
+  );
+}
+```
+
+| Campo | Dev | Prod (build con `bun run build`) |
+|---|---|---|
+| `error.digest` | `undefined` | Hash tipo `1234567890abcdef` (único por error) |
+| `error.message` | Real ("Debe ser una key del registry…") | **`undefined`** (redactado por seguridad) |
+| `error.stack` | Real | **`undefined`** |
+
+→ El `message` final en prod queda `"Hubo un problema al conectar con el servidor. Unknown error"`. Sin contexto, sin identificador, sin manera de correlacionar con logs de Vercel.
+
+**Por qué Next.js redacta el message**: por seguridad. Lanzar el `error.message` original filtra info del SQL (ej. `relation "translations" does not exist`) o paths internos del runtime (`at /var/task/.next/server/app/page.js`).
+
+### 🎯 Plan de fix (3 archivos, ~30 líneas)
+
+Decisión del usuario 2026-10-09: **plan MÍNIMO** (sin Sentry, sin endpoint de logging server-side, sin retry exponencial). Si después se quiere algo más grande, ver §"Posibles ampliaciones" abajo.
+
+#### Cambio 1 — `src/app/error.tsx` (rewrite del componente actual)
+
+```tsx
+"use client";
+
+import { useEffect } from "react";
+import { ErrorPage } from "../components/components";
+
+export default function Err({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    // Log explícito del digest para correlacionar con Vercel logs.
+    console.error("[portfolio-v2] Error capturado por ErrorBoundary:", {
+      digest: error.digest,
+      message: error.message,    // En prod es undefined (redactado por Next.js).
+      stack: error.stack,        // En prod también es undefined.
+      env: process.env.NODE_ENV,
+    });
+  }, [error]);
+
+  // En prod: solo digest + mensaje amigable. En dev: mostrar el message real (debug).
+  const isProd = process.env.NODE_ENV === "production";
+  const digestShort = error.digest?.slice(0, 8) ?? "—";
+
+  return (
+    <ErrorPage
+      message={
+        isProd
+          ? `Hubo un problema al cargar el portafolio. Código de incidente: ${digestShort}. Probá reintentar o volvé más tarde.`
+          : `Error: ${error.message ?? "Unknown error"}${error.digest ? ` (digest: ${error.digest})` : ""}`
+      }
+      onRetry={reset}
+    />
+  );
+}
+```
+
+**Por qué este shape**:
+- **Prod**: usuario ve `Código de incidente: 1a2b3c4d` (8 chars del digest, suficiente para identificar en Vercel logs). Sin filtrar info sensible.
+- **Dev**: usuario ve el error real (útil para debug local).
+- **Console del servidor (Vercel)**: siempre logueamos digest + env, así se puede cruzar con logs de Vercel.
+
+#### Cambio 2 — `src/services/data/site.ts` (agregar failId al log + throw)
+
+```ts
+// fetchPayload — agregar contexto antes del throw
+const result = (schema as z.ZodType).safeParse(value);
+if (!result.success) {
+  const failId = `db-${Date.now().toString(36)}-${key.replace(/[^a-z0-9]/gi, "")}`;
+  console.error(`[site] [${failId}] Content invalid for "${key}":`, result.error);
+  console.error(`[site] [${failId}] Actual content for "${key}":`, JSON.stringify(value, null, 2));
+  throw new Error(`[${failId}] ${result.error.issues[0]?.message}`);
+}
+```
+
+**Por qué**: el `failId` se filtra al cliente vía `error.message` solo en dev (prod lo redacta), pero queda en los logs de Vercel con el prefijo `[db-l8kqm1-projectcentro...]`. Fácil de buscar.
+
+Mismo tratamiento para el otro throw (metadata):
+```ts
+throw new Error(`[${failId}] ${result.error.issues[0]?.message}`);
+```
+
+#### Cambio 3 — `docs/05-issues/issues.md`
+
+Marcar issues #4 y #5 como DONE con resumen de este plan. Agregar nueva issue #030 "Aplicar plan de errores legibles en prod" referenciando este doc.
+
+#### Cambio 4 — `CHANGELOG.md`
+
+Nueva entrada `[0.1.2]` con bullets `Fixed: mensajes de error en prod muestran digest + failId correlacionable con logs`.
+
+### 📋 Verificación (cuando se implemente)
+
+1. `bun run dev` → forzás un error (ej. cambiar `icon_key` en DB a `"invalid"`) → confirmar que ves mensaje con message real en dev.
+2. `bun run build && bun run start` → mismo escenario → confirmar que ves el digest en lugar del error crudo.
+3. Buscar el digest / failId en los logs y confirmar que están correlacionados:
+   - Local: `bun run start` + `tail` del output de Next.
+   - Vercel: Dashboard → Logs → filtrar por `error.digest=1a2b3c4d` o `[db-l8kqm1-…]`.
+
+### 📂 Archivos tocados cuando se implemente
+
+| Archivo | Tipo de cambio |
+|---|---|
+| `src/app/error.tsx` | patch (no rewrite) |
+| `src/services/data/site.ts` | patch (agregar failId al log + throw) |
+| `docs/05-issues/issues.md` | marcar #4 + #5 como DONE, agregar #030 |
+| `CHANGELOG.md` | nueva entrada `[0.1.2]` |
+
+### 🔭 Posibles ampliaciones (fuera del scope mínimo)
+
+Si después de implementar el mínimo querés más, las opciones son:
+
+| # | Ampliación | Esfuerzo | Valor |
+|---|---|---|---|
+| A | Fallback hardcoded por bloque (Supabase caído → mostrar último conocido estático) | 2-3h | Alto (UX degradada pero la página no se rompe) |
+| B | Retry exponencial en cliente (reintentar 2-3 veces antes de mostrar error) | 30min | Medio (cubre glitches de red) |
+| C | Endpoint `POST /api/log-error` (server endpoint al que el cliente reporta el digest → guardar en Supabase o enviarte un mail) | 1h | Medio (auditoría de errores sin Sentry) |
+| D | Sentry / Datadog (tracking real con stack traces completos, alertas, métricas) | 3-4h + cuenta + keys | Alto (producción madura) |
+| E | Clasificar el tipo de error (data vs network vs validation) y dispatch a UI distinta | 1h | Bajo (cosmético) |
+
+La opción A es la más valiosa para un portfolio público (Supabase free-tier tiene límites y puede dormirse). D es la más profesional. B es rápida. C es el "pobre man's Sentry" sin pagar.
 
 ## Próximo sistema
 

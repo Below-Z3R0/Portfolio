@@ -269,6 +269,57 @@
 - **Cuando tengas tiempo libre**: toma 1 issue, fixéalo, y márcalo como done (agregando una línea `DONE #N: descripción`).
 - **Cuando hagas CI**: agrega un check que falle si hay TODOs marcados como `FIXME` o `XXX` (los patrones que usé en `generaldata.service.ts`).
 
+## 🟡 Issues añadidos post-loop (incidentes sueltos)
+
+### #028 — `icon_key: "postgresql"` en `project.centeno-advisory-db` rompe validación Zod
+
+- **Fecha**: 2026-10-09
+- **Detectado en**: consola del dev server (Home → getSiteData → fetchPayload → Zod safeParse). Cuatro instancias del mismo error.
+- **Sistema**: DB (CMS i18n) ↔ icon-registry
+- **Archivos**: `src/services/data/site.ts:71` (throw), `src/services/assets/icon-registry.ts:37` (`postgressql`, typo intencional del registry), DB: `portfolio.translations` con `key='project.centeno-advisory-db'`, lang `es`+`en`.
+- **Causa raíz**: la DB tenía `"icon_key": "postgresql"` (convención oficial de Postgres) en `tecnologies[1]` del proyecto **`project.centeno-advisory-db`**, pero el `ICON_REGISTRY` en TS tiene la key como `"postgressql"` (typo histórico, alias de `PostGresSQLIcon`). Ningún otro proyecto usaba `"postgresql"` (cross-check SQL confirmó `0 filas` con icon_key inválido).
+- **Por qué el síntoma es runtime, no build**: `IconNameSchema` valida con `.refine((v) => v in ICON_REGISTRY)`, no con `.enum()`. La diferencia de key solo se ve cuando el RPC corre contra la BD real.
+- **Fix aplicado** (1 statement SQL, afecta `es` y `en` juntos):
+
+  ```sql
+  UPDATE portfolio.translations t
+  SET content = jsonb_set(content, '{tecnologies}', (
+    SELECT jsonb_agg(
+      CASE WHEN (tech->>'icon_key') = 'postgresql'
+           THEN jsonb_set(tech, '{icon_key}', '"postgressql"')
+           ELSE tech END)
+    FROM jsonb_array_elements(content->'tecnologies') AS tech), false),
+  updated_at = NOW()
+  WHERE t.block_id = (SELECT id FROM portfolio.content_blocks WHERE key = 'project.centeno-advisory-db')
+    AND content::text LIKE '%"icon_key": "postgresql"%';
+  ```
+
+- **Verificación**:
+
+  - `SELECT portfolio.get_site_payload('es', array['project.centeno-advisory-db'])` → `"icon_key": "postgressql"` ✓
+  - `IconNameSchema.safeParse('postgressql')` → `VALID` ✓
+  - `IconNameSchema.safeParse('postgresql')` → `INVALID` (confirma por qué fallaba antes)
+  - `ProjectItemSchema.safeParse(data)` para `es` y `en` → `OK ✅` ambos
+  - Cross-check `WHERE (elem->>'icon_key') NOT IN (...todas las keys válidas del registry...)` → `0 filas`
+
+- **Por qué NO se arregló el registry**: el typo `"postgressql"` ya está documentado en `services/assets/icon-registry.ts:37` con `PostGresSQLIcon`. Cambiar la key en el registry rompería el icono en el resto del codebase si alguien lo importa por string. La DB es el lugar correcto donde vive el contenido traducible y no afecta a TS.
+- **Lección**: el `.refine()` de Zod oculta typos silenciosos hasta que un bloque real pega el valor. Cambiar a `.enum(Object.keys(ICON_REGISTRY) as [string, ...string[]])` daría errores de compilación al escribir el typo. **Pendiente**: ver #029.
+- **DONE #028**: `icon_key` corregido en `es` + `en`, validado Zod-safe, cross-check global limpio.
+
+### #029 — Considerar pasar `IconNameSchema` de `.refine()` a `.enum()` (mejora derivada)
+
+- **Origen**: derivado de #028. El `.refine()` solo falla en runtime; un `.enum()` fallaría al cargar el módulo si se introduce una key inválida.
+- **Idea**:
+
+  ```ts
+  export const IconNameSchema = z.enum(
+    Object.keys(ICON_REGISTRY) as [IconKey, ...IconKey[]]
+  );
+  ```
+
+- **Trade-off**: si alguien agrega una tech al array de `ICON_REGISTRY`, el array de claves válidas cambia y rompe todo código viejo que use la key anterior. Pero ese es exactamente el comportamiento que queremos (forzar reescritura).
+- **Estado**: abierto, no urgente. Aplicar después del próximo refactor de `ICON_REGISTRY`.
+
 ## Estado del grafo
 
 - **266 nodos, 553 edges, 18 comunidades** (regenerado con `graphify extract src/ --out docs/graph/ && graphify cluster-only docs/graph/ && python3 docs/graph/restore-theming-edges.py`).

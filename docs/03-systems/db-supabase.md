@@ -396,6 +396,8 @@ if (!result.success) {
 - `data.content[key]` no matchea el schema Zod → throw con la key + valor real → `error.tsx` se renderiza.
 - `lang` no existe en la BD → el RPC devuelve `{}`, el loop tira `Missing content for "..."`.
 - Zod validation fail en runtime → propagado como `error.tsx` boundary.
+- **`icon_key` no válido** (caso típico): `IconNameSchema` falla con `refine()`. Detalle histórico: el registry usa `"postgressql"` (typo, `PostGresSQLIcon`) — los datos deben usar esa key, no `"postgresql"`. Ver [issue #028](../05-issues/issues.md#028-icon_key-postgresql-en-projectcenteno-advisory-db-rompe-validación-zod).
+- **Guardrail SQL recomendado** al editar `tecnologies[]` en cualquier bloque: cross-check `WHERE (elem->>'icon_key') NOT IN (<lista de keys del registry>)` → debe devolver `0 filas`. La lista se mantiene en `src/services/assets/icon-registry.ts`.
 
 > **Pendiente**: el proyecto no tiene fallback de idioma (si el `lang` no existe, la página se rompe). El idioma solo se puede cambiar via el LanguageToggle si la BD tiene el `lang_code` cargado.
 
