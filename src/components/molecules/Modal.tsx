@@ -1,8 +1,21 @@
 import { m } from "motion/react";
-import { Button, LinkButton, Paragraph, TecnologiesCard, Title2, Title3 } from "../components";
-import { ModalProps } from "../types";
+import {
+  Button,
+  Paragraph,
+  TecnologiesCard,
+  Title2,
+  Title3,
+} from "../components";
+import type { ModalProps } from "../types";
 
-export function Modal({ img, data, in_construction, onClose, activeTxt, setActivetxt }: ModalProps) {
+export function Modal({
+  img,
+  data,
+  in_construction,
+  onClose,
+  activeTxt,
+  setActivetxt,
+}: ModalProps) {
   return (
     <m.div
       // Backdrop
@@ -14,15 +27,19 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
     >
       <m.div
         // Modal content
-        initial={{ opacity: 0, scale: 0.50, y: 30 }}
+        initial={{ opacity: 0, scale: 0.5, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.50, y: 30 }}
+        exit={{ opacity: 0, scale: 0.5, y: 30 }}
         transition={{ type: "spring" }}
         onClick={(event) => event.stopPropagation()}
         className="relative w-232 h-210 rounded-3xl bg-card border border-accent/40 shadow-2xl overflow-hidden flex flex-col items-center justify-center"
       >
         <div className="relative h-60 w-full">
-          <Button img={img} imgStyle="object-cover mask-b-to-80%" buttonBody="h-100 pointer-events-none w-full" />
+          <Button
+            img={img}
+            imgStyle="object-cover mask-b-to-80%"
+            buttonBody="h-100 pointer-events-none w-full"
+          />
           <div className="absolute inset-0 flex flex-col justify-end pl-20">
             <Title3 txt={data.category} />
             <Title2 txt={data.title} />
@@ -34,9 +51,9 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
             ? activeTxt
                 .split(/\n\s*\n/)
                 .filter((p) => p.trim().length > 0)
-                .map((paragraph, i) => (
+                .map((paragraph) => (
                   <Paragraph
-                    key={i}
+                    key={paragraph.slice(0, 32)}
                     className="text-[0.97rem]"
                     txt={paragraph}
                   />
@@ -48,7 +65,13 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
           {data.tecnologies.map((item) => (
             <Button
               buttonBody={`size-8 cursor-pointer ${in_construction}`}
-              onClick={() => setActivetxt(activeTxt === item.description ? data.paragraph : item.description)}
+              onClick={() =>
+                setActivetxt(
+                  activeTxt === item.description
+                    ? data.paragraph
+                    : item.description,
+                )
+              }
               key={item.name}
               aria-label={item.name}
             >
@@ -61,7 +84,6 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
             </Button>
           ))}
         </div>
-
       </m.div>
     </m.div>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { LanguageIcon } from "../../services/assets/Icons";
 import { Button } from "../components";
 
 export function LanguageToggle() {

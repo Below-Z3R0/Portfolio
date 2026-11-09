@@ -3,15 +3,12 @@ import {
   StaggerGroup,
   StaggerItem,
 } from "../animations/Animations";
-import { Paragraph, TecnologiesCard, Title2, Title3, Title4 } from "../components";
+import { Paragraph, TecnologiesCard, Title2, Title3 } from "../components";
 import type { TecnologiesSectionProps } from "../types";
 
 export function SkillsSection({ skills_data }: TecnologiesSectionProps) {
   return (
-    <section
-      id="Tecnologies"
-      className="flex flex-col gap-10 pt-10"
-    >
+    <section id="Tecnologies" className="flex flex-col gap-10 pt-10">
       {/* Cabecera de la sección */}
       <div className="flex items-start flex-col gap-4">
         <EyebrowReveal>

@@ -1,8 +1,11 @@
 import type { ImageLoaderProps } from "next/image";
+import { supabaseEnv } from "@/services/env";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-
-export default function supabaseImageLoader({ src, width, quality }: ImageLoaderProps) {
+export default function supabaseImageLoader({
+  src,
+  width,
+  quality,
+}: ImageLoaderProps) {
   const cleanSrc = src.replace(/^\//, ""); // quita el leading slash
 
   if (cleanSrc.startsWith("http")) {
@@ -12,5 +15,5 @@ export default function supabaseImageLoader({ src, width, quality }: ImageLoader
     return url.href;
   }
 
-  return `${SUPABASE_URL}/storage/v1/object/public/project-images/${cleanSrc}?width=${width}&quality=${quality ?? 75}`;
+  return `${supabaseEnv.url}/storage/v1/object/public/project-images/${cleanSrc}?width=${width}&quality=${quality ?? 75}`;
 }

@@ -1,53 +1,76 @@
 "use client";
 import emailjs from "@emailjs/browser";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoadingDots } from "../animations/animationsindex";
-import { Button, ErrorMessage, Span, SuccessMessage, Title4 } from "../components";
-import type { FormStatus, FormularyProps } from "../types";
-import { SendEmailSchema, type SendEmail } from "../schemas";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { emailJsEnv } from "@/services/env";
+import { LoadingDots } from "../animations/animationsindex";
+import {
+  Button,
+  ErrorMessage,
+  Span,
+  SuccessMessage,
+  Title4,
+} from "../components";
+import { type SendEmail, SendEmailSchema } from "../schemas";
+import type { FormStatus, FormularyProps } from "../types";
 
-export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: FormularyProps) {
+export function Formulary({
+  form_data,
+  bodyStyle,
+  labelStyle,
+  inputStyle,
+}: FormularyProps) {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const closeModal = () => { setStatus("idle"); setErrorMsg(""); };
+  const closeModal = () => {
+    setStatus("idle");
+    setErrorMsg("");
+  };
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SendEmail>
-    ({
-      resolver: zodResolver(SendEmailSchema),
-      mode: "onChange",
-      defaultValues: { name: "", user_email: "", title: "", message: "" }
-    });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SendEmail>({
+    resolver: zodResolver(SendEmailSchema),
+    mode: "onChange",
+    defaultValues: { name: "", user_email: "", title: "", message: "" },
+  });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        emailJsEnv.serviceId,
+        emailJsEnv.templateId,
         {
           from_name: data.name,
           reply_to: data.user_email,
           title: data.title,
           message: data.message,
         },
-        { publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY! },
+        { publicKey: emailJsEnv.publicKey },
       );
 
       setStatus("success");
       reset();
-    }
-
-    catch (err) {
+    } catch (err) {
       const e = err as Record<string, unknown>;
-      console.error("EmailJS error:", JSON.stringify(e, Object.getOwnPropertyNames(e || {}), 2));
+      console.error(
+        "EmailJS error:",
+        JSON.stringify(e, Object.getOwnPropertyNames(e || {}), 2),
+      );
       console.error("Error keys:", e && Object.keys(e));
       console.error("Error status:", e && (e.status || e.code));
       console.error("Error text:", e && (e.text || e.message));
-      const errorMessage = typeof e?.text === "string" ? e.text
-        : typeof e?.message === "string" ? e.message
-        : "Error desconocido al enviar el mensaje";
+      const errorMessage =
+        typeof e?.text === "string"
+          ? e.text
+          : typeof e?.message === "string"
+            ? e.message
+            : "Error desconocido al enviar el mensaje";
       setErrorMsg(errorMessage);
       setStatus("error");
     }
@@ -59,7 +82,6 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
         onSubmit={onSubmit}
         className={`${bodyStyle} rounded-3xl size-full flex flex-col p-[5%] bg-card border border-border items-start shadow-2xl relative overflow-hidden`}
       >
-
         <div className="relative w-full">
           <Title4
             txt={form_data.title}
@@ -71,7 +93,6 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
               key={field.name}
               className={`${labelStyle} w-full rounded-xl flex flex-col items-start mb-[2%] text-sm font-medium text-muted-foreground gap-2`}
             >
-              
               {field.label}
               <input
                 required
@@ -90,7 +111,6 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
                   className="text-destructive text-xs"
                 />
               )}
-
             </label>
           ))}
 
@@ -113,19 +133,18 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
                 className="text-destructive text-xs"
               />
             )}
-
           </label>
 
           <div className="flex items-center justify-center w-full">
             <Button
               type="submit"
               disabled={isSubmitting}
-              buttonBody={`w-7/12 p-[2%] mt-[3%] rounded-md bg-primary font-bold transition-all inline-flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.2)] ${isSubmitting
-                ? "opacity-70 cursor-not-allowed"
-                : "hover:opacity-90 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)]"
-                }`}
+              buttonBody={`w-7/12 p-[2%] mt-[3%] rounded-md bg-primary font-bold transition-all inline-flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.2)] ${
+                isSubmitting
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:opacity-90 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)]"
+              }`}
             >
-
               {isSubmitting ? (
                 <>
                   <Span txt={form_data.sending} />
@@ -134,24 +153,21 @@ export function Formulary({ form_data, bodyStyle, labelStyle, inputStyle, }: For
               ) : (
                 <Span txt={form_data.send} />
               )}
-
             </Button>
           </div>
         </div>
-      </form >
+      </form>
 
       {/* Mensaje de éxito animado */}
-      < SuccessMessage
-        show={status === "success"
-        }
-        onClose={closeModal}
-      />
+      <SuccessMessage show={status === "success"} onClose={closeModal} />
 
       {/* Mensaje de error animado */}
-      < ErrorMessage
+      <ErrorMessage
         show={status === "error"}
         onClose={closeModal}
-        onRetry={() => { setErrorMsg(""); }}
+        onRetry={() => {
+          setErrorMsg("");
+        }}
         message={errorMsg}
       />
     </>

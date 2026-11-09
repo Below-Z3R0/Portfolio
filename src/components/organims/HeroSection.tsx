@@ -24,30 +24,20 @@ export function HeroSection({ hero_data }: HeroSectionProps) {
                 txtStyle="text-xs font-semibold text-accent!"
                 link={hero_data.meta.contacts.linkedin.link}
                 txt={hero_data.data.workstatus}
-              >
-              </LinkButton>
+              ></LinkButton>
             </PopReveal>
           </div>
         </StaggerItem>
 
         {/* Textos Principales */}
         <StaggerItem>
-          <Title2
-            txt={hero_data.data.title}
-            className="mb-5"
-          />
+          <Title2 txt={hero_data.data.title} className="mb-5" />
         </StaggerItem>
         <StaggerItem>
-          <Paragraph
-            className="max-w-2xl"
-            txt={hero_data.data.paragraph_1}
-          />
+          <Paragraph className="max-w-2xl" txt={hero_data.data.paragraph_1} />
         </StaggerItem>
         <StaggerItem>
-          <Paragraph
-            className="max-w-2xl"
-            txt={hero_data.data.paragraph_2}
-          />
+          <Paragraph className="max-w-2xl" txt={hero_data.data.paragraph_2} />
         </StaggerItem>
 
         {/* Navegación de Contacto Rápido */}
