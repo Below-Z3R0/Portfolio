@@ -44,3 +44,7 @@ next-env.d.ts
 .venv/
 __pycache__/
 *.pyc
+
+# Graphify cache artifacts (el output principal ya esta trackeado)
+docs/graph/graphify-out/cache/
+docs/graph/graphify-out/.graphify_semantic_marker
