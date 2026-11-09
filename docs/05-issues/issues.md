@@ -321,9 +321,10 @@
 
 ## Estado del grafo
 
-- **277 nodos, 571 edges, 12 comunidades** (regenerado con MiniMax M3.1 Flash).
+- **286 nodos, 578 edges, 15 comunidades** (regenerado con MiniMax M3.1 Flash, ahora incluye el SQL).
 - Comando: `graphify extract src/ --backend openai --model MiniMax-M3.1-Flash --out docs/graph/ --force && graphify cluster-only docs/graph/ --backend openai --model MiniMax-M3.1-Flash && python3 docs/graph/restore-theming-edges.py`.
 - Las 10 edges manuales del theming v2 están preservadas (el script `restore-theming-edges.py` las restaura tras cada `cluster-only`).
 - **Nota de counting**: las edges viven en la clave `links` del `graph.json`, no en `edges`. Un conteo con `g["edges"]` devuelve 0 y parece un grafo vacío.
 - **Backend**: MiniMax vía endpoint OpenAI-compatible. Requiere `OPENAI_BASE_URL=https://api.minimax.io/v1`, `OPENAI_MODEL=MiniMax-M3.1-Flash` y `OPENAI_API_KEY` (de `pass show api/minimax`).
+- **SQL en el grafo**: requiere `pip install "graphifyy[sql]"` (tree_sitter_sql). Sin eso los `.sql` no aportan nodos al grafo.
 - **M3.1-Flash requiere thinking adaptativo**: no se puede deshabilitar (`GRAPHIFY_DISABLE_THINKING=1` lo rechaza con error 400). Hay que dejar `max_completion_tokens` alto (16000+) o la respuesta queda vacía y Graphify la marca como `hollow`.

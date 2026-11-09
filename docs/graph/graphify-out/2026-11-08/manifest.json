@@ -358,5 +358,11 @@
     "seen": 1794197031.1543257,
     "ast_hash": "7684bbaf74d282bd06b939e4dcce63e6",
     "semantic_hash": "7684bbaf74d282bd06b939e4dcce63e6"
+  },
+  "services/data/function-example.sql": {
+    "mtime": 1791402701.7760377,
+    "seen": 1794197656.4993901,
+    "ast_hash": "0a5743c3c643f60ce3d984a11c110fd9",
+    "semantic_hash": "0a5743c3c643f60ce3d984a11c110fd9"
   }
 }

@@ -4,8 +4,8 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 276 nodes · 561 edges · 12 communities
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.85)
+- 277 nodes · 569 edges · 13 communities (11 shown, 2 thin omitted)
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.77)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -14,18 +14,19 @@
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- components/types.ts
-- components.ts
+- schemas.ts
+- Animations.tsx
 - types/types.ts
 - icon-registry.ts
 - skeletonindex.tsx
 - IconRender.tsx
-- page.tsx
-- NavBar.tsx
-- Formulary.tsx
-- layout.tsx
+- components/types.ts
+- components.ts
+- ProjectCardProps
 - theming.v2.ts
+- AboutMeSection
 - IASection
+- NavBarProps
 
 ## God Nodes (most connected - your core abstractions)
 1. `Button()` - 12 edges
@@ -36,8 +37,8 @@
 6. `EyebrowReveal()` - 6 edges
 7. `LinkButton()` - 6 edges
 8. `TitleProps` - 5 edges
-9. `SkeletonPulse()` - 5 edges
-10. `Title4()` - 5 edges
+9. `ProjectCard()` - 5 edges
+10. `SkeletonPulse()` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Home()` --calls--> `getSiteData()`  [EXTRACTED]
@@ -57,15 +58,15 @@
 ## Hyperedges (group relationships)
 - **Projects Section Rendering Flow** — app_pending_section_reveal, app_pending_os_section, app_pending_ia_section, app_pending_general_data, app_pending_current_lang [EXTRACTED 0.95]
 
-## Communities (12 total, 0 thin omitted)
+## Communities (13 total, 2 thin omitted)
 
-### Community 0 - "components/types.ts"
-Cohesion: 0.05
-Nodes (65): AboutMeContent, AboutMeContentSchema, AboutMeMetadata, AboutMeMetadataSchema, AboutMeSection, Contact, ContactContent, ContactContentSchema (+57 more)
+### Community 0 - "schemas.ts"
+Cohesion: 0.09
+Nodes (30): AboutMeContent, AboutMeContentSchema, AboutMeMetadataSchema, ContactContentSchema, ContactItemSchema, ContactList, ContactListSchema, ContactSectionMetadata (+22 more)
 
-### Community 1 - "components.ts"
-Cohesion: 0.08
-Nodes (25): easeOut, EyebrowReveal(), PopReveal(), sectionVariants, SlideReveal(), spring, staggerContainerVariants, StaggerGroup() (+17 more)
+### Community 1 - "Animations.tsx"
+Cohesion: 0.09
+Nodes (32): Home(), PageProps, easeOut, EyebrowReveal(), PopReveal(), SectionReveal(), sectionVariants, SlideReveal() (+24 more)
 
 ### Community 2 - "types/types.ts"
 Cohesion: 0.08
@@ -80,28 +81,24 @@ Cohesion: 0.24
 Nodes (5): FormularySkeleton(), NavBarSkeleton(), ProjectCardSkeleton(), SkeletonPulse(), TecnologiesCardSkeleton()
 
 ### Community 5 - "IconRender.tsx"
-Cohesion: 0.16
-Nodes (12): IconRender(), LinkButton(), Span(), Title4(), ButtonProps, IconRendererProps, LinkButtonProps, SpanProps (+4 more)
+Cohesion: 0.27
+Nodes (7): IconRender(), ButtonProps, IconRendererProps, LinkButtonProps, TecnologiesConfig, ICON_REGISTRY, IconKey
 
-### Community 6 - "page.tsx"
-Cohesion: 0.16
-Nodes (11): Home(), PageProps, SectionReveal(), Formulary(), AboutMeSection(), ContactSection(), Footer(), ProjectsSection() (+3 more)
+### Community 6 - "components/types.ts"
+Cohesion: 0.08
+Nodes (30): AboutMeMetadata, Contact, ContactContent, ContactSection, FooterContent, FooterSection, Form, HeroContent (+22 more)
 
-### Community 7 - "NavBar.tsx"
-Cohesion: 0.24
-Nodes (8): ThemeSwitcher(), ThemeToggle(), Theme, ThemeData, useTheme(), NavBar(), Header(), HeaderProps
+### Community 7 - "components.ts"
+Cohesion: 0.07
+Nodes (23): LoadingDots(), Button(), LanguageToggle(), Span(), ThemeSwitcher(), ThemeToggle(), Title4(), Theme (+15 more)
 
-### Community 8 - "Formulary.tsx"
-Cohesion: 0.17
-Nodes (8): LoadingDots(), ErrorMessage(), SuccessMessage(), SendEmail, SendEmailSchema, ErrorMessageProps, FormStatus, SuccessMessageProps
+### Community 8 - "ProjectCardProps"
+Cohesion: 0.67
+Nodes (3): ProjectItem, ProjectsMetadata, ProjectCardProps
 
-### Community 9 - "layout.tsx"
-Cohesion: 0.24
-Nodes (6): geistMono, geistSans, metadata, BackgroundFX(), ThemeProvider(), NoiseTexture()
-
-### Community 10 - "theming.v2.ts"
-Cohesion: 0.29
-Nodes (6): ALL_TAILWIND_UTILITIES, NOTE: Este archivo existe únicamente para integrar globals.css dentro del grafo…, TailwindUtility, Theme, ThemeToken, themingConventions
+### Community 9 - "theming.v2.ts"
+Cohesion: 0.14
+Nodes (12): geistMono, geistSans, metadata, BackgroundFX(), ThemeProvider(), ALL_TAILWIND_UTILITIES, NOTE: Este archivo existe únicamente para integrar globals.css dentro del grafo…, TailwindUtility (+4 more)
 
 ### Community 11 - "IASection"
 Cohesion: 0.70
@@ -109,21 +106,22 @@ Nodes (5): currentLang, general_data, IASection, OSSection, SectionReveal
 
 ## Knowledge Gaps
 - **51 isolated node(s):** `ContactList`, `ContactSectionMetadata`, `GeneralContacts`, `GeneralData`, `GeneralThemes` (+46 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 70 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 71 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Button()` connect `components.ts` to `Formulary.tsx`, `IconRender.tsx`, `NavBar.tsx`?**
-  _High betweenness centrality (0.012) - this node is a cross-community bridge._
-- **Why does `getSiteData()` connect `page.tsx` to `components/types.ts`, `types/types.ts`?**
+- **Why does `Button()` connect `components.ts` to `Animations.tsx`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `getSiteData()` connect `Animations.tsx` to `schemas.ts`, `types/types.ts`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `ContactList`, `ContactSectionMetadata`, `GeneralContacts` to the rest of the system?**
   _51 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `components/types.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05004389815627744 - nodes in this community are weakly interconnected._
-- **Should `components.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08295625942684766 - nodes in this community are weakly interconnected._
+- **Should `schemas.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.08870967741935484 - nodes in this community are weakly interconnected._
+- **Should `Animations.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.0858843537414966 - nodes in this community are weakly interconnected._
 - **Should `types/types.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.07862903225806452 - nodes in this community are weakly interconnected._
 - **Should `icon-registry.ts` be split into smaller, more focused modules?**
