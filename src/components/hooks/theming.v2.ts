@@ -10,10 +10,10 @@
  * Sistema de theming v2 de portfolio-v2.
  *
  * 4 paletas: .dark, .light, .rosepine-dark, .rosepine-light
- * 36 variables CSS por paleta: ver docs/03-systems/theming-v2-flow.md y Knowledge/learning/projects/portfolio-v2/architecture/theming-v2-flow.md
+ * 45 variables CSS por paleta: ver docs/03-systems/theming-v2-flow.md
  *
  * Archivos del sistema:
- *   - src/app/globals.css                 → 36 vars × 4 paletas + @theme + utility classes
+ *   - src/app/globals.css                 → 45 vars × 4 paletas + @theme + utility classes
  *   - src/components/hooks/useTheme.tsx   → hook tipado con los 4 themes
  *   - src/components/hooks/themeProvider.tsx → wrapper de next-themes
  *   - src/components/atoms/ThemeSwitcher.tsx → UI para elegir paleta

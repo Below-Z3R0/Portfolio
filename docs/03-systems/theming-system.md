@@ -11,7 +11,7 @@ tags: [css-variables, dark-mode, frontend, learning, nextjs, tailwind-v4, shadcn
 verified_with: minimax-m3
 ---
 
-> **TL;DR:** Sistema de theming de portfolio-v2 basado en convención shadcn / Material 3 / Noctalia Rosepine. Cuatro paletas conmutables vía clases CSS (`dark`, `light`, `rosepine-dark`, `rosepine-light`) que aplican 36 variables de tema cada una. Las utilidades de Tailwind v4 (`bg-background`, `text-foreground`, `border`) se generan automáticamente desde el bloque `@theme`. Patrón universal: en dark el bg es el más oscuro y la card más clara; en light el bg es el más claro y la card más oscura. La paleta Rosepine Dawn oficial tiene la jerarquía invertida (card más blanca que bg), por lo que `rosepine-light` aplica una corrección para que la card no parezca "transparente".
+> **TL;DR:** Sistema de theming de portfolio-v2 basado en convención shadcn / Material 3 / Noctalia Rosepine. Cuatro paletas conmutables vía clases CSS (`dark`, `light`, `rosepine-dark`, `rosepine-light`) que aplican 45 variables de tema cada una. Las utilidades de Tailwind v4 (`bg-background`, `text-foreground`, `border`) se generan automáticamente desde el bloque `@theme`. Patrón universal: en dark el bg es el más oscuro y la card más clara; en light el bg es el más claro y la card más oscura. La paleta Rosepine Dawn oficial tiene la jerarquía invertida (card más blanca que bg), por lo que `rosepine-light` aplica una corrección para que la card no parezca "transparente".
 
 ## 🎯 Filosofía
 
@@ -39,9 +39,9 @@ Separar las capas permite:
 - Estás en una SPA sin SSR (Vite, Astro client-only). Para eso usá [[learning/frontend/css/themes/themes-css-variables-vite.md]].
 - Estás en otro proyecto con sistema propio. Esta guía es específica a portfolio-v2.
 
-## 🗂️ Jerarquía de variables (4 paletas × 36 vars)
+## 🗂️ Jerarquía de variables (4 paletas × 45 vars)
 
-Cada paleta expone las **mismas 36 variables** (más alias en `@theme` para Tailwind v4).
+Cada paleta expone las **mismas 45 variables** (más alias en `@theme` para Tailwind v4).
 
 ### Backgrounds (jerarquía del más elevado al más profundo)
 
@@ -271,7 +271,7 @@ Tomar como plantilla una paleta existente (recomendado: `.light` por brevedad) y
   --background: #tu-color-mas-oscuro-oclaro;
   --background-foreground: #tu-foreground;
   --card: #un-paso-arriba;
-  /* ... 36 vars total ... */
+  /* ... 45 vars total ... */
 }
 ```
 
@@ -338,7 +338,7 @@ Este proyecto usa Rosepine. La paleta oficial viene del proyecto Noctalia shell.
 - **Paleta oficial Rosepine**: <https://rosepinetheme.com/palette>
 - **3 variantes**: Main (default), Moon (más oscuro), Dawn (light)
 - **Colores**: 15 roles: `base`, `surface`, `overlay`, `muted`, `subtle`, `text`, `love`, `gold`, `rose`, `pine`, `foam`, `iris`, `highlightLow/Med/High`
-- **Cómo aplicarlo**: mapeá esos 15 a tu sistema de 36 vars (ej: `base → background`, `surface → card`, etc.). El mapeo exacto está en Noctalia.
+- **Cómo aplicarlo**: mapeá esos 15 a tu sistema de 45 vars (ej: `base → background`, `surface → card`, etc.). El mapeo exacto está en Noctalia.
 
 ### 2. shadcn/ui / Radix official colors (estándar 2026)
 
@@ -391,7 +391,7 @@ Este proyecto usa Rosepine. La paleta oficial viene del proyecto Noctalia shell.
 
 1. **Elegir fuente**: tomá una paleta de las fuentes arriba o generá una con `tailwind.ink` o `coolors.co`.
 2. **Verificar contraste**: usá [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) — el delta entre bg y `muted-foreground` debe ser > 100 en luminancia (este proyecto usa 165-186).
-3. **Mapear 36 variables**: cada paleta necesita las 36 vars del sistema. Si la fuente tiene menos, completá con valores derivados (ej: `--secondary` = alias de `--popover`).
+3. **Mapear 45 variables**: cada paleta necesita las 45 vars del sistema. Si la fuente tiene menos, completá con valores derivados (ej: `--secondary` = alias de `--popover`).
 4. **Pegar en `globals.css`** bajo un selector nuevo (`.mi-paleta { ... }`).
 5. **Registrar en `useTheme.tsx` y `themeProvider.tsx`** (2 archivos).
 6. **Verificar**: tsc pasa, server arranca, navegar y probar las 4 paletas.

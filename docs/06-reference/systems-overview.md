@@ -235,7 +235,7 @@ Admin edita translations.content en Supabase Dashboard
 ### 3. **Theme v2 como sistema cohesivo (no hardcoded)**
 
 - 4 paletas (dark, light, rosepine-dark, rosepine-light).
-- 36 vars por paleta, `as const satisfies Record<string, IconComponent>`.
+- 45 vars por paleta, `as const satisfies Record<string, IconComponent>`.
 - `<m.div>` con `<LazyMotion features={domAnimation}>` (bundle optimizado).
 - `<AnimatePresence>` para exit animations.
 

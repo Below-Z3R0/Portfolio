@@ -39,7 +39,7 @@ verified_with: minimax-m3
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 4. Selector activo (.dark, .light, etc.)                            │
 │    Las clases en <html> hacen match con selectores del .css         │
-│    Cada selector define 36 vars — el render usa esas vars          │
+│    Cada selector define 45 vars — el render usa esas vars          │
 └─────────────────────────────────────────────────────────────────────┘
                                 ↓ CSS variables resueltas
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -104,7 +104,7 @@ Cada selector define los **36 valores literales** para su paleta. Por ejemplo:
 }
 ```
 
-> **⚠️ Estructura fija**: cada paleta DEBE tener las mismas 36 variables. Si agregás una variable a `@theme`, tenés que agregarla en las 4 paletas.
+> **⚠️ Estructura fija**: cada paleta DEBE tener las mismas 45 variables. Si agregás una variable a `@theme`, tenés que agregarla en las 4 paletas.
 
 #### Sección C — Utility classes custom del proyecto (líneas 364-429)
 
@@ -386,7 +386,7 @@ Si querés agregar `mi-paleta`:
   --background: #...;
   --background-foreground: #...;
   --card: #...;
-  /* ... 36 variables total ... */
+  /* ... 45 variables total ... */
 }
 ```
 
@@ -467,7 +467,7 @@ Naming consistente, no es bug real. Pero `.bg-fx` no tiene utilidad @theme asoci
 ## 🔗 Conexiones a otros archivos del proyecto
 
 ```
-globals.css (36 vars × 4 paletas)
+globals.css (45 vars × 4 paletas)
     ↑ alias en @theme
 tailwind utilities (bg-card, text-foreground, ...)
     ↑ usado en
@@ -484,7 +484,7 @@ src/app/layout.tsx (layout raíz)
 
 **4 archivos puente** entre el CSS y los componentes:
 
-1. `globals.css` (las 36 vars × 4 paletas + @theme + utility classes custom)
+1. `globals.css` (las 45 vars × 4 paletas + @theme + utility classes custom)
 2. `themeProvider.tsx` (config central)
 3. `useTheme.tsx` (hook tipado)
 4. `ThemeSwitcher.tsx` (UI de selector)

@@ -10,7 +10,7 @@
 | --- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------ | ------------------ |
 | 1   | Base de datos (Postgres schema + RLS + RPC)            | [db-supabase.md](./03-systems/db-supabase.md)                                                                         | ✅     | C3                 |
 | 2   | Carga de contenido (RPC + orquestador + cache)         | [orquestador.md](./03-systems/orquestador.md)                                                                         | ✅     | C2                 |
-| 3   | Theming v2 (4 paletas, 36 vars, shadcn conventions)    | [theming-v2-flow.md](./03-systems/theming-v2-flow.md) + [theming-system.md](./03-systems/theming-system.md)           | ✅     | C5, C7, C8         |
+| 3   | Theming v2 (4 paletas, 45 vars, shadcn conventions)    | [theming-v2-flow.md](./03-systems/theming-v2-flow.md) + [theming-system.md](./03-systems/theming-system.md)           | ✅     | C5, C7, C8         |
 | 4   | Motion (LazyMotion + 7 wrappers level-based)           | [motion-integration.md](./03-systems/motion-integration.md)                                                           | ✅     | C0                 |
 | 5   | UI base (atoms + molecules + barrel)                   | [ui-base.md](./03-systems/ui-base.md) + [barrel-type-helpers.md](./03-systems/barrel-type-helpers.md)                 | ✅     | C0, C1             |
 | 6   | Modal + Form + EmailJS (3 modales con AnimatePresence) | [modal-form-emailjs.md](./03-systems/modal-form-emailjs.md) + [animate-presence.md](./03-systems/animate-presence.md) | ✅     | C0                 |
@@ -29,7 +29,7 @@
 | 1   | `components/types.ts`                  | 257   | Tipos e interfaces centralizados                             |
 | 2   | `components/schemas.ts`                | 316   | Zod schemas (fuente de verdad de la data)                    |
 | 3   | `services/data/site.ts`                | 90    | `getSiteData(lang)` (1 RPC + Zod anidado + `unstable_cache`) |
-| 4   | `app/globals.css`                      | —     | Theming v2 (4 paletas × 36 vars)                             |
+| 4   | `app/globals.css`                      | —     | Theming v2 (4 paletas × 45 vars)                             |
 | 5   | `components/animations/Animations.tsx` | 311   | 7 wrappers level-based (Motion)                              |
 | 6   | `components/atoms/Button.tsx`          | 25    | Atomo más usado                                              |
 
