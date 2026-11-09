@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de barrel + type helpers (tipado SQL → componente)"
 type: system-documentation
 project: portfolio-v2
@@ -21,11 +22,11 @@ verified_with: minimax-m3
 
 ## 📁 Archivos
 
-| Archivo | Rol |
-|---|---|
-| `src/components/components.ts` | **El barrel** — re-exporta todo |
-| `src/services/supabase/types/types.ts` (1191 líneas) | Generado por `supabase gen types` |
-| `src/services/supabase/types/types.helper.ts` (18 líneas) | Crea el `PortfolioClient` tipado |
+| Archivo                                                   | Rol                               |
+| --------------------------------------------------------- | --------------------------------- |
+| `src/components/components.ts`                            | **El barrel** — re-exporta todo   |
+| `src/services/supabase/types/types.ts` (1191 líneas)      | Generado por `supabase gen types` |
+| `src/services/supabase/types/types.helper.ts` (18 líneas) | Crea el `PortfolioClient` tipado  |
 
 ## 🧬 El barrel: `components.ts` (39 líneas)
 
@@ -55,7 +56,7 @@ export * from "./molecules/NavBar";
 //export * from "./molecules/ProjectCard"; ← comentado (issue con SSR)
 export * from "./molecules/SuccessMessage";
 export * from "./molecules/TecnologiesCard";
-export * from "./molecules/Modal"  // ← falta ;
+export * from "./molecules/Modal"; // ← falta ;
 
 // --- Organisms ---
 export * from "./organims/AboutMeSection";
@@ -134,6 +135,7 @@ bun run gen-types
 ```
 
 Esto ejecuta:
+
 ```sh
 supabase gen types typescript \
   --project-id hlsjbvwnqcwrzfuyocja \
@@ -144,6 +146,7 @@ supabase gen types typescript \
 > ⚠️ El output es `src/types` (sin extensión). Es **un único archivo** con TODO el tipado de la BD (1191 líneas). Sobreescribe el archivo completamente.
 
 **Cuándo regenerar**:
+
 - Agregás/modificás una tabla o columna.
 - Cambias un constraint.
 - Cambias una foreign key.
@@ -183,12 +186,12 @@ import type { PortfolioClient } from "../supabase/types/types.helper";
 export const getData = async <Schema extends z.ZodType>(
   block_key: string,
   lang: string,
-  supabase: PortfolioClient,  // ← tipado
+  supabase: PortfolioClient, // ← tipado
   schema: Schema,
 ): Promise<z.infer<Schema>> => {
   const { data, error } = await supabase
-    .from("translations")  // ← solo "translations" es válido
-    .select("content, content_blocks!inner(key)")  // ← tipado según shape
+    .from("translations") // ← solo "translations" es válido
+    .select("content, content_blocks!inner(key)") // ← tipado según shape
     .eq("lang_code", lang)
     .eq("content_blocks.key", block_key)
     .limit(1)
@@ -200,6 +203,7 @@ export const getData = async <Schema extends z.ZodType>(
 ```
 
 **Lo que el tipado te da**:
+
 - `supabase.from("translations")` — TS solo acepta strings que son nombres de tablas en `Database`.
 - `.select("content, content_blocks!inner(key)")` — TS valida que las columnas existen.
 - `data` es `Translation | null` con todas las columnas.
@@ -212,7 +216,7 @@ export const getData = async <Schema extends z.ZodType>(
 ### 1. **El barrel tiene un typo (`Modal"` sin `;`)**
 
 ```ts
-export * from "./molecules/Modal"  // ← falta ;
+export * from "./molecules/Modal"; // ← falta ;
 ```
 
 > TypeScript probablemente lo acepta (es la última línea antes de `--- Organisms ---`). **Issue menor**.
@@ -276,6 +280,7 @@ import { ThemeSwitcher } from "../components/atoms/ThemeSwitcher";  // ← path 
 2. Ejecutar `bun run gen-types`.
 3. El `Database["portfolio"]["Tables"]["mi_tabla"]` ahora existe.
 4. Crear un helper en `types.helper.ts`:
+
    ```ts
    export type MiTabla = PortfolioTables["mi_tabla"]["Row"];
    ```

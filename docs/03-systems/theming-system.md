@@ -1,4 +1,5 @@
 ---
+
 title: Theming system v2 — portfolio-v2 (Next.js + Tailwind v4 + shadcn conventions)
 type: reference
 project: portfolio-v2
@@ -44,60 +45,60 @@ Cada paleta expone las **mismas 36 variables** (más alias en `@theme` para Tail
 
 ### Backgrounds (jerarquía del más elevado al más profundo)
 
-| Variable | Alias Tailwind | Uso |
-|---|---|---|
+| Variable       | Alias Tailwind  | Uso                                              |
+| -------------- | --------------- | ------------------------------------------------ |
 | `--background` | `bg-background` | `<body>` de la página (color de fondo principal) |
-| `--card` | `bg-card` | contenedor elevado (article, modal, sección) |
-| `--popover` | `bg-popover` | elemento dentro de card (input, sub-panel) |
-| `--secondary` | `bg-secondary` | alias de popover en este sistema |
-| `--tertiary` | `bg-tertiary` | nivel más elevado (modal sobre card sobre bg) |
+| `--card`       | `bg-card`       | contenedor elevado (article, modal, sección)     |
+| `--popover`    | `bg-popover`    | elemento dentro de card (input, sub-panel)       |
+| `--secondary`  | `bg-secondary`  | alias de popover en este sistema                 |
+| `--tertiary`   | `bg-tertiary`   | nivel más elevado (modal sobre card sobre bg)    |
 
 **Patrón universal**: en dark, `--background < --card < --popover` (luminosidad ascendente). En light, `--popover < --card < --background`.
 
 ### Foregrounds (texto principal)
 
-| Variable | Alias Tailwind | Uso |
-|---|---|---|
-| `--foreground` | `text-foreground` | texto principal (títulos, párrafos destacados) |
-| `--background-foreground` | `text-background` | **no se usa** (causa confusión con `bg-background`) |
-| `--card-foreground` | `text-card` | no se usa |
-| `--muted-foreground` | `text-muted-foreground` | texto secundario (descripciones, párrafos largos) |
-| `--text-footer` | — | solo en `--footer`, mantenerlo separado |
+| Variable                  | Alias Tailwind          | Uso                                                 |
+| ------------------------- | ----------------------- | --------------------------------------------------- |
+| `--foreground`            | `text-foreground`       | texto principal (títulos, párrafos destacados)      |
+| `--background-foreground` | `text-background`       | **no se usa** (causa confusión con `bg-background`) |
+| `--card-foreground`       | `text-card`             | no se usa                                           |
+| `--muted-foreground`      | `text-muted-foreground` | texto secundario (descripciones, párrafos largos)   |
+| `--text-footer`           | —                       | solo en `--footer`, mantenerlo separado             |
 
 > **⚠️ Bug frecuente**: usar `text-background` esperando color de texto. La utility existe porque el alias existe, pero su valor es `#fafafa` (igual que `--card-foreground`). **Usá `text-foreground`** para texto principal y `text-primary-foreground` para texto sobre `bg-primary`.
 
 ### Brand: primary + accent
 
-| Variable | Uso |
-|---|---|
-| `--primary` | color de marca (botón CTA, badge destacado) |
+| Variable               | Uso                                                                      |
+| ---------------------- | ------------------------------------------------------------------------ |
+| `--primary`            | color de marca (botón CTA, badge destacado)                              |
 | `--primary-foreground` | **texto sobre `bg-primary`** = blanco puro `#ffffff` (todas las paletas) |
-| `--primary-soft` | fondo suave con 8-10% alpha (badges, hover state) |
-| `--primary-container` | container más oscuro (chips, indicators) |
-| `--accent` | acento secundario (links, iconos destacados) |
+| `--primary-soft`       | fondo suave con 8-10% alpha (badges, hover state)                        |
+| `--primary-container`  | container más oscuro (chips, indicators)                                 |
+| `--accent`             | acento secundario (links, iconos destacados)                             |
 
 > **Convención clave**: `--primary-foreground` SIEMPRE es blanco puro (`#ffffff`) en cualquier paleta, para que los CTAs tengan máximo contraste sobre su fondo violeta.
 
 ### Semánticos (estados)
 
-| Variable | Uso | Light | Dark |
-|---|---|---|---|
-| `--destructive` / `--destructive-soft` | errores (red) | `#dc2626` / 8% | `#f87171` / 10% |
-| `--warning` / `--warning-soft` | advertencias (gold/amber) | `#d97706` / 8% | `#f59e0b` / 10% |
-| `--success` / `--success-soft` | confirmaciones (green) | `#059669` / 8% | `#34d399` / 10% |
-| `--info` (Rosepine: `--foam`) | info (cyan) | `#0891b2` | `#22d3ee` |
+| Variable                               | Uso                       | Light          | Dark            |
+| -------------------------------------- | ------------------------- | -------------- | --------------- |
+| `--destructive` / `--destructive-soft` | errores (red)             | `#dc2626` / 8% | `#f87171` / 10% |
+| `--warning` / `--warning-soft`         | advertencias (gold/amber) | `#d97706` / 8% | `#f59e0b` / 10% |
+| `--success` / `--success-soft`         | confirmaciones (green)    | `#059669` / 8% | `#34d399` / 10% |
+| `--info` (Rosepine: `--foam`)          | info (cyan)               | `#0891b2`      | `#22d3ee`       |
 
 > **Regla semántica**: `warning` solo para advertencias reales. Para "EN CONSTRUCCIÓN" usá `warning` (no `destructive`, porque no es un error). Para errores de validación o estados fallidos, sí `destructive`.
 
 ### Bordes
 
-| Variable | Uso |
-|---|---|
-| `--border` | color de borde **principal** — translúcido (rgba 6-8%) para jerarquía visual |
-| `--border-foreground` | variante opuesta (más opaco o más claro según paleta) |
-| `--border-glow` | color de borde con glow (cuando hovereás) — usa `--primary` con alpha |
-| `--input` | color de borde de inputs |
-| `--ring` | color de focus ring (más opaco que `--border-glow`) |
+| Variable              | Uso                                                                          |
+| --------------------- | ---------------------------------------------------------------------------- |
+| `--border`            | color de borde **principal** — translúcido (rgba 6-8%) para jerarquía visual |
+| `--border-foreground` | variante opuesta (más opaco o más claro según paleta)                        |
+| `--border-glow`       | color de borde con glow (cuando hovereás) — usa `--primary` con alpha        |
+| `--input`             | color de borde de inputs                                                     |
+| `--ring`              | color de focus ring (más opaco que `--border-glow`)                          |
 
 > **⚠️ Convención fundamental shadcn**: en Tailwind v4, `border` solo define el **ancho (1px)**. Para que tenga color necesitás `border border-border`. La utility `border-border` (sin guión) usa `--color-border`. **SIEMPRE usar ambos juntos**.
 >
@@ -110,6 +111,7 @@ Cada paleta expone las **mismas 36 variables** (más alias en `@theme` para Tail
 > ```
 >
 > Si querés un borde con color explícito:
+>
 > ```tsx
 > <div className="border border-destructive">  {/* rojo */}
 > <div className="border border-primary">      {/* violeta */}
@@ -118,30 +120,30 @@ Cada paleta expone las **mismas 36 variables** (más alias en `@theme` para Tail
 
 ### Ring (focus + hover frames)
 
-| Variable | Uso |
-|---|---|
-| `--ring` | `ring-1 ring-primary` para focus visible (intensidad alta) |
-| `--hover` | `hover:bg-hover` para fondos de hover (intensidad baja) |
-| `--pressed` | `bg-pressed` para active state |
+| Variable    | Uso                                                        |
+| ----------- | ---------------------------------------------------------- |
+| `--ring`    | `ring-1 ring-primary` para focus visible (intensidad alta) |
+| `--hover`   | `hover:bg-hover` para fondos de hover (intensidad baja)    |
+| `--pressed` | `bg-pressed` para active state                             |
 
 ### Texto de jerarquía (footer, grid)
 
-| Variable | Uso |
-|---|---|
-| `--footer` | copyright, año |
-| `--grid` | color del grid decorativo (rgba 4-8%) |
-| `--highlight-low/med/high` | overlays translúcidos (3 tiers) |
+| Variable                   | Uso                                   |
+| -------------------------- | ------------------------------------- |
+| `--footer`                 | copyright, año                        |
+| `--grid`                   | color del grid decorativo (rgba 4-8%) |
+| `--highlight-low/med/high` | overlays translúcidos (3 tiers)       |
 
 ### Rosepine palette
 
 Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el sistema de design los pide (badges temáticos, iconos de marca):
 
 | Variable | Color (light/Dawn) | Color (main/dark) | Color (moon/dark) |
-|---|---|---|---|
-| `--love` | `#b4637a` | `#eb6f92` | `#eb6f92` |
-| `--pine` | `#286983` | `#31748f` | `#31748f` |
-| `--foam` | `#56949f` | `#9ccfd8` | `#9ccfd8` |
-| `--iris` | `#907aa9` | `#c4a7e7` | `#c4a7e7` |
+| -------- | ------------------ | ----------------- | ----------------- |
+| `--love` | `#b4637a`          | `#eb6f92`         | `#eb6f92`         |
+| `--pine` | `#286983`          | `#31748f`         | `#31748f`         |
+| `--foam` | `#56949f`          | `#9ccfd8`         | `#9ccfd8`         |
+| `--iris` | `#907aa9`          | `#c4a7e7`         | `#c4a7e7`         |
 
 > **⚠️ El alias real en Noctalia Rosepine tradicional** mapea como: `love` = warning, `gold` = warning, `rose` = primary, `pine` = success, `foam` = info, `iris` = accent. En este sistema se eligió `rose = primary` y los otros como **acento decorativo** (no se usan para feedback semántico).
 >
@@ -150,6 +152,7 @@ Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el siste
 ## 🎨 Las 4 paletas en detalle
 
 ### `.dark` (default)
+
 ```
 --background: #000000      /* negro puro, fondo página */
 --card: #1a1a1a           /* gris sutilmente más claro que bg */
@@ -162,6 +165,7 @@ Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el siste
 ```
 
 ### `.light`
+
 ```
 --background: #ffffff      /* blanco puro */
 --card: #ededed           /* gris muy claro distintivo */
@@ -174,6 +178,7 @@ Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el siste
 ```
 
 ### `.rosepine-dark` (Noctalia Rosepine main)
+
 ```
 --background: #191724      /* base Rosepine */
 --card: #1f1d2e           /* surface Rosepine */
@@ -184,6 +189,7 @@ Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el siste
 ```
 
 ### `.rosepine-light` (Noctalia Rosepine Dawn)
+
 ```
 --background: #fffaf3      /* surface Rosepine (más claro) */
 --card: #faf4ed           /* base Rosepine (más oscuro) */
@@ -198,6 +204,7 @@ Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el siste
 ## 🛠️ Aplicación práctica en componentes
 
 ### Ejemplo 1: proyecto card
+
 ```tsx
 <article
     className={`max-h-220 mx-auto rounded-xl flex bg-card 
@@ -209,40 +216,48 @@ Colores específicos del proyecto Noctalia Rosepine. Solo se usan donde el siste
 ```
 
 ### Ejemplo 2: botón CTA primario
+
 ```tsx
 <Button
   buttonBody="bg-primary text-primary-foreground 
              hover:opacity-90 transition-opacity 
              font-semibold"
   txt="Hablemos"
-/>
+/>;
 ```
 
 ### Ejemplo 3: input dentro de card
+
 ```tsx
 <input
   className="w-full rounded-md p-3 bg-popover text-foreground 
              border-border focus:ring-2 focus:ring-ring 
              outline-none"
-/>
+/>;
 ```
 
 ### Ejemplo 4: badge destacado (soft + ring)
+
 ```tsx
 <Title4
   className="bg-primary-soft text-primary 
              ring-1 ring-primary/40"
   txt="★ PROYECTO DESTACADO"
-/>
+/>;
 ```
 
 ### Ejemplo 5: separador visual
-```tsx
-{/* ❌ MAL — text-border es demasiado tenue (rgba), invisible */}
-<span className="text-border">·</span>
 
-{/* ✓ BIEN — usa muted-foreground que es gris visible */}
-<span className="text-muted-foreground">·</span>
+```tsx
+{
+  /* ❌ MAL — text-border es demasiado tenue (rgba), invisible */
+}
+<span className="text-border">·</span>;
+
+{
+  /* ✓ BIEN — usa muted-foreground que es gris visible */
+}
+<span className="text-muted-foreground">·</span>;
 ```
 
 ## 🎨 Cómo agregar una nueva paleta
@@ -273,8 +288,19 @@ Tomar como plantilla una paleta existente (recomendado: `.light` por brevedad) y
 ### Paso 3 — Registrar en `useTheme.tsx`
 
 ```tsx
-export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light" | "mi-paleta";
-export const ThemeData: Theme[] = ["light", "dark", "rosepine-dark", "rosepine-light", "mi-paleta"];
+export type Theme =
+  | "light"
+  | "dark"
+  | "rosepine-dark"
+  | "rosepine-light"
+  | "mi-paleta";
+export const ThemeData: Theme[] = [
+  "light",
+  "dark",
+  "rosepine-dark",
+  "rosepine-light",
+  "mi-paleta",
+];
 ```
 
 ### Paso 4 — Verificar
@@ -285,18 +311,18 @@ export const ThemeData: Theme[] = ["light", "dark", "rosepine-dark", "rosepine-l
 
 ## ⚠️ Errores comunes que NO debo repetir
 
-| ❌ Error | ✓ Fix |
-|---|---|
-| `className="border shadow-lg"` | `className="border border-border shadow-lg"` (ancho + color) |
+| ❌ Error                                                         | ✓ Fix                                                                                       |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `className="border shadow-lg"`                                   | `className="border border-border shadow-lg"` (ancho + color)                                |
 | `className="text-background"` (pensando que era texto principal) | `className="text-foreground"` (foreground) o `text-primary-foreground` (sobre `bg-primary`) |
-| `className="bg-border/20"` para skeleton | `className="bg-muted"` (muted-foreground existe, border NO) |
-| `className="text-body"` (no existe) | `className="text-muted-foreground"` |
-| `className="text-wrap: balance"` (typo con espacio y `:`) | `className="text-wrap-balance"` |
-| `className="border bordear-subtle"` (typo) | `className="border"` |
-| `className="border border border-glow"` (triple) | `className="border border-glow"` (ancho + color juntos) |
-| `className="text-white"` hardcoded | `className="text-primary-foreground"` |
-| `className="bg-slate-900/50 border-slate-800"` | `className="bg-popover border-border"` (sin colores hardcoded) |
-| `className="text-border"` para separador visual | `className="text-muted-foreground"` (más visible) |
+| `className="bg-border/20"` para skeleton                         | `className="bg-muted"` (muted-foreground existe, border NO)                                 |
+| `className="text-body"` (no existe)                              | `className="text-muted-foreground"`                                                         |
+| `className="text-wrap: balance"` (typo con espacio y `:`)        | `className="text-wrap-balance"`                                                             |
+| `className="border bordear-subtle"` (typo)                       | `className="border"`                                                                        |
+| `className="border border border-glow"` (triple)                 | `className="border border-glow"` (ancho + color juntos)                                     |
+| `className="text-white"` hardcoded                               | `className="text-primary-foreground"`                                                       |
+| `className="bg-slate-900/50 border-slate-800"`                   | `className="bg-popover border-border"` (sin colores hardcoded)                              |
+| `className="text-border"` para separador visual                  | `className="text-muted-foreground"` (más visible)                                           |
 
 > **Regla nemotécnica**: si el color que necesitás no está en `@theme` de `globals.css`, NO está en el sistema. Buscá un alias semántico (`bg-muted`, `bg-popover`, `text-foreground`) antes de hardcodear.
 

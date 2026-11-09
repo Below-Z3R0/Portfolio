@@ -1,4 +1,5 @@
 ---
+
 title: Theming v2 — flujo end-to-end (globals.css → componente)
 type: flow-guide
 project: portfolio-v2
@@ -180,7 +181,12 @@ Hook custom sobre `next-themes/useTheme` que:
 
 ```tsx
 export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light";
-export const ThemeData: Theme[] = ["light", "dark", "rosepine-dark", "rosepine-light"];
+export const ThemeData: Theme[] = [
+  "light",
+  "dark",
+  "rosepine-dark",
+  "rosepine-light",
+];
 
 export function useTheme() {
   const { setTheme: setNextTheme, resolvedTheme } = useNextTheme();
@@ -191,10 +197,11 @@ export function useTheme() {
   }, []);
 
   const currentTheme: Theme =
-    mounted && (
-      resolvedTheme === "dark" || resolvedTheme === "light" ||
-      resolvedTheme === "rosepine-dark" || resolvedTheme === "rosepine-light"
-    )
+    mounted &&
+    (resolvedTheme === "dark" ||
+      resolvedTheme === "light" ||
+      resolvedTheme === "rosepine-dark" ||
+      resolvedTheme === "rosepine-light")
       ? resolvedTheme
       : "dark";
 
@@ -214,34 +221,41 @@ UI para elegir entre las 4 paletas. Es el "control panel":
 
 ```tsx
 export function ThemeSwitcher({
-    ThemeMenuOrganization,
+  ThemeMenuOrganization,
 }: {
-    ThemeMenuOrganization?: string;
+  ThemeMenuOrganization?: string;
 }) {
-    const { setTheme } = useTheme();
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    return (
-        <>
-            <Button svg={"daynight"} buttonBody="size-7 z-50 "
-                    svgStyle="text-foreground hover:text-primary"
-                    onClick={() => setIsOpen(!isOpen)} />
+  const { setTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  return (
+    <>
+      <Button
+        svg={"daynight"}
+        buttonBody="size-7 z-50 "
+        svgStyle="text-foreground hover:text-primary"
+        onClick={() => setIsOpen(!isOpen)}
+      />
 
-            {isOpen && (
-                <div className="... bg-background border border-border shadow-2xl ...">
-                    {ThemeData.map((cat, index) => (
-                        <Button onClick={() => setTheme(cat as Theme)}
-                                key={index} txt={cat}
-                                buttonBody="flex items-start h-8 w-full p-1 rounded-md"
-                                txtStyle="hover:text-primary" />
-                    ))}
-                </div>
-            )}
-        </>
-    );
+      {isOpen && (
+        <div className="... bg-background border border-border shadow-2xl ...">
+          {ThemeData.map((cat, index) => (
+            <Button
+              onClick={() => setTheme(cat as Theme)}
+              key={index}
+              txt={cat}
+              buttonBody="flex items-start h-8 w-full p-1 rounded-md"
+              txtStyle="hover:text-primary"
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
 }
 ```
 
 **Por qué importa**: este es el ÚNICO punto donde el usuario cambia de tema. Cualquier nuevo modo de tema se agrega modificando:
+
 1. `globals.css` (variables CSS).
 2. `themeProvider.tsx` (array `themes`).
 3. `useTheme.tsx` (tipo `Theme` + `ThemeData`).
@@ -254,9 +268,17 @@ El layout raíz. Conecta todo:
 ```tsx
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full text-[18px] leading-[145%] tracking-[0.18px] zoom-110 text-foreground bg-background font-display">
-        <ThemeProvider attribute="class" enableSystem disableTransitionOnChange={true}>
+        <ThemeProvider
+          attribute="class"
+          enableSystem
+          disableTransitionOnChange={true}
+        >
           <LazyMotion features={domAnimation} strict>
             <BackgroundFX />
             {children}
@@ -377,8 +399,19 @@ themes={["light", "dark", "rosepine-dark", "rosepine-light", "mi-paleta"]}
 ### Paso 3 — useTheme.tsx
 
 ```tsx
-export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light" | "mi-paleta";
-export const ThemeData: Theme[] = ["light", "dark", "rosepine-dark", "rosepine-light", "mi-paleta"];
+export type Theme =
+  | "light"
+  | "dark"
+  | "rosepine-dark"
+  | "rosepine-light"
+  | "mi-paleta";
+export const ThemeData: Theme[] = [
+  "light",
+  "dark",
+  "rosepine-dark",
+  "rosepine-light",
+  "mi-paleta",
+];
 
 // También agregar a validThemes y al check de currentTheme
 ```
@@ -450,6 +483,7 @@ src/app/layout.tsx (layout raíz)
 ```
 
 **4 archivos puente** entre el CSS y los componentes:
+
 1. `globals.css` (las 36 vars × 4 paletas + @theme + utility classes custom)
 2. `themeProvider.tsx` (config central)
 3. `useTheme.tsx` (hook tipado)
@@ -469,18 +503,18 @@ El sistema de theming v2 está **integrado al grafo de Graphify** del proyecto (
 
 ### Edges manuales agregados
 
-| Source | Relation | Target | Por qué |
-|---|---|---|---|
-| `theming_v2` | `validates-type-of` | `useTheme` | Type `Theme` exportado en ambos |
-| `theming_v2` | `documents-config-of` | `themeProvider` | Array `themes=[...]` documentado |
-| `theming_v2` | `documents-ui-of` | `ThemeSwitcher` | ThemeSwitcher lista ThemeData |
-| `theming_v2` | `documents-utility-of` | `BackgroundFX` | Usa `.bg-grid`, `.bg-fx__noise`, `.bg-fx__vignette` |
-| `theming_v2` | `represents-system-of` | `globals.css` | theming.v2.ts es el proxy TypeScript |
-| `globals.css` | `is-proxied-by` | `theming_v2` | Conexión bidireccional |
-| `layout` | `mounts-system-of` | `theming_v2` | layout.tsx monta `<ThemeProvider>` |
-| `ProjectCard` | `uses-conventions-of` | `theming_v2` | Ejemplo de uso del sistema |
-| `ProjectCard()` | `uses-conventions-of` | `theming_v2` | Función/componente |
-| `ThemeSwitcher()` | `consumes` | `useTheme()` | Hook consumido |
+| Source            | Relation               | Target          | Por qué                                             |
+| ----------------- | ---------------------- | --------------- | --------------------------------------------------- |
+| `theming_v2`      | `validates-type-of`    | `useTheme`      | Type `Theme` exportado en ambos                     |
+| `theming_v2`      | `documents-config-of`  | `themeProvider` | Array `themes=[...]` documentado                    |
+| `theming_v2`      | `documents-ui-of`      | `ThemeSwitcher` | ThemeSwitcher lista ThemeData                       |
+| `theming_v2`      | `documents-utility-of` | `BackgroundFX`  | Usa `.bg-grid`, `.bg-fx__noise`, `.bg-fx__vignette` |
+| `theming_v2`      | `represents-system-of` | `globals.css`   | theming.v2.ts es el proxy TypeScript                |
+| `globals.css`     | `is-proxied-by`        | `theming_v2`    | Conexión bidireccional                              |
+| `layout`          | `mounts-system-of`     | `theming_v2`    | layout.tsx monta `<ThemeProvider>`                  |
+| `ProjectCard`     | `uses-conventions-of`  | `theming_v2`    | Ejemplo de uso del sistema                          |
+| `ProjectCard()`   | `uses-conventions-of`  | `theming_v2`    | Función/componente                                  |
+| `ThemeSwitcher()` | `consumes`             | `useTheme()`    | Hook consumido                                      |
 
 ### Cómo mantener el grafo
 

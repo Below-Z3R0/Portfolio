@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de AnimatePresence y exit animations"
 type: system-documentation
 project: portfolio-v2
@@ -42,13 +43,13 @@ CSS no puede animar unmount:
 
 ## 📁 Archivos (4 modales + el wrapper)
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/components/molecules/Modal.tsx` | 60 | Modal fullscreen con `<m.div>` initial/animate/exit (sin AnimatePresence wrapper — se renderiza condicional, no desmonta) |
-| `src/components/molecules/SuccessMessage.tsx` | 113 | Modal con `<AnimatePresence>` + checkmark path animation |
-| `src/components/molecules/ErrorMessage.tsx` | 107 | Modal con `<AnimatePresence>` + X path animation |
-| `src/components/atoms/BackgroundFX.tsx` | 14 | (no usa AnimatePresence pero es client component) |
-| `src/components/animations/Animations.tsx` | 311 | (no exporta AnimatePresence — el usuario lo importa directo de `motion/react`) |
+| Archivo                                       | Líneas | Rol                                                                                                                       |
+| --------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `src/components/molecules/Modal.tsx`          | 60     | Modal fullscreen con `<m.div>` initial/animate/exit (sin AnimatePresence wrapper — se renderiza condicional, no desmonta) |
+| `src/components/molecules/SuccessMessage.tsx` | 113    | Modal con `<AnimatePresence>` + checkmark path animation                                                                  |
+| `src/components/molecules/ErrorMessage.tsx`   | 107    | Modal con `<AnimatePresence>` + X path animation                                                                          |
+| `src/components/atoms/BackgroundFX.tsx`       | 14     | (no usa AnimatePresence pero es client component)                                                                         |
+| `src/components/animations/Animations.tsx`    | 311    | (no exporta AnimatePresence — el usuario lo importa directo de `motion/react`)                                            |
 
 ## 🧬 El patrón de `<AnimatePresence>` (4 lugares)
 
@@ -140,6 +141,7 @@ return (
 ```
 
 **3 niveles de animación**:
+
 1. **Backdrop** (200ms fade).
 2. **Modal container** (spring scale + slide).
 3. **Checkmark SVG path** (500ms con delay 300ms, después de que el modal aparece).
@@ -191,11 +193,11 @@ t=1900: button fully visible — modal complete
 ## 🛠️ Cómo agregar un nuevo modal con AnimatePresence
 
 1. Crear el componente con la misma estructura:
+
    ```tsx
    "use client";
    import { AnimatePresence, m } from "motion/react";
-   
-   export function MiModal({ show, onClose }: MiModalProps) {
+      export function MiModal({ show, onClose }: MiModalProps) {
      return (
        <AnimatePresence>
          {show && (
@@ -224,6 +226,7 @@ t=1900: button fully visible — modal complete
    ```
 
 2. Definir el type en `types.ts`:
+
    ```ts
    export interface MiModalProps {
      show: boolean;
@@ -257,6 +260,7 @@ El Modal principal (de proyectos) **no tiene wrapper de AnimatePresence**. El pa
 ```
 
 > En vez de stagger manual, **podría usarse un parent variant**:
+>
 > ```tsx
 > const containerVariants = {
 >   hidden: {},
@@ -274,8 +278,11 @@ El Modal principal (de proyectos) **no tiene wrapper de AnimatePresence**. El pa
 `AnimatePresence` siempre anima (incluso en usuarios con `prefers-reduced-motion: reduce` activado). **Issue de accesibilidad**.
 
 **Fix**:
+
 ```tsx
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
 const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.3 };
 ```
 
@@ -288,7 +295,7 @@ const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.3 };
   <m.div onClick={(e) => e.stopPropagation()} className="...modal">
     {/* contenido */}
   </m.div>
-</m.div>
+</m.div>;
 ```
 
 > Click **fuera** del modal (sobre el backdrop) → cierra. Click **dentro** del modal → `stopPropagation` evita que cierre. **OK**, pero si el contenido del modal tiene elementos con `position: absolute` que sobresalen del modal, pueden interceptar el click y no cerrar.

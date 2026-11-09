@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de fuentes: next/font (Geist + Geist_Mono)"
 type: system-documentation
 project: portfolio-v2
@@ -14,24 +15,24 @@ verified_with: minimax-m3
 
 ## 🎯 Por qué next/font y no Google Fonts CDN
 
-| Aspecto | Google Fonts CDN | next/font (Next.js 13+) |
-|---|---|---|
-| Self-host | No (CDN) | Sí (descargado en build) |
-| Layout shift | Mitigado con `font-display: swap` | **Eliminado**: subset + preload + size-adjust |
-| Subset | Manual (subset por idioma) | **Automático** (solo los chars usados) |
-| Performance | 1+ HTTP request a fonts.googleapis.com | 0 request (inline en CSS bundle) |
-| CORS / CSP | Problemas comunes | Sin problemas (mismo origen) |
-| Personalización | Limitada | Total (weight, style, variable) |
+| Aspecto         | Google Fonts CDN                       | next/font (Next.js 13+)                       |
+| --------------- | -------------------------------------- | --------------------------------------------- |
+| Self-host       | No (CDN)                               | Sí (descargado en build)                      |
+| Layout shift    | Mitigado con `font-display: swap`      | **Eliminado**: subset + preload + size-adjust |
+| Subset          | Manual (subset por idioma)             | **Automático** (solo los chars usados)        |
+| Performance     | 1+ HTTP request a fonts.googleapis.com | 0 request (inline en CSS bundle)              |
+| CORS / CSP      | Problemas comunes                      | Sin problemas (mismo origen)                  |
+| Personalización | Limitada                               | Total (weight, style, variable)               |
 
 > Para un portfolio que prioriza **Lighthouse score** y **Core Web Vitals**, `next/font` es la elección correcta.
 
 ## 📁 Archivos
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/app/layout.tsx` | 48 | Carga las fuentes con `Geist()` y `Geist_Mono()` |
-| `src/app/globals.css` | 429 | Define `--font-display` que referencia las CSS variables |
-| (ningún otro) | — | Next.js maneja el resto (subfolder `.next/static/media`) |
+| Archivo               | Líneas | Rol                                                      |
+| --------------------- | ------ | -------------------------------------------------------- |
+| `src/app/layout.tsx`  | 48     | Carga las fuentes con `Geist()` y `Geist_Mono()`         |
+| `src/app/globals.css` | 429    | Define `--font-display` que referencia las CSS variables |
+| (ningún otro)         | —      | Next.js maneja el resto (subfolder `.next/static/media`) |
 
 ## 🧬 Anatomía del uso
 
@@ -41,7 +42,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 // 1. Instanciar las fuentes (en el scope del módulo, no del componente)
 const geistSans = Geist({
-  variable: "--font-geist-sans",   // ← CSS variable que se genera
+  variable: "--font-geist-sans", // ← CSS variable que se genera
   subsets: ["latin"],
 });
 
@@ -53,10 +54,11 @@ const geistMono = Geist_Mono({
 // 2. Aplicar la class al <html>
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="font-display ...">
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="font-display ...">{children}</body>
     </html>
   );
 }
@@ -97,6 +99,7 @@ En `globals.css`:
 > **Issue**: el `--font-display` está **hardcoded a "Inter"** en `globals.css`, no a `var(--font-geist-sans)`. Esto significa que el theme v2 no usa la fuente Geist — usa Inter.
 
 **Fix planeado** (en `globals.css`):
+
 ```css
 @theme {
   --font-display: var(--font-geist-sans), "Inter", sans-serif;
@@ -113,16 +116,16 @@ En `globals.css`:
 ```ts
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin", "latin-ext"],  // ← si el sitio tiene texto en otros alfabetos
+  subsets: ["latin", "latin-ext"], // ← si el sitio tiene texto en otros alfabetos
 });
 ```
 
-| Subset | Chars cubiertos | Peso bundle |
-|---|---|---|
-| `latin` | A-Z, a-z, 0-9, signos básicos | ~10 KB por weight |
-| `latin-ext` | latin + chars acentuados especiales | +5 KB |
-| `cyrillic` | alfabeto cirílico | +30 KB |
-| `vietnamese` | vietnamita | +20 KB |
+| Subset       | Chars cubiertos                     | Peso bundle       |
+| ------------ | ----------------------------------- | ----------------- |
+| `latin`      | A-Z, a-z, 0-9, signos básicos       | ~10 KB por weight |
+| `latin-ext`  | latin + chars acentuados especiales | +5 KB             |
+| `cyrillic`   | alfabeto cirílico                   | +30 KB            |
+| `vietnamese` | vietnamita                          | +20 KB            |
 
 > **Regla**: solo usar los subsets que **realmente aparecen** en el sitio. Para un portfolio en español/inglés, `latin` es suficiente.
 
@@ -173,16 +176,16 @@ Runtime:
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-  
+
   // Opciones menos comunes pero útiles:
-  weight: ["400", "500", "700"],       // solo esos weights (default: todos)
-  style: ["normal", "italic"],         // solo esos styles (default: normal)
-  display: "swap",                      // "auto" | "block" | "swap" | "fallback" | "optional"
-  preload: true,                        // preload en <head> (default: true si solo 1 font)
-  fallback: ["Helvetica", "Arial"],     // fallback si Geist no carga
-  adjustFontFallback: true,             // auto-genera size-adjust (default: true)
+  weight: ["400", "500", "700"], // solo esos weights (default: todos)
+  style: ["normal", "italic"], // solo esos styles (default: normal)
+  display: "swap", // "auto" | "block" | "swap" | "fallback" | "optional"
+  preload: true, // preload en <head> (default: true si solo 1 font)
+  fallback: ["Helvetica", "Arial"], // fallback si Geist no carga
+  adjustFontFallback: true, // auto-genera size-adjust (default: true)
   variable: "--font-geist-sans",
-  axes: [],                              // para variable fonts (no aplica a Geist)
+  axes: [], // para variable fonts (no aplica a Geist)
 });
 ```
 
@@ -201,7 +204,7 @@ const geistSans = Geist({
 // Si la fuente es variable (ej. Inter, Roboto Flex)
 const inter = Inter({
   subsets: ["latin"],
-  axes: ["slnt", "wght"],  // solo los axes que se usan
+  axes: ["slnt", "wght"], // solo los axes que se usan
 });
 ```
 
@@ -210,6 +213,7 @@ Geist NO es variable font. Geist Variable (la versión extendida) sí lo es. Si 
 ## 🛠️ Cómo agregar una nueva fuente
 
 1. Importar la fuente en `layout.tsx`:
+
    ```ts
    import { Fira_Code } from "next/font/google";
    const firaCode = Fira_Code({
@@ -220,11 +224,13 @@ Geist NO es variable font. Geist Variable (la versión extendida) sí lo es. Si 
    ```
 
 2. Aplicar al `<html>`:
+
    ```tsx
    <html className={`${geistSans.variable} ${geistMono.variable} ${firaCode.variable} ...`}>
    ```
 
 3. Conectar al theme v2 (en `globals.css`):
+
    ```css
    @theme {
      --font-display: var(--font-geist-sans), "Inter", sans-serif;
@@ -238,7 +244,7 @@ Geist NO es variable font. Geist Variable (la versión extendida) sí lo es. Si 
 
 ```css
 @theme {
-  --font-display: "Inter", sans-serif;  /* ← hardcoded a Inter */
+  --font-display: "Inter", sans-serif; /* ← hardcoded a Inter */
 }
 ```
 
@@ -247,6 +253,7 @@ Geist NO es variable font. Geist Variable (la versión extendida) sí lo es. Si 
 > - Si Inter es la fuente de marca, el `<link>` a Geist no aporta nada.
 
 **Fix**: en `globals.css`:
+
 ```css
 @theme {
   --font-display: var(--font-geist-sans), "Inter", sans-serif;
@@ -268,7 +275,7 @@ Geist NO es variable font. Geist Variable (la versión extendida) sí lo es. Si 
 
 ```ts
 const geistSans = Geist({
-  subsets: ["latin"],  // ← si pones un subset inválido, TS no avisa
+  subsets: ["latin"], // ← si pones un subset inválido, TS no avisa
 });
 ```
 
@@ -281,6 +288,7 @@ const geistSans = Geist({
 ### 5. **No hay `display: "swap"` configurado explícitamente**
 
 `next/font` default es `swap`, así que **OK por default**. Pero podrías ser explícito para claridad:
+
 ```ts
 const geistSans = Geist({
   variable: "--font-geist-sans",

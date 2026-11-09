@@ -1,4 +1,5 @@
 ---
+
 title: "Motion + LazyMotion en portfolio-v2 — guía de integración"
 type: integration-guide
 project: portfolio-v2
@@ -16,17 +17,18 @@ verified_with: minimax-m3
 
 En lugar de animar **elementos sueltos** desde cada componente con `motion.div`, el proyecto centraliza animaciones en un set de **wrappers semánticos** que se reutilizan en todas las secciones. Cada wrapper tiene un rol claro:
 
-| Wrapper | Rol | Trigger |
-|---|---|---|
-| `SectionReveal` | contenedor entero de sección | `whileInView` con `once: true` |
-| `TextReveal` | texto secundario (párrafos, descripciones) | `whileInView` con `once: true` |
-| `SlideReveal` | contenido bipartito (imagen + texto) | `whileInView` con `direction` |
-| `StaggerGroup` | contenedor con children escalonados | variantes con `staggerChildren: 0.08` |
-| `StaggerItem` | hijo directo de `StaggerGroup` | hereda `hidden/show` del parent |
-| `EyebrowReveal` | mini-título arriba de secciones (eyebrow) | `whileInView` con delay corto |
-| `PopReveal` | badges, status indicators, iconos animados | `whileInView` con spring preset |
+| Wrapper         | Rol                                        | Trigger                               |
+| --------------- | ------------------------------------------ | ------------------------------------- |
+| `SectionReveal` | contenedor entero de sección               | `whileInView` con `once: true`        |
+| `TextReveal`    | texto secundario (párrafos, descripciones) | `whileInView` con `once: true`        |
+| `SlideReveal`   | contenido bipartito (imagen + texto)       | `whileInView` con `direction`         |
+| `StaggerGroup`  | contenedor con children escalonados        | variantes con `staggerChildren: 0.08` |
+| `StaggerItem`   | hijo directo de `StaggerGroup`             | hereda `hidden/show` del parent       |
+| `EyebrowReveal` | mini-título arriba de secciones (eyebrow)  | `whileInView` con delay corto         |
+| `PopReveal`     | badges, status indicators, iconos animados | `whileInView` con spring preset       |
 
 **Ventajas del patrón:**
+
 - **Tree-shakeable**: cada sección importa solo lo que usa.
 - **Tema-aware**: las animaciones no dependen de colores, son motion puro.
 - **DRY**: las constantes `easeOut`, `spring`, `sectionVariants`, etc. viven una sola vez.
@@ -54,18 +56,22 @@ Define **todo** el sistema de animación del proyecto:
 ### 2. `src/app/layout.tsx`
 
 ```tsx
-<ThemeProvider attribute="class" defaultTheme="dark"
-                enableSystem={false}
-                themes={["light", "dark", "rosepine-dark", "rosepine-light"]}
-                disableTransitionOnChange>
+<ThemeProvider
+  attribute="class"
+  defaultTheme="dark"
+  enableSystem={false}
+  themes={["light", "dark", "rosepine-dark", "rosepine-light"]}
+  disableTransitionOnChange
+>
   <LazyMotion features={domAnimation} strict>
     <BackgroundFX />
     {children}
   </LazyMotion>
-</ThemeProvider>
+</ThemeProvider>;
 ```
 
 **`LazyMotion` con `features={domAnimation}` y `strict={true}`**:
+
 - `domAnimation` es **el subconjunto mínimo** de features de Motion: opacity, transform, transformOrigin. Suficiente para ~95% de casos (reveals, slides, staggers, springs).
 - `strict={true}` hace que motion lance un error si vos usás `<motion.div>` directamente en lugar de `<m.div>`. Es la red de seguridad que evita el bundle completo.
 - **Resultado**: bundle de Motion pasa de **~30 KB (full motion)** a **~4.6 KB solo lo necesario**. Esa es la magia de LazyMotion.
@@ -119,7 +125,7 @@ const sectionVariants: Variants = {
 // Uso: props de delay local, variantes globales
 <SectionReveal delay={0.2}>
   <SkillsSection />
-</SectionReveal>
+</SectionReveal>;
 ```
 
 `<SectionReveal delay={0.2}>` espera 200ms antes de animar, pero la variante (qué animar) viene de `Animations.tsx`. **No redefinas variantes locales, solo pasá `delay`**.
@@ -127,6 +133,7 @@ const sectionVariants: Variants = {
 ### Patrón 3: Always controlable — no Infinity loops
 
 `LoadingDots` es **controlado** por la prop `isLoading`:
+
 ```tsx
 if (!isLoading) return null;  // ← No renderiza, no anima, no consume CPU
 ```
@@ -153,14 +160,14 @@ Importante: las animaciones son **client-side**. El wrapper `LazyMotion` requier
 
 ## ⚠️ Errores comunes que NO debés repetir
 
-| ❌ Anti-pattern | ✓ Fix en el proyecto |
-|---|---|
-| Importar `motion` (librería entera, ~30KB) | Importar `motion/react` (LazyMotion sub) |
-| Usar `<motion.div>` directamente | Usar `<m.div>` (el sub-version de LazyMotion) |
-| Definir variantes en cada componente | Definir variantes en `Animations.tsx` (una sola vez) |
-| `repeat: Infinity` siempre montado | `repeat: Infinity` solo dentro de `LoadingDots` con `isLoading` controlado |
-| `transition={{ ... }}` en cada `<m.div>` | `<SectionReveal transition={{ delay }}>` (el wrapper controla) |
-| Múltiples `<LazyMotion>` en el árbol | UN solo `<LazyMotion>` en `app/layout.tsx` (root) |
+| ❌ Anti-pattern                            | ✓ Fix en el proyecto                                                       |
+| ------------------------------------------ | -------------------------------------------------------------------------- |
+| Importar `motion` (librería entera, ~30KB) | Importar `motion/react` (LazyMotion sub)                                   |
+| Usar `<motion.div>` directamente           | Usar `<m.div>` (el sub-version de LazyMotion)                              |
+| Definir variantes en cada componente       | Definir variantes en `Animations.tsx` (una sola vez)                       |
+| `repeat: Infinity` siempre montado         | `repeat: Infinity` solo dentro de `LoadingDots` con `isLoading` controlado |
+| `transition={{ ... }}` en cada `<m.div>`   | `<SectionReveal transition={{ delay }}>` (el wrapper controla)             |
+| Múltiples `<LazyMotion>` en el árbol       | UN solo `<LazyMotion>` en `app/layout.tsx` (root)                          |
 
 ## 🔧 Cómo agregar un nuevo wrapper
 
@@ -178,7 +185,11 @@ export function ZoomInReveal({
   children,
   delay = 0,
   className = "",
-}: { children: ReactNode; delay?: number; className?: string }) {
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
   return (
     <m.div
       variants={zoomVariants}
@@ -212,7 +223,6 @@ Si querés que la transición de tema sea animada (fade entre palettes), se hace
 - [[learning/frontend/css/libraries/motion/fundamentals/use-scroll-and-use-transform]] — scroll-linked animations
 - [[learning/frontend/css/libraries/motion/patterns/layout-and-exit-animations]] — patterns avanzados (layoutId, AnimatePresence)
 - [[learning/projects/portfolio-v2/theming-v2-flow]] — flujo completo del theming (paralelo al sistema de animations)
-- [[learning/projects/portfolio-v2/raw/globals-css-theming-v2]] — nodo conceptual de globals.css
 
 ## 🔗 Conexión al sistema v2 (grafo de Graphify)
 

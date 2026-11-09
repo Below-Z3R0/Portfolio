@@ -1,4 +1,5 @@
 ---
+
 title: "ADR-024 — RPC get_site_payload + unstable_cache vs Promise.all de queries"
 type: adr
 project: portfolio-v2
@@ -41,10 +42,12 @@ El orquestador anterior (`src/services/generaldata.service.ts`) tenía:
 17 queries paralelas con `Promise.all`, sin cache.
 
 **Pro**:
+
 - Cero cambios en DB.
 - Una capa más familiar (`getData` por bloque).
 
 **Contra**:
+
 - Sin cache de server → 17 queries por cada render.
 - Más bytes transferibles (no filtra en SQL).
 - Verboso (102 líneas en `generaldata.service.ts`).
@@ -55,21 +58,23 @@ Una sola query a `translations` con `.select('content, content_blocks!inner(key)
 
 ```ts
 const { data } = await supabase
-  .from('translations')
-  .select('content, content_blocks!inner(key)')
-  .eq('lang_code', lang);
+  .from("translations")
+  .select("content, content_blocks!inner(key)")
+  .eq("lang_code", lang);
 
 // Mapear array → { [key]: content } en JS
 const byKey = Object.fromEntries(
-  data.map(r => [(r.content_blocks as { key: string }).key, r.content]),
+  data.map((r) => [(r.content_blocks as { key: string }).key, r.content]),
 );
 ```
 
 **Pro**:
+
 - 1 sola query a `translations` (1 round-trip).
 - Sin cambios en DB.
 
 **Contra**:
+
 - **No filtra en SQL**: si la DB tiene 27 bloques pero el código usa 12, se transfieren los 27 (silencio en Zod).
 - **No escala a metadata**: hay que hacer **otra** query a `content_blocks_metadata`. Total: 2 queries.
 - Sin cache.
@@ -106,6 +111,7 @@ $$;
 ```
 
 **Pro**:
+
 - **1 sola query HTTP** (reemplaza 17).
 - **Filtra en SQL** antes de transferir: el RPC solo devuelve las keys que el código conoce.
 - **Single source of truth**: `SitePayloadSchema` define qué keys se traen.
@@ -114,6 +120,7 @@ $$;
 - **Validación declarativa** con `z.object` anidado: Zod infiere `SitePayload` y valida todo de una.
 
 **Contra**:
+
 - Hay que mantener un RPC (migración SQL).
 - Tipos del RPC son `any` hasta regenerar `supabase gen types`.
 - `createClient()` (que usa `cookies()`) **debe correr fuera del cache** (limitación de `unstable_cache`).
@@ -133,16 +140,16 @@ $$;
 
 ## 📊 Comparación
 
-| Métrica | Antes (Opción A) | Después (Opción C) |
-|---|---|---|
-| Queries HTTP por request | 17 | 1 |
-| Queries HTTP en cache hit | 17 (no había cache) | 0 |
-| Bytes transferidos | 17 keys × jsonb | Solo keys declaradas en `SitePayloadSchema` |
-| Latencia típica (Supabase) | 250-400ms | 50-150ms |
-| Líneas de orquestador | 102 | 90 |
-| Archivos del sistema | 3 | 1 |
-| Validación Zod | Manual, destructuring posicional | Declarativa con `z.object` anidado |
-| Filtrado de keys | No (se transfieren todas) | Sí (SQL filtra antes) |
+| Métrica                    | Antes (Opción A)                 | Después (Opción C)                          |
+| -------------------------- | -------------------------------- | ------------------------------------------- |
+| Queries HTTP por request   | 17                               | 1                                           |
+| Queries HTTP en cache hit  | 17 (no había cache)              | 0                                           |
+| Bytes transferidos         | 17 keys × jsonb                  | Solo keys declaradas en `SitePayloadSchema` |
+| Latencia típica (Supabase) | 250-400ms                        | 50-150ms                                    |
+| Líneas de orquestador      | 102                              | 90                                          |
+| Archivos del sistema       | 3                                | 1                                           |
+| Validación Zod             | Manual, destructuring posicional | Declarativa con `z.object` anidado          |
+| Filtrado de keys           | No (se transfieren todas)        | Sí (SQL filtra antes)                       |
 
 ## 🔄 Consecuencias
 
@@ -171,4 +178,4 @@ $$;
 
 1. **Regenerar tipos** con `bunx supabase gen types typescript` para sacar el `as any` del RPC.
 2. **Validar en dev** que `bun dev` levante y cargue las secciones con datos.
-4. (Opcional) Implementar fallback de idioma.
+3. (Opcional) Implementar fallback de idioma.

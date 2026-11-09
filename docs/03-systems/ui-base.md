@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de UI base — atoms + molecules"
 type: system-documentation
 project: portfolio-v2
@@ -24,20 +25,20 @@ verified_with: minimax-m3
 
 ## 📁 Archivos del sistema (comunidades 0 y 1 del grafo)
 
-| Comunidad | Archivo | Rol |
-|---|---|---|
-| 1 (atoms base) | `src/components/atoms/Button.tsx` | `<button>` polimórfico (txt/svg/img/children) |
-| 1 | `src/components/atoms/LinkButton.tsx` | `<a target="_blank">` con misma API que Button |
-| 1 | `src/components/atoms/Span.tsx` | `<span>` con `role` (para `alert`) e `id` (aria) |
-| 1 | `src/components/atoms/Title1-4.tsx` | Headings semánticos (h1, h2, h3, h4) |
-| 1 | `src/components/atoms/IconRender.tsx` | Resuelve `name` → `ICON_REGISTRY[name]` |
-| 0 (molecules) | `src/components/molecules/NavBar.tsx` | Barra de navegación |
-| 0 | `src/components/molecules/ProjectCard.tsx` | Card de proyecto (con modal) |
-| 0 | `src/components/molecules/Modal.tsx` | **NUEVO** — modal fullscreen con info del proyecto |
-| 0 | `src/components/molecules/Formulary.tsx` | Form con RHF + Zod + EmailJS |
-| 0 | `src/components/molecules/TecnologiesCard.tsx` | Card de skill (tecnología) |
-| 0 | `src/components/molecules/ErrorMessage.tsx` | Modal de error (con `<m.path>` anim) |
-| 0 | `src/components/molecules/SuccessMessage.tsx` | Modal de éxito (con checkmark anim) |
+| Comunidad      | Archivo                                        | Rol                                                |
+| -------------- | ---------------------------------------------- | -------------------------------------------------- |
+| 1 (atoms base) | `src/components/atoms/Button.tsx`              | `<button>` polimórfico (txt/svg/img/children)      |
+| 1              | `src/components/atoms/LinkButton.tsx`          | `<a target="_blank">` con misma API que Button     |
+| 1              | `src/components/atoms/Span.tsx`                | `<span>` con `role` (para `alert`) e `id` (aria)   |
+| 1              | `src/components/atoms/Title1-4.tsx`            | Headings semánticos (h1, h2, h3, h4)               |
+| 1              | `src/components/atoms/IconRender.tsx`          | Resuelve `name` → `ICON_REGISTRY[name]`            |
+| 0 (molecules)  | `src/components/molecules/NavBar.tsx`          | Barra de navegación                                |
+| 0              | `src/components/molecules/ProjectCard.tsx`     | Card de proyecto (con modal)                       |
+| 0              | `src/components/molecules/Modal.tsx`           | **NUEVO** — modal fullscreen con info del proyecto |
+| 0              | `src/components/molecules/Formulary.tsx`       | Form con RHF + Zod + EmailJS                       |
+| 0              | `src/components/molecules/TecnologiesCard.tsx` | Card de skill (tecnología)                         |
+| 0              | `src/components/molecules/ErrorMessage.tsx`    | Modal de error (con `<m.path>` anim)               |
+| 0              | `src/components/molecules/SuccessMessage.tsx`  | Modal de éxito (con checkmark anim)                |
 
 ## 🧩 El corazón: `types.ts`
 
@@ -85,13 +86,35 @@ import { Span } from "../components";
 import type { ButtonProps } from "../types";
 import { IconRender } from "./IconRender";
 
-export function Button({ txt, img, children, svg, alt, svgStyle, buttonBody, txtStyle, imgStyle, type = "button", onClick }: ButtonProps) {
+export function Button({
+  txt,
+  img,
+  children,
+  svg,
+  alt,
+  svgStyle,
+  buttonBody,
+  txtStyle,
+  imgStyle,
+  type = "button",
+  onClick,
+}: ButtonProps) {
   return (
-    <button className={`flex justify-center items-center ${buttonBody}`} type={type} onClick={onClick}>
+    <button
+      className={`flex justify-center items-center ${buttonBody}`}
+      type={type}
+      onClick={onClick}
+    >
       {txt && <Span txt={txt} className={txtStyle} />}
       {svg && <IconRender name={svg} className={`size-full ${svgStyle}`} />}
       {img && (
-        <Image src={`/${img}`} alt={alt || "icon"} className={`size-full ${imgStyle}`} width={80} height={80} />
+        <Image
+          src={`/${img}`}
+          alt={alt || "icon"}
+          className={`size-full ${imgStyle}`}
+          width={80}
+          height={80}
+        />
       )}
       {children}
     </button>
@@ -123,8 +146,11 @@ Mismo patrón, pero usa `<a target="_blank">` para links externos. **Diferencia 
 ```tsx
 export function Span({ txt, className, children, role, id }: SpanProps) {
   return (
-    <span id={id} role={role}
-          className={`text-foreground font-sans text-lg text-balance leading-relaxed font-medium ${className ?? ""}`}>
+    <span
+      id={id}
+      role={role}
+      className={`text-foreground font-sans text-lg text-balance leading-relaxed font-medium ${className ?? ""}`}
+    >
       {children}
       {txt}
     </span>
@@ -139,7 +165,13 @@ export function Span({ txt, className, children, role, id }: SpanProps) {
 ```tsx
 // Title2.tsx (ejemplo)
 export function Title2({ txt, className }: TitleProps) {
-  return <h2 className={`text-4xl text-wrap-balance tracking-tight text-left text-foreground ${className ?? ""}`}>{txt}</h2>;
+  return (
+    <h2
+      className={`text-4xl text-wrap-balance tracking-tight text-left text-foreground ${className ?? ""}`}
+    >
+      {txt}
+    </h2>
+  );
 }
 ```
 
@@ -182,20 +214,27 @@ export interface NavBarProps {
 ### `Formulary.tsx` — formulario de contacto (159 líneas)
 
 El molecule más complejo. Usa:
+
 - `react-hook-form` para state del form
 - `zodResolver(SendEmailSchema)` para validación
 - `emailjs.send()` para enviar el email
 - `AnimatePresence` para mostrar `SuccessMessage` o `ErrorMessage`
 
 ```tsx
-const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SendEmail>({
+const {
+  register,
+  handleSubmit,
+  reset,
+  formState: { errors, isSubmitting },
+} = useForm<SendEmail>({
   resolver: zodResolver(SendEmailSchema),
   mode: "onChange",
-  defaultValues: { name: "", user_email: "", title: "", message: "" }
+  defaultValues: { name: "", user_email: "", title: "", message: "" },
 });
 ```
 
 **4 estados posibles** (`FormStatus`):
+
 - `idle` (form en blanco)
 - `loading` (isSubmitting, muestra `<LoadingDots>`)
 - `success` (email enviado, muestra `<SuccessMessage>`)
@@ -261,7 +300,7 @@ export interface SuccessMessageProps {
   onClose: () => void;
   title?: string;
   message?: string;
-  autoCloseMs?: number;  // ← existe en el type pero no se usa
+  autoCloseMs?: number; // ← existe en el type pero no se usa
 }
 ```
 
@@ -280,6 +319,7 @@ export * from "./types";
 ```
 
 **Por qué existe**:
+
 - Los componentes importan de un solo lugar (`from "../components"`).
 - Re-exporta también `schemas` y `types` (single import point).
 - Permite tree-shaking: solo lo importado se incluye en el bundle.

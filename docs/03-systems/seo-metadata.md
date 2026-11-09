@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema SEO, metadata, fuentes y ErrorBoundary"
 type: system-documentation
 project: portfolio-v2
@@ -20,13 +21,13 @@ El portfolio es un **proyecto personal**. SEO/Analytics/SEO avanzado no son prio
 
 ## 📁 Archivos
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/app/layout.tsx` | 48 | Root layout: metadata + fuentes + ThemeProvider + LazyMotion |
-| `src/app/error.tsx` | 24 | ErrorBoundary raíz: captura errores de página |
-| `src/components/organims/ErrorPage.tsx` | ~50 | Molecule: la UI que muestra el error |
-| `next.config.ts` | 12 | (referencia) — config global con `reactCompiler: true` |
-| `public/favicon.ico` | binary | Favicon estático (256x256) |
+| Archivo                                 | Líneas | Rol                                                          |
+| --------------------------------------- | ------ | ------------------------------------------------------------ |
+| `src/app/layout.tsx`                    | 48     | Root layout: metadata + fuentes + ThemeProvider + LazyMotion |
+| `src/app/error.tsx`                     | 24     | ErrorBoundary raíz: captura errores de página                |
+| `src/components/organims/ErrorPage.tsx` | ~50    | Molecule: la UI que muestra el error                         |
+| `next.config.ts`                        | 12     | (referencia) — config global con `reactCompiler: true`       |
+| `public/favicon.ico`                    | binary | Favicon estático (256x256)                                   |
 
 ## 🧬 Anatomía de `app/layout.tsx`
 
@@ -57,14 +58,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en"
-          className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-          suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full text-[18px] leading-[145%] tracking-[0.18px] zoom-110 text-foreground bg-background font-display">
-        <ThemeProvider attribute="class" defaultTheme="dark"
-                      enableSystem={false}
-                      themes={["light", "dark", "rosepine-dark", "rosepine-light"]}
-                      disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          themes={["light", "dark", "rosepine-dark", "rosepine-light"]}
+          disableTransitionOnChange
+        >
           <LazyMotion features={domAnimation} strict>
             <BackgroundFX />
             {children}
@@ -89,17 +95,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 import { Geist, Geist_Mono } from "next/font/google";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",     // CSS variable
+  variable: "--font-geist-sans", // CSS variable
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",     // CSS variable
+  variable: "--font-geist-mono", // CSS variable
   subsets: ["latin"],
 });
 ```
 
 **Cómo se usa** (en el `<html>`):
+
 ```tsx
 <html className={`${geistSans.variable} ${geistMono.variable} ...`}>
 ```
@@ -107,9 +114,11 @@ const geistMono = Geist_Mono({
 Esto genera **CSS classes** (`__variable_xxxx`, `__variable_yyyy`) que Next.js inyecta en el HTML. Las CSS variables `--font-geist-sans` y `--font-geist-mono` quedan disponibles globalmente.
 
 **Cómo se aplican las fuentes** (en el body o elementos):
+
 ```tsx
 <body className="... font-display">
 ```
+
 - `font-display` es un alias del theme v2 que apunta a `var(--font-geist-sans)` (definido en `globals.css`).
 - `font-mono` (no usado actualmente) apuntaría a `var(--font-geist-mono)`.
 
@@ -125,12 +134,14 @@ export const metadata: Metadata = {
 ```
 
 **Limitaciones actuales**:
+
 - ✗ No es i18n (no hay `title.es` o `title.en`).
 - ✗ No tiene `keywords`, `authors`, `openGraph`, `twitter`.
 - ✗ No tiene `metadataBase` (canonical URL).
 - ✗ No tiene `robots` directives.
 
 Next.js auto-inyecta:
+
 - `<meta charset="utf-8">`
 - `<meta name="viewport" content="width=device-width, initial-scale=1">`
 - `<title>` desde `metadata.title`
@@ -147,7 +158,8 @@ export const metadata: Metadata = {
     default: "Emmanuel Centeno — Full Stack Developer",
     template: "%s | Emmanuel.dev",
   },
-  description: "Full Stack Developer especializado en React, Next.js y TypeScript...",
+  description:
+    "Full Stack Developer especializado en React, Next.js y TypeScript...",
   keywords: ["Full Stack", "React", "Next.js", "TypeScript", "Portfolio"],
   authors: [{ name: "Emmanuel Centeno", url: "https://github.com/Below-Z3R0" }],
   openGraph: {
@@ -189,6 +201,7 @@ export default function Err({
 ```
 
 **Cuándo se renderiza**:
+
 - Error en `getGeneralData()` (e.g., Supabase caído).
 - Error de validación de Zod (si un bloque no matchea el schema).
 - Excepción no capturada en cualquier Server Component de la home.
@@ -200,6 +213,7 @@ export default function Err({
 ### `ErrorPage` molecule (cómo se ve)
 
 El `<ErrorPage>` molecule (en `organims/`) tiene:
+
 - Icon de error animado (`<m.path d="M6 6l12 12M18 6L6 18">`).
 - Título y mensaje (recibe `message` prop).
 - Botón "Reintentar" (recibe `onRetry` prop).
@@ -264,6 +278,7 @@ Pero no vale la pena para un portfolio personal.
 > - **Traducción automática** del browser (ofrece English cuando la página está en Spanish).
 
 **Fix**:
+
 ```tsx
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const headersList = await headers();
@@ -277,6 +292,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 ### 2. **No hay `sitemap.xml` ni `robots.txt`**
 
 El proyecto no tiene:
+
 - `app/sitemap.ts` (sitemap generado dinámicamente).
 - `app/robots.ts` (robots.txt generado dinámicamente).
 - `public/robots.txt` (estático).
@@ -284,13 +300,12 @@ El proyecto no tiene:
 > **Issue SEO**: Google no puede indexar bien el sitio.
 
 **Fix mínimo**:
+
 ```ts
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: "https://emmanueltech.vercel.app", lastModified: new Date() },
-  ];
+  return [{ url: "https://emmanueltech.vercel.app", lastModified: new Date() }];
 }
 ```
 
@@ -309,6 +324,7 @@ title: "Emmanuel.dev",
 > **Issue**: si el usuario navega a `?lang=en`, el título sigue siendo "Emmanuel.dev" (no cambia). No hay i18n de metadata.
 
 **Fix**:
+
 ```ts
 title: {
   default: "Emmanuel.dev",
@@ -323,8 +339,10 @@ title: {
 Si el usuario tiene `prefers-reduced-motion: reduce` (accesibilidad), las animaciones de motion y CSS siguen corriendo. **Issue a11y**.
 
 **Fix** (en `app/layout.tsx`):
+
 ```tsx
-const prefersReducedMotion = headers().get("x-prefers-reduced-motion") === "reduce";
+const prefersReducedMotion =
+  headers().get("x-prefers-reduced-motion") === "reduce";
 // luego pasar como prop a ThemeProvider y components
 ```
 
@@ -338,17 +356,19 @@ import { Inter } from "next/font/google";
 
 export const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin", "cyrillic"],  // ← para multi-script
+  subsets: ["latin", "cyrillic"], // ← para multi-script
   display: "swap",
 });
 ```
 
 Usar en layout:
+
 ```tsx
 <html className={`${inter.variable} ...`}>
 ```
 
 Aplicar en componentes:
+
 ```tsx
 <p className="font-sans">Default font</p>
 <p className="font-[family-name:var(--font-inter)]">Inter</p>
@@ -362,9 +382,22 @@ Aplicar en componentes:
 import { useEffect } from "react";
 import { ErrorPage } from "@/components/components";
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  useEffect(() => { console.error("Error en projects:", error); }, [error]);
-  return <ErrorPage message={`No se pudo cargar el proyecto: ${error.message}`} onRetry={reset} />;
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error("Error en projects:", error);
+  }, [error]);
+  return (
+    <ErrorPage
+      message={`No se pudo cargar el proyecto: ${error.message}`}
+      onRetry={reset}
+    />
+  );
 }
 ```
 

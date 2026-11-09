@@ -229,28 +229,28 @@
 
 ## 📊 Resumen por prioridad
 
-| Prioridad | Count | Total esfuerzo estimado |
-|---|---|---|
-| 🟢 Crítica | 5 | ~5-7 días |
-| 🟡 Media | 10 | ~2-3 días |
-| 🔵 Baja | 12 | ~5-7 días |
-| **Total** | **27** | **~12-17 días** |
+| Prioridad  | Count  | Total esfuerzo estimado |
+| ---------- | ------ | ----------------------- |
+| 🟢 Crítica | 5      | ~5-7 días               |
+| 🟡 Media   | 10     | ~2-3 días               |
+| 🔵 Baja    | 12     | ~5-7 días               |
+| **Total**  | **27** | **~12-17 días**         |
 
 ## 🔗 Conexiones con sistemas
 
-| Issue | Sistema | Doc que lo cubre |
-|---|---|---|
-| #001, #002, #016, #019, #020 | i18n | [[sistema-i18n-multi-idioma]] + [[sistema-i18n-metadata-extensions]] |
-| #003, #006 | testing/infra | [[sistema-testing-ci-deploy-gap]] |
-| #004, #021, #022 | data layer | [[sistema-db-supabase-headless-cms]] + [[sistema-manejo-errores]] |
-| #005, #007, #008, #014, #026 | type system | [[sistema-barrel-type-helpers]] |
-| #006, #009, #027 | animations | [[sistema-animate-presence-exit-animations]] + [[sistema-motion]] |
-| #010, #012 | assets | [[sistema-imagenes-svg-image]] |
-| #011, #026 | type system | [[sistema-barrel-type-helpers]] |
-| #013 | loading | [[sistema-loading-skeletons]] |
-| #015 | theming | [[sistema-theming-v2-flow]] + [[sistema-theming-v2]] |
-| #017, #018, #023, #024 | SEO/infra | [[sistema-seo-metadata-fonts-errorboundary]] |
-| #025 | organisms | [[sistema-header-navegacion]] + [[sistema-ui-base-atoms-molecules]] |
+| Issue                        | Sistema       | Doc que lo cubre                                                     |
+| ---------------------------- | ------------- | -------------------------------------------------------------------- |
+| #001, #002, #016, #019, #020 | i18n          | [[sistema-i18n-multi-idioma]] + [[sistema-i18n-metadata-extensions]] |
+| #003, #006                   | testing/infra | [[sistema-testing-ci-deploy-gap]]                                    |
+| #004, #021, #022             | data layer    | [[sistema-db-supabase-headless-cms]] + [[sistema-manejo-errores]]    |
+| #005, #007, #008, #014, #026 | type system   | [[sistema-barrel-type-helpers]]                                      |
+| #006, #009, #027             | animations    | [[sistema-animate-presence-exit-animations]] + [[sistema-motion]]    |
+| #010, #012                   | assets        | [[sistema-imagenes-svg-image]]                                       |
+| #011, #026                   | type system   | [[sistema-barrel-type-helpers]]                                      |
+| #013                         | loading       | [[sistema-loading-skeletons]]                                        |
+| #015                         | theming       | [[sistema-theming-v2-flow]] + [[sistema-theming-v2]]                 |
+| #017, #018, #023, #024       | SEO/infra     | [[sistema-seo-metadata-fonts-errorboundary]]                         |
+| #025                         | organisms     | [[sistema-header-navegacion]] + [[sistema-ui-base-atoms-molecules]]  |
 
 ## 🛠️ Workflow de resolución sugerido
 
@@ -295,7 +295,6 @@
   ```
 
 - **Verificación**:
-
   - `SELECT portfolio.get_site_payload('es', array['project.centeno-advisory-db'])` → `"icon_key": "postgressql"` ✓
   - `IconNameSchema.safeParse('postgressql')` → `VALID` ✓
   - `IconNameSchema.safeParse('postgresql')` → `INVALID` (confirma por qué fallaba antes)
@@ -322,5 +321,9 @@
 
 ## Estado del grafo
 
-- **266 nodos, 553 edges, 18 comunidades** (regenerado con `graphify extract src/ --out docs/graph/ && graphify cluster-only docs/graph/ && python3 docs/graph/restore-theming-edges.py`).
+- **277 nodos, 571 edges, 12 comunidades** (regenerado con MiniMax M3.1 Flash).
+- Comando: `graphify extract src/ --backend openai --model MiniMax-M3.1-Flash --out docs/graph/ --force && graphify cluster-only docs/graph/ --backend openai --model MiniMax-M3.1-Flash && python3 docs/graph/restore-theming-edges.py`.
 - Las 10 edges manuales del theming v2 están preservadas (el script `restore-theming-edges.py` las restaura tras cada `cluster-only`).
+- **Nota de counting**: las edges viven en la clave `links` del `graph.json`, no en `edges`. Un conteo con `g["edges"]` devuelve 0 y parece un grafo vacío.
+- **Backend**: MiniMax vía endpoint OpenAI-compatible. Requiere `OPENAI_BASE_URL=https://api.minimax.io/v1`, `OPENAI_MODEL=MiniMax-M3.1-Flash` y `OPENAI_API_KEY` (de `pass show api/minimax`).
+- **M3.1-Flash requiere thinking adaptativo**: no se puede deshabilitar (`GRAPHIFY_DISABLE_THINKING=1` lo rechaza con error 400). Hay que dejar `max_completion_tokens` alto (16000+) o la respuesta queda vacía y Graphify la marca como `hollow`.

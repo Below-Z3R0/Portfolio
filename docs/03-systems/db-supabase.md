@@ -1,4 +1,5 @@
 ---
+
 title: "DB + Supabase — schema portfolio (headless CMS)"
 type: system-documentation
 project: portfolio-v2
@@ -28,14 +29,14 @@ En vez de hardcodear el contenido en componentes (títulos, descripciones, links
 
 ### Tablas del proyecto (verificadas con `mcp__supabase__execute_sql`)
 
-| Tabla | Propósito | Filas en BD |
-|---|---|---|
-| `content_blocks` | Catálogo semántico de bloques (define "qué existe") | ~12 (verificar) |
-| `translations` | Contenido traducible por idioma (`lang_code`) | ~24 (12 bloques × 2 idiomas) |
-| `content_blocks_metadata` | Metadata no traducible (image_keys, links, flags) | ~7 |
-| `general_data` | Datos globales del sitio | ~1 (general) |
-| `languages` | Catálogo de idiomas activos | 2 (es, en) |
-| `projects` | Catálogo de proyectos con content jsonb propio | 5 (centenoadvisory, db, features, portfolio, nincy) |
+| Tabla                     | Propósito                                           | Filas en BD                                         |
+| ------------------------- | --------------------------------------------------- | --------------------------------------------------- |
+| `content_blocks`          | Catálogo semántico de bloques (define "qué existe") | ~12 (verificar)                                     |
+| `translations`            | Contenido traducible por idioma (`lang_code`)       | ~24 (12 bloques × 2 idiomas)                        |
+| `content_blocks_metadata` | Metadata no traducible (image_keys, links, flags)   | ~7                                                  |
+| `general_data`            | Datos globales del sitio                            | ~1 (general)                                        |
+| `languages`               | Catálogo de idiomas activos                         | 2 (es, en)                                          |
+| `projects`                | Catálogo de proyectos con content jsonb propio      | 5 (centenoadvisory, db, features, portfolio, nincy) |
 
 > **Nota**: las 6 tablas viven en el **schema `portfolio`** (no en `public`). El cliente Supabase se inicializa con `db: { schema: "portfolio" }` para usar este namespace.
 
@@ -43,59 +44,59 @@ En vez de hardcodear el contenido en componentes (títulos, descripciones, links
 
 #### `content_blocks` (catálogo de claves)
 
-| Columna | Tipo | Nullable | Default | Notas |
-|---|---|---|---|---|
-| `id` | uuid | NO | `gen_random_uuid()` | PK |
-| `key` | text | NO | — | `section.hero`, `section.navbar`, `project.centeno-advisory`, etc. |
-| `owner` | text | NO | — | Quién creó el bloque (admin, sistema) |
-| `description` | text | YES | — | Texto libre, no se usa en frontend |
-| `create_at` | timestamptz | YES | `now()` | — |
+| Columna       | Tipo        | Nullable | Default             | Notas                                                              |
+| ------------- | ----------- | -------- | ------------------- | ------------------------------------------------------------------ |
+| `id`          | uuid        | NO       | `gen_random_uuid()` | PK                                                                 |
+| `key`         | text        | NO       | —                   | `section.hero`, `section.navbar`, `project.centeno-advisory`, etc. |
+| `owner`       | text        | NO       | —                   | Quién creó el bloque (admin, sistema)                              |
+| `description` | text        | YES      | —                   | Texto libre, no se usa en frontend                                 |
+| `create_at`   | timestamptz | YES      | `now()`             | —                                                                  |
 
 #### `translations` (content traducible)
 
-| Columna | Tipo | Nullable | Default | Notas |
-|---|---|---|---|---|
-| `id` | uuid | NO | `gen_random_uuid()` | PK |
-| `block_id` | uuid | YES | — | FK → `content_blocks.id` |
-| `lang_code` | text | YES | — | `"es"` \| `"en"` (valida contra `languages.code`) |
-| `content` | jsonb | NO | — | El JSON que valida el Zod schema (ej. `HeroContentSchema`) |
-| `updated_at` | timestamptz | YES | `now()` | — |
+| Columna      | Tipo        | Nullable | Default             | Notas                                                      |
+| ------------ | ----------- | -------- | ------------------- | ---------------------------------------------------------- |
+| `id`         | uuid        | NO       | `gen_random_uuid()` | PK                                                         |
+| `block_id`   | uuid        | YES      | —                   | FK → `content_blocks.id`                                   |
+| `lang_code`  | text        | YES      | —                   | `"es"` \| `"en"` (valida contra `languages.code`)          |
+| `content`    | jsonb       | NO       | —                   | El JSON que valida el Zod schema (ej. `HeroContentSchema`) |
+| `updated_at` | timestamptz | YES      | `now()`             | —                                                          |
 
 > **Importante**: `block_id` y `lang_code` son la **clave compuesta lógica** (no hay UNIQUE constraint explícito en el schema, pero el código asume unicidad).
 
 #### `content_blocks_metadata` (datos no traducibles)
 
-| Columna | Tipo | Nullable | Default | Notas |
-|---|---|---|---|---|
-| `id` | uuid | NO | `gen_random_uuid()` | PK |
-| `block_id` | uuid | NO | — | FK → `content_blocks.id` |
-| `content` | jsonb | NO | — | El JSON que valida `HeroMetadataSchema`, etc. |
-| `updated_at` | timestamptz | YES | `now()` | — |
+| Columna      | Tipo        | Nullable | Default             | Notas                                         |
+| ------------ | ----------- | -------- | ------------------- | --------------------------------------------- |
+| `id`         | uuid        | NO       | `gen_random_uuid()` | PK                                            |
+| `block_id`   | uuid        | NO       | —                   | FK → `content_blocks.id`                      |
+| `content`    | jsonb       | NO       | —                   | El JSON que valida `HeroMetadataSchema`, etc. |
+| `updated_at` | timestamptz | YES      | `now()`             | —                                             |
 
 #### `general_data` (datos globales del sitio)
 
-| Columna | Tipo | Nullable | Default | Notas |
-|---|---|---|---|---|
-| `id` | uuid | NO | `gen_random_uuid()` | PK |
-| `section_name` | text | YES | — | ej. `"general"`, `"contacts"` |
-| `content` | jsonb | YES | — | El JSON del bloque global (ej. `GeneralContacts`) |
+| Columna        | Tipo  | Nullable | Default             | Notas                                             |
+| -------------- | ----- | -------- | ------------------- | ------------------------------------------------- |
+| `id`           | uuid  | NO       | `gen_random_uuid()` | PK                                                |
+| `section_name` | text  | YES      | —                   | ej. `"general"`, `"contacts"`                     |
+| `content`      | jsonb | YES      | —                   | El JSON del bloque global (ej. `GeneralContacts`) |
 
 #### `languages` (catálogo de idiomas)
 
-| Columna | Tipo | Nullable | Default | Notas |
-|---|---|---|---|---|
-| `code` | text | NO | — | PK (ej. `"es"`, `"en"`) |
-| `name` | text | NO | — | Nombre visible (ej. `"Español"`, `"English"`) |
-| `is_default` | bool | YES | `false` | Idioma por defecto |
-| `create_at` | timestamptz | YES | `now()` | — |
+| Columna      | Tipo        | Nullable | Default | Notas                                         |
+| ------------ | ----------- | -------- | ------- | --------------------------------------------- |
+| `code`       | text        | NO       | —       | PK (ej. `"es"`, `"en"`)                       |
+| `name`       | text        | NO       | —       | Nombre visible (ej. `"Español"`, `"English"`) |
+| `is_default` | bool        | YES      | `false` | Idioma por defecto                            |
+| `create_at`  | timestamptz | YES      | `now()` | —                                             |
 
 #### `projects` (catálogo de proyectos)
 
-| Columna | Tipo | Nullable | Default | Notas |
-|---|---|---|---|---|
-| `id` | uuid | NO | `gen_random_uuid()` | PK |
-| `project_name` | text | YES | — | ej. `"centenoadvisory"`, `"portfolio"`, `"nincy"` |
-| `content` | jsonb | YES | — | El JSON con `paragraph, tecnologies, modal` (validado por `ProjectItemSchema`) |
+| Columna        | Tipo  | Nullable | Default             | Notas                                                                          |
+| -------------- | ----- | -------- | ------------------- | ------------------------------------------------------------------------------ |
+| `id`           | uuid  | NO       | `gen_random_uuid()` | PK                                                                             |
+| `project_name` | text  | YES      | —                   | ej. `"centenoadvisory"`, `"portfolio"`, `"nincy"`                              |
+| `content`      | jsonb | YES      | —                   | El JSON con `paragraph, tecnologies, modal` (validado por `ProjectItemSchema`) |
 
 > **Nota**: esta tabla parece **redundante** con `translations`. Pero el código la usa distinto: `getData("project.X", lang, supabase, ProjectItemSchema)` apunta a `translations` (con `lang_code`), mientras que `projects.content` se usaría para datos que **no varían por idioma**. El proyecto actual no la usa directamente — la info de proyectos vive en `translations`.
 
@@ -103,25 +104,25 @@ En vez de hardcodear el contenido en componentes (títulos, descripciones, links
 
 Cada contenido tiene una **clave semántica** en `content_blocks.key`:
 
-| `block_key` | Tabla | Schema Zod | Aparece en |
-|---|---|---|---|
-| `section.hero` | `translations` | `HeroContentSchema` | Hero |
-| `section.hero` | `content_blocks_metadata` | `HeroMetadataSchema` | Hero |
-| `section.navbar` | `translations` | `NavbarContentSchema` | NavBar |
-| `section.skills` | `translations` | `SkillsContentSchema` | Skills |
-| `section.skills` | `content_blocks_metadata` | `SkillsMetadataSchema` | Skills |
-| `section.projects` | `translations` | `ProjectsContentSchema` | Projects |
-| `section.aboutme` | `translations` | `AboutMeContentSchema` | AboutMe |
-| `section.aboutme` | `content_blocks_metadata` | `AboutMeMetadataSchema` | AboutMe |
-| `section.contact` | `translations` | `ContactContentSchema` | Contact |
-| `section.footer` | `translations` | `FooterContentSchema` | Footer |
-| `general.contacts` | `content_blocks_metadata` | `GeneralContactsSchema` | Hero / Contact |
-| `project.centeno-advisory` | `translations` | `ProjectItemSchema` | Projects card |
-| `project.centeno-advisory-db` | `translations` | `ProjectItemSchema` | Projects card |
-| `project.centeno-advisory-features` | `translations` | `ProjectItemSchema` | Projects card |
-| `project.portfolio` | `translations` | `ProjectItemSchema` | Projects card |
-| `project.nincy` | `translations` | `ProjectItemSchema` | Projects card |
-| `project.{slug}` (× 5) | `content_blocks_metadata` | `ProjectsMetadataSchema` | Projects card |
+| `block_key`                         | Tabla                     | Schema Zod               | Aparece en     |
+| ----------------------------------- | ------------------------- | ------------------------ | -------------- |
+| `section.hero`                      | `translations`            | `HeroContentSchema`      | Hero           |
+| `section.hero`                      | `content_blocks_metadata` | `HeroMetadataSchema`     | Hero           |
+| `section.navbar`                    | `translations`            | `NavbarContentSchema`    | NavBar         |
+| `section.skills`                    | `translations`            | `SkillsContentSchema`    | Skills         |
+| `section.skills`                    | `content_blocks_metadata` | `SkillsMetadataSchema`   | Skills         |
+| `section.projects`                  | `translations`            | `ProjectsContentSchema`  | Projects       |
+| `section.aboutme`                   | `translations`            | `AboutMeContentSchema`   | AboutMe        |
+| `section.aboutme`                   | `content_blocks_metadata` | `AboutMeMetadataSchema`  | AboutMe        |
+| `section.contact`                   | `translations`            | `ContactContentSchema`   | Contact        |
+| `section.footer`                    | `translations`            | `FooterContentSchema`    | Footer         |
+| `general.contacts`                  | `content_blocks_metadata` | `GeneralContactsSchema`  | Hero / Contact |
+| `project.centeno-advisory`          | `translations`            | `ProjectItemSchema`      | Projects card  |
+| `project.centeno-advisory-db`       | `translations`            | `ProjectItemSchema`      | Projects card  |
+| `project.centeno-advisory-features` | `translations`            | `ProjectItemSchema`      | Projects card  |
+| `project.portfolio`                 | `translations`            | `ProjectItemSchema`      | Projects card  |
+| `project.nincy`                     | `translations`            | `ProjectItemSchema`      | Projects card  |
+| `project.{slug}` (× 5)              | `content_blocks_metadata` | `ProjectsMetadataSchema` | Projects card  |
 
 **Total de keys** = 8 content + 9 metadata = **17 queries en paralelo**.
 
@@ -178,12 +179,12 @@ $$;
 
 ### Por qué el SQL hace el trabajo
 
-| Operación | En JS (antes) | En SQL (ahora) |
-|---|---|---|
-| JOIN content_blocks ↔ translations | N round-trips (uno por key) | 1 round-trip con JOIN |
-| Agrupar por key | Manual con `Object.fromEntries` | `jsonb_object_agg(cb.key, ...)` |
-| Filtrar keys permitidas | No se filtraba (se transferían todas) | `WHERE cb.key = ANY(p_keys)` |
-| Manejar filas vacías | `if (!data) throw ...` | `COALESCE(..., '{}'::jsonb)` |
+| Operación                          | En JS (antes)                         | En SQL (ahora)                  |
+| ---------------------------------- | ------------------------------------- | ------------------------------- |
+| JOIN content_blocks ↔ translations | N round-trips (uno por key)           | 1 round-trip con JOIN           |
+| Agrupar por key                    | Manual con `Object.fromEntries`       | `jsonb_object_agg(cb.key, ...)` |
+| Filtrar keys permitidas            | No se filtraba (se transferían todas) | `WHERE cb.key = ANY(p_keys)`    |
+| Manejar filas vacías               | `if (!data) throw ...`                | `COALESCE(..., '{}'::jsonb)`    |
 
 ### Por qué `security invoker`
 
@@ -193,7 +194,7 @@ Sin esto, la función corre con permisos del **definidor** (generalmente el owne
 
 ```ts
 // src/services/data/site.ts
-const { data, error } = await supabase.rpc('get_site_payload', {
+const { data, error } = await supabase.rpc("get_site_payload", {
   p_lang: lang,
   p_keys: allowedKeys,
 });
@@ -286,7 +287,7 @@ export const createClient = () =>
   createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    { db: { schema: "portfolio" } }
+    { db: { schema: "portfolio" } },
   );
 ```
 
@@ -303,11 +304,13 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
-        getAll() { return cookieStore.getAll(); },
+        getAll() {
+          return cookieStore.getAll();
+        },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              cookieStore.set(name, value, options),
             );
           } catch {
             // Server Component: ignorar error de escritura
@@ -315,7 +318,7 @@ export async function createClient() {
         },
       },
       db: { schema: "portfolio" },
-    }
+    },
   );
 }
 ```
@@ -393,6 +396,7 @@ if (!result.success) {
 ```
 
 **Implicaciones**:
+
 - `data.content[key]` no matchea el schema Zod → throw con la key + valor real → `error.tsx` se renderiza.
 - `lang` no existe en la BD → el RPC devuelve `{}`, el loop tira `Missing content for "..."`.
 - Zod validation fail en runtime → propagado como `error.tsx` boundary.
@@ -403,14 +407,14 @@ if (!result.success) {
 
 ## 📁 Archivos del sistema (en el grafo, comunidad 3)
 
-| Archivo | Líneas | Propósito |
-|---|---|---|
-| `services/supabase/client.ts` | 14 | Cliente browser (publishable key, cookies) |
-| `services/supabase/server.ts` | 32 | Cliente server (publishable key + cookies RSC) |
-| `services/supabase/types/types.ts` | 1191 | Tipado de la BD (generado por `supabase gen types`) |
-| `services/supabase/types/types.helper.ts` | corto | `PortfolioClient` type helper |
-| `services/data/site.ts` | 90 | `getSiteData(lang)` (1 RPC + Zod anidado + `unstable_cache`) |
-| `services/data/function-example.sql` | 87 | SQL canónico del RPC (doc + backup) |
+| Archivo                                   | Líneas | Propósito                                                    |
+| ----------------------------------------- | ------ | ------------------------------------------------------------ |
+| `services/supabase/client.ts`             | 14     | Cliente browser (publishable key, cookies)                   |
+| `services/supabase/server.ts`             | 32     | Cliente server (publishable key + cookies RSC)               |
+| `services/supabase/types/types.ts`        | 1191   | Tipado de la BD (generado por `supabase gen types`)          |
+| `services/supabase/types/types.helper.ts` | corto  | `PortfolioClient` type helper                                |
+| `services/data/site.ts`                   | 90     | `getSiteData(lang)` (1 RPC + Zod anidado + `unstable_cache`) |
+| `services/data/function-example.sql`      | 87     | SQL canónico del RPC (doc + backup)                          |
 
 **Total**: ~1400 líneas (incluyendo types.ts generado). **Antes**: 3 archivos de servicios (`generaldata.service.ts` + `data.service.ts` + `metadata.service.ts`) + 1 helper. **Ahora**: 1 archivo (`site.ts`) + 1 doc SQL.
 
@@ -430,6 +434,7 @@ if (!result.success) {
    - Insert row en `translations` con `block_id` apuntando al nuevo key.
    - Insert row en `content_blocks_metadata` si tiene metadata.
 2. **En `components/schemas.ts`**:
+
    ```ts
    export const TestimonialsContentSchema = z.object({
      title: z.string(),
@@ -437,6 +442,7 @@ if (!result.success) {
    });
    ```
 3. **En `services/data/site.ts`** — agregar al `SitePayloadSchema`:
+
    ```ts
    content: z.object({
      // ...existing...
@@ -444,11 +450,13 @@ if (!result.success) {
    }),
    ```
 4. **En `app/page.tsx`**:
+
    ```tsx
    const testimonials_data = { data: content["section.testimonials"] };
    <TestimonialsSection testimonials_data={testimonials_data} />
    ```
 5. **Invalidar cache** (opcional, si querés ver el cambio antes de la hora):
+
    ```ts
    import { revalidateTag } from 'next/cache';
    revalidateTag('site:es');
@@ -462,13 +470,13 @@ if (!result.success) {
 
 ## 🔗 Conexiones con otros sistemas
 
-| Sistema | Edge con DB | Detalle |
-|---|---|---|
-| Orquestador (comunidad 2) | `getSiteData()` retorna `SitePayload` (cacheado) | Une DB con UI |
-| Formulario (comunidad 5) | ninguno directo | EmailJS usa el form, no la BD |
-| Iconos (comunidad 4) | parcial | `IconNameSchema` valida que `icon_key` exista en `ICON_REGISTRY` (no en DB) |
-| Imágenes (comunidad 10) | parcial | `<Image loader="supabase-image-loader">` apunta a Supabase Storage (no a la DB) |
-| Theming v2 (comunidad 8) | ninguno directo | CSS variables hardcoded en `globals.css` |
+| Sistema                   | Edge con DB                                      | Detalle                                                                         |
+| ------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| Orquestador (comunidad 2) | `getSiteData()` retorna `SitePayload` (cacheado) | Une DB con UI                                                                   |
+| Formulario (comunidad 5)  | ninguno directo                                  | EmailJS usa el form, no la BD                                                   |
+| Iconos (comunidad 4)      | parcial                                          | `IconNameSchema` valida que `icon_key` exista en `ICON_REGISTRY` (no en DB)     |
+| Imágenes (comunidad 10)   | parcial                                          | `<Image loader="supabase-image-loader">` apunta a Supabase Storage (no a la DB) |
+| Theming v2 (comunidad 8)  | ninguno directo                                  | CSS variables hardcoded en `globals.css`                                        |
 
 ## ⚠️ Lo que falta documentar del sistema DB
 

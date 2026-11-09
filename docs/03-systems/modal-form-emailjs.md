@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de Modal + Formulario con EmailJS"
 type: system-documentation
 project: portfolio-v2
@@ -14,25 +15,25 @@ verified_with: minimax-m3
 
 ## 🎯 ¿Por qué 3 modales y no 1?
 
-| Modal | Trigger | Uso | Animación |
-|---|---|---|---|
-| `Modal.tsx` | Click en `ProjectCard` | Mostrar info detallada del proyecto | Spring scale + opacity |
-| `SuccessMessage.tsx` | Email enviado OK | Confirmar al usuario que recibimos | Checkmark path animation |
-| `ErrorMessage.tsx` | EmailJS throw | Mostrar el error y permitir retry | X path animation |
+| Modal                | Trigger                | Uso                                 | Animación                |
+| -------------------- | ---------------------- | ----------------------------------- | ------------------------ |
+| `Modal.tsx`          | Click en `ProjectCard` | Mostrar info detallada del proyecto | Spring scale + opacity   |
+| `SuccessMessage.tsx` | Email enviado OK       | Confirmar al usuario que recibimos  | Checkmark path animation |
+| `ErrorMessage.tsx`   | EmailJS throw          | Mostrar el error y permitir retry   | X path animation         |
 
 **AnimatePresence** (motion) hace que las exit transitions se rendericen (CSS no puede animar unmount).
 
 ## 📁 Archivos
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/components/molecules/Modal.tsx` | 60 | Modal fullscreen con imagen + título + descripción interactiva |
-| `src/components/molecules/Formulary.tsx` | 159 | Form completo (RHF + Zod + EmailJS) |
-| `src/components/molecules/SuccessMessage.tsx` | 113 | Modal de éxito con checkmark animado |
-| `src/components/molecules/ErrorMessage.tsx` | 107 | Modal de error con X animada |
-| `src/components/schemas.ts` (líneas 4-9) | 6 | `SendEmailSchema` (validación del form) |
-| `src/components/types.ts` (líneas 147-176) | 30 | Types: `FormularyProps`, `FormStatus`, `SuccessMessageProps`, `ErrorMessageProps` |
-| `.env` | — | 4 env vars de EmailJS |
+| Archivo                                       | Líneas | Rol                                                                               |
+| --------------------------------------------- | ------ | --------------------------------------------------------------------------------- |
+| `src/components/molecules/Modal.tsx`          | 60     | Modal fullscreen con imagen + título + descripción interactiva                    |
+| `src/components/molecules/Formulary.tsx`      | 159    | Form completo (RHF + Zod + EmailJS)                                               |
+| `src/components/molecules/SuccessMessage.tsx` | 113    | Modal de éxito con checkmark animado                                              |
+| `src/components/molecules/ErrorMessage.tsx`   | 107    | Modal de error con X animada                                                      |
+| `src/components/schemas.ts` (líneas 4-9)      | 6      | `SendEmailSchema` (validación del form)                                           |
+| `src/components/types.ts` (líneas 147-176)    | 30     | Types: `FormularyProps`, `FormStatus`, `SuccessMessageProps`, `ErrorMessageProps` |
+| `.env`                                        | —      | 4 env vars de EmailJS                                                             |
 
 ## 🎭 El Modal (recién agregado)
 
@@ -40,7 +41,14 @@ verified_with: minimax-m3
 
 ```tsx
 // src/components/molecules/Modal.tsx
-export function Modal({ img, data, in_construction, onClose, activeTxt, setActivetxt }: ModalProps) {
+export function Modal({
+  img,
+  data,
+  in_construction,
+  onClose,
+  activeTxt,
+  setActivetxt,
+}: ModalProps) {
   return (
     <m.div
       // Backdrop
@@ -52,37 +60,52 @@ export function Modal({ img, data, in_construction, onClose, activeTxt, setActiv
     >
       <m.div
         // Modal content
-        initial={{ opacity: 0, scale: 0.50, y: 30 }}
+        initial={{ opacity: 0, scale: 0.5, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.50, y: 30 }}
+        exit={{ opacity: 0, scale: 0.5, y: 30 }}
         transition={{ type: "spring" }}
         onClick={(event) => event.stopPropagation()}
         className="relative w-232 h-180 rounded-3xl bg-card border border-accent/40 shadow-2xl overflow-hidden flex flex-col items-center justify-center"
       >
         {/* imagen (Button img usa el custom loader de Supabase) */}
-        <Button img={img} imgStyle="object-cover mask-b-to-80%" buttonBody="h-100 pointer-events-none w-full" />
-        
+        <Button
+          img={img}
+          imgStyle="object-cover mask-b-to-80%"
+          buttonBody="h-100 pointer-events-none w-full"
+        />
+
         {/* Título */}
         <div className="absolute inset-0 flex flex-col justify-end pl-20">
           <Title3 txt={data.category} />
           <Title2 txt={data.title} />
         </div>
-        
+
         {/* Descripción interactiva */}
         <div className="h-full px-20 pt-5">
           <Paragraph className="text-[0.97rem]" txt={activeTxt} />
         </div>
-        
+
         {/* Tecnologías como botones clickeables */}
         <div className="flex gap-4 mb-3">
           {data.tecnologies.map((item) => (
             <Button
               buttonBody={`size-8 cursor-pointer ${in_construction}`}
-              onClick={() => setActivetxt(activeTxt === item.description ? data.paragraph : item.description)}
+              onClick={() =>
+                setActivetxt(
+                  activeTxt === item.description
+                    ? data.paragraph
+                    : item.description,
+                )
+              }
               key={item.name}
               aria-label={item.name}
             >
-              <TecnologiesCard cardStyle="..." svg={item.icon_key} color={item.color} bar={true} />
+              <TecnologiesCard
+                cardStyle="..."
+                svg={item.icon_key}
+                color={item.color}
+                bar={true}
+              />
             </Button>
           ))}
         </div>
@@ -114,7 +137,7 @@ export interface ModalProps {
   setActivetxt: (txt: string) => void;
   open: boolean;
   onClose: () => void;
-};
+}
 ```
 
 > `data` extiende `ModalContent` (de schemas) **agregando** `category` y `title`. **Issue conocido**: `ModalContent = z.infer<typeof ProjectItemSchema>["modal"]` ya tiene `paragraph`, pero el modal usa `data.paragraph` (pasado por `activeTxt`). El wrapper `data` se construye en `ProjectCard.tsx`.
@@ -143,16 +166,19 @@ Si error → setErrorMsg(...) + setStatus("error") → modal ErrorMessage
 ```ts
 // src/components/schemas.ts
 export const SendEmailSchema = z.object({
-  name: z.string().min(2, 'Name to short!!').max(80, 'Name to large'),
-  user_email: z.email('Invalid email!!').transform(v => v.toLowerCase().trim()),
-  title: z.string().min(3, 'Subject to short!!'),
-  message: z.string().min(8, 'Message to short!!')
+  name: z.string().min(2, "Name to short!!").max(80, "Name to large"),
+  user_email: z
+    .email("Invalid email!!")
+    .transform((v) => v.toLowerCase().trim()),
+  title: z.string().min(3, "Subject to short!!"),
+  message: z.string().min(8, "Message to short!!"),
 });
 
 export type SendEmail = z.infer<typeof SendEmailSchema>;
 ```
 
 **4 validaciones**:
+
 - `name`: 2-80 caracteres.
 - `user_email`: email válido, normalizado a lowercase + trim.
 - `title`: 3+ caracteres.
@@ -163,14 +189,20 @@ export type SendEmail = z.infer<typeof SendEmailSchema>;
 ### RHF + Zod setup (en `Formulary.tsx`)
 
 ```ts
-const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SendEmail>({
+const {
+  register,
+  handleSubmit,
+  reset,
+  formState: { errors, isSubmitting },
+} = useForm<SendEmail>({
   resolver: zodResolver(SendEmailSchema),
-  mode: "onChange",  // valida en cada cambio (no esperar al submit)
-  defaultValues: { name: "", user_email: "", title: "", message: "" }
+  mode: "onChange", // valida en cada cambio (no esperar al submit)
+  defaultValues: { name: "", user_email: "", title: "", message: "" },
 });
 ```
 
 **`mode: "onChange"`** es importante: la validación corre en cada keystroke. **Alternativas**:
+
 - `onSubmit`: valida solo al submit (UX peor).
 - `onBlur`: valida al perder foco (UX intermedia).
 - `onTouched`: igual a `onBlur` pero no muestra errores hasta el primer blur.
@@ -259,6 +291,7 @@ El template vive en el **dashboard de EmailJS** (no en este repo). Tiene 2 email
 ```
 
 **3 animaciones encadenadas**:
+
 1. Backdrop fade-in (200ms).
 2. Modal scale + slide (spring).
 3. Checkmark pathLength animation (500ms con delay 300ms).
@@ -266,6 +299,7 @@ El template vive en el **dashboard de EmailJS** (no en este repo). Tiene 2 email
 ## 🔴 El Modal de error (ErrorMessage)
 
 Idéntico a SuccessMessage, pero con:
+
 - Border `border-destructive/40` (rojo en vez de success verde).
 - Icon es una **X** con 2 path strokes (en vez de checkmark).
 - `role="alertdialog"` (en vez de `dialog`).
@@ -326,7 +360,7 @@ export interface SuccessMessageProps {
   onClose: () => void;
   title?: string;
   message?: string;
-  autoCloseMs?: number;  // ← declarado, no implementado
+  autoCloseMs?: number; // ← declarado, no implementado
 }
 ```
 
@@ -353,6 +387,7 @@ Un usuario puede spamear el botón "Enviar" y enviar 100 emails en 10 segundos. 
 ## 🛠️ Cómo agregar una validación al form
 
 1. Editar `SendEmailSchema` en `schemas.ts`:
+
    ```ts
    export const SendEmailSchema = z.object({
      name: z.string().min(2).max(80),

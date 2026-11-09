@@ -1,4 +1,5 @@
 ---
+
 title: "i18n de metadata — cómo hacer que `<html lang>`, `metadata.title`, y OpenGraph cambien con `?lang=`"
 type: extension
 project: portfolio-v2
@@ -129,7 +130,7 @@ export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
   const { lang = "es" } = await searchParams;
-  const t = await getTranslations(lang);  // o un dict local
+  const t = await getTranslations(lang); // o un dict local
   return {
     title: t("title"),
     description: t("description"),
@@ -154,12 +155,16 @@ const DICT = {
   },
 } as const;
 
-export const getMeta = (lang: string = "es") => DICT[lang as keyof typeof DICT] || DICT.es;
+export const getMeta = (lang: string = "es") =>
+  DICT[lang as keyof typeof DICT] || DICT.es;
 ```
 
 Uso:
+
 ```ts
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
   const { lang = "es" } = await searchParams;
   const t = getMeta(lang);
   return { title: t.title, description: t.description };
@@ -194,7 +199,10 @@ export const getMetadata = async (lang: string, supabase: PortfolioClient) => {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export function LinkWithLang({ href, ...props }: { href: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+export function LinkWithLang({
+  href,
+  ...props
+}: { href: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang");
   const finalHref = lang ? `${href}?lang=${lang}` : href;
@@ -212,7 +220,10 @@ export function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const lang = request.nextUrl.searchParams.get("lang");
   if (lang) {
-    response.headers.set("x-pathname", request.nextUrl.pathname + `?lang=${lang}`);
+    response.headers.set(
+      "x-pathname",
+      request.nextUrl.pathname + `?lang=${lang}`,
+    );
   }
   return response;
 }
@@ -235,7 +246,10 @@ const toggleLanguage = () => {
 // middleware.ts (lee cookie)
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
-  const lang = request.nextUrl.searchParams.get("lang") || request.cookies.get("lang")?.value || "es";
+  const lang =
+    request.nextUrl.searchParams.get("lang") ||
+    request.cookies.get("lang")?.value ||
+    "es";
   response.headers.set("x-language", lang);
   return response;
 }
@@ -273,12 +287,12 @@ Si querés **el máximo impacto con mínima invasividad**:
 
 ## Cuándo aplicar este fix
 
-| Cambio | Esfuerzo | Impacto |
-|---|---|---|
-| Fix 1: `<html lang>` dinámico | Bajo (middleware + 1 línea en layout) | **Alto** (SEO, a11y, OG) |
-| Fix 2: `metadata.title` dinámico | Bajo (dict + generateMetadata) | **Alto** (SEO, social sharing) |
-| Fix 3: URLs preservan `?lang=` | Alto (wrapper o cookie) | Medio (UX) |
-| OpenGraph con `lang` | Bajo (add a metadata) | Alto (social) |
-| `robots.txt` + `sitemap.xml` | Bajo (1 archivo cada uno) | Alto (SEO) |
+| Cambio                           | Esfuerzo                              | Impacto                        |
+| -------------------------------- | ------------------------------------- | ------------------------------ |
+| Fix 1: `<html lang>` dinámico    | Bajo (middleware + 1 línea en layout) | **Alto** (SEO, a11y, OG)       |
+| Fix 2: `metadata.title` dinámico | Bajo (dict + generateMetadata)        | **Alto** (SEO, social sharing) |
+| Fix 3: URLs preservan `?lang=`   | Alto (wrapper o cookie)               | Medio (UX)                     |
+| OpenGraph con `lang`             | Bajo (add a metadata)                 | Alto (social)                  |
+| `robots.txt` + `sitemap.xml`     | Bajo (1 archivo cada uno)             | Alto (SEO)                     |
 
 **Total esfuerzo**: ~3 horas para cubrir Fix 1 + Fix 2 + OpenGraph. Fix 3 puede esperar.

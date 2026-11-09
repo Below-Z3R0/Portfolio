@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de Header / Navegación"
 type: system-documentation
 project: portfolio-v2
@@ -21,13 +22,13 @@ verified_with: minimax-m3
 
 ## 📁 Archivos (comunidades 0 y 9 del grafo)
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/components/organims/Header.tsx` | 53 | Wrapper con estado + responsive (desktop/mobile) |
-| `src/components/molecules/NavBar.tsx` | ~100 | El nav bar real (links + logo + theme + lang) |
-| `src/components/atoms/ThemeSwitcher.tsx` | ~40 | UI para elegir tema (4 paletas) |
-| `src/components/atoms/LanguageToggle.tsx` | ~30 | UI para elegir idioma |
-| `src/components/atoms/BackgroundFX.tsx` | 14 | Los efectos de fondo (no parte del Header pero relacionado) |
+| Archivo                                   | Líneas | Rol                                                         |
+| ----------------------------------------- | ------ | ----------------------------------------------------------- |
+| `src/components/organims/Header.tsx`      | 53     | Wrapper con estado + responsive (desktop/mobile)            |
+| `src/components/molecules/NavBar.tsx`     | ~100   | El nav bar real (links + logo + theme + lang)               |
+| `src/components/atoms/ThemeSwitcher.tsx`  | ~40    | UI para elegir tema (4 paletas)                             |
+| `src/components/atoms/LanguageToggle.tsx` | ~30    | UI para elegir idioma                                       |
+| `src/components/atoms/BackgroundFX.tsx`   | 14     | Los efectos de fondo (no parte del Header pero relacionado) |
 
 > **3 organismos/componentes** que importan el `NavBar` con diferentes props: `Header`, `Footer` y el `NavBar` standalone. Es el "componente más reutilizado" del sistema.
 
@@ -55,14 +56,19 @@ export function Header({ nav_data }: HeaderProps) {
       />
 
       {/* 2) Hamburger button mobile (oculto en desktop) */}
-      <nav aria-label="Navegación móvil"
-           className="z-1 qw:left-5 qw:right-5 left-2 right-2 max-w-241.5 p-5 mt-5 rounded-2xl mx-auto flex gap-6 items-center justify-between ew:hidden">
+      <nav
+        aria-label="Navegación móvil"
+        className="z-1 qw:left-5 qw:right-5 left-2 right-2 max-w-241.5 p-5 mt-5 rounded-2xl mx-auto flex gap-6 items-center justify-between ew:hidden"
+      >
         <div className="flex fixed w-full justify-end mx-auto pr-10 z-1">
-          <Button svg={"hamburnav"} buttonBody="size-7"
-                  svgStyle="text-foreground"
-                  onClick={() => setIsOpen(!isOpen)}
-                  aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-                  aria-expanded={isOpen} />
+          <Button
+            svg={"hamburnav"}
+            buttonBody="size-7"
+            svgStyle="text-foreground"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isOpen}
+          />
         </div>
       </nav>
 
@@ -108,11 +114,11 @@ NavBar.tsx
 
 ## 🎨 Mobile vs Desktop: las 3 props diferentes
 
-| Prop | Desktop | Mobile (dropdown) |
-|---|---|---|
-| `GeneralOrganization` | `"hidden ew:flex"` (oculto en mobile) | `"flex-col! items-end! bg-background/95! backdrop-blur-xl! rounded-2xl! shadow-2xl! gap-2! p-3! static! max-w-48!"` |
-| `LinksOrganization` | (default) | `"flex! flex-col! items-end! gap-2!"` |
-| `ThemeMenuOrganization` | (default) | `"right-0! top-0! relative! ml-0! mt-2! w-full! z-1"` |
+| Prop                    | Desktop                               | Mobile (dropdown)                                                                                                   |
+| ----------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `GeneralOrganization`   | `"hidden ew:flex"` (oculto en mobile) | `"flex-col! items-end! bg-background/95! backdrop-blur-xl! rounded-2xl! shadow-2xl! gap-2! p-3! static! max-w-48!"` |
+| `LinksOrganization`     | (default)                             | `"flex! flex-col! items-end! gap-2!"`                                                                               |
+| `ThemeMenuOrganization` | (default)                             | `"right-0! top-0! relative! ml-0! mt-2! w-full! z-1"`                                                               |
 
 > **`!` (Tailwind v4 important modifier)** se usa mucho en mobile porque el `NavBar` tiene `flex-row` por default (desktop), y mobile necesita sobreescribirlo.
 
@@ -220,7 +226,7 @@ Sigo con los sistemas restantes que detecté en el audit:
 
 - **EmailJS en profundidad** (template setup, env vars, debug)
 - **next-themes + attribute="class"** (ya documentado parcialmente)
-- **next/font (Geist)** 
+- **next/font (Geist)**
 - **`<AnimatePresence>` y exit animations**
 - **i18n (multi-idioma)**
 - **SEO / metadata / favicon**

@@ -1,4 +1,5 @@
 ---
+
 title: Catálogo de paletas de colores para proyectos frontend
 type: reference
 project: global
@@ -125,39 +126,47 @@ verified_with: minimax-m3
 ## 🛠️ Herramientas de extracción y generación
 
 ### Themer.js — extraer paletas de imágenes
+
 - <https://themer.js.org/>
 - Pegás una imagen (screenshot, foto) y te genera los colores principales.
 - Útil cuando el cliente da "esa foto de referencia" y querés copiar los colores.
 
 ### Coolors.co — generar paletas con contraste
+
 - <https://coolors.co/>
 - Genera 5 colores random que armonicen. Soporta WCAG contrast checks.
 - **Por qué es el más útil para empezar**: cuando necesitás una paleta custom, generás acá y luego verificás contraste.
 
 ### Realtime Colors
+
 - <https://www.realtimecolors.com/>
 - Pega un color y te genera variantes de paletas completas (Tailwind, shadcn, Material).
 - **El más rápido para iterar** en un color específico.
 
 ### Tailwind Ink
+
 - <https://tailwind.ink/>
 - Genera paletas Tailwind v4 con OKLCH y contraste WCAG automático.
 - Ideal para proyectos que usan Tailwind v4 y necesitan paletas accesibles sin ajustar manualmente.
 
 ### Material Theme Builder
+
 - <https://material-foundation.github.io/material-theme-builder/>
 - Genera las 6 paletas tonales de Material 3 a partir de un color.
 - Genera código para CSS variables, Flutter, Compose, etc.
 
 ### ColorHub
+
 - <https://colorhub.vercel.app/>
 - Genera paletas a partir de un color base.
 
 ### Huemint
+
 - <https://www.huemint.com/>
 - Genera paletas inteligentes considerando jerarquía visual.
 
 ### Leonardo AI Color
+
 - <https://leonardocolor.ai/>
 - Genera paletas por categoría (e-commerce, gaming, etc.) con ajuste de contraste.
 
@@ -166,6 +175,7 @@ verified_with: minimax-m3
 ### Paso 1 — Define el contexto
 
 Preguntate:
+
 - ¿Es un proyecto personal, B2B, e-commerce, gaming?
 - ¿Necesita light, dark, o ambos? (recomendado: ambos)
 - ¿La marca tiene color corporativo? Si sí, partí de él.
@@ -173,14 +183,14 @@ Preguntate:
 
 ### Paso 2 — Elige fuente
 
-| Contexto | Recomendado |
-|---|---|
-| Documentación técnica | Nord, Tokyo Night, Catppuccin Latte |
-| Dashboard / tooling | Dracula, Catppuccin Mocha, One Dark Pro |
-| SaaS profesional | Material 3, shadcn, Linear-inspired |
-| Portfolio / personal | Rosepine, Catppuccin, Noctalia |
-| E-commerce | Material 3, Tailwind default, coolors.co custom |
-| Mobile-first / Android sync | Material 3 (dynamic color) |
+| Contexto                    | Recomendado                                     |
+| --------------------------- | ----------------------------------------------- |
+| Documentación técnica       | Nord, Tokyo Night, Catppuccin Latte             |
+| Dashboard / tooling         | Dracula, Catppuccin Mocha, One Dark Pro         |
+| SaaS profesional            | Material 3, shadcn, Linear-inspired             |
+| Portfolio / personal        | Rosepine, Catppuccin, Noctalia                  |
+| E-commerce                  | Material 3, Tailwind default, coolors.co custom |
+| Mobile-first / Android sync | Material 3 (dynamic color)                      |
 
 ### Paso 3 — Generá / extraé los colores
 
@@ -190,6 +200,7 @@ Preguntate:
 ### Paso 4 — Mapeo al sistema v2
 
 Ver [[learning/frontend/css/themes/theme-system-portfolio-v2]] para el mapeo completo. Resumido:
+
 - 4 backgrounds (background, card, popover, secondary)
 - 4 text roles (foreground, muted-foreground, footer, body-text-en-grid)
 - 6 brand (primary+accent cada uno con foreground, soft, container)
@@ -201,6 +212,7 @@ Ver [[learning/frontend/css/themes/theme-system-portfolio-v2]] para el mapeo com
 ### Paso 5 — Verificá contraste
 
 Para cada paleta generada:
+
 - `bg-page` vs `text-foreground`: contraste > 200 (idealmente > 245)
 - `bg-page` vs `text-muted-foreground`: contraste > 100
 - `bg-primary` vs `text-primary-foreground`: contraste > 200 (los CTAs deben ser siempre legibles)
@@ -210,6 +222,7 @@ Herramienta: [WebAIM Contrast Checker](https://webaim.org/tool/contrast-checker/
 ### Paso 6 — Implementá
 
 Ver guía del [[learning/frontend/css/themes/theme-system-portfolio-v2]]:
+
 1. Pegá en `globals.css` bajo el selector de la nueva paleta.
 2. Registrá en `useTheme.tsx` y `themeProvider.tsx`.
 3. `bunx tsc --noEmit`.
@@ -217,12 +230,12 @@ Ver guía del [[learning/frontend/css/themes/theme-system-portfolio-v2]]:
 
 ## 🔍 Cómo encontré cada paleta en este proyecto
 
-| Paleta | Fuente | Por qué la elegí |
-|---|---|---|
-| `.dark` violeta | Original del proyecto | Mantení el estilo que ya tenías |
-| `.light` | shadcn convention | El `--background: #ffffff` y `--card: #ededed` siguen el patrón shadcn |
-| `.rosepine-dark` | Noctalia shell (uso diario en Hyprland) | Ya tenías Rosepine en tu setup; reutilizar mantiene coherencia |
-| `.rosepine-light` (Dawn) | Noctalia / Rosepine Dawn | Complemento natural al dark |
+| Paleta                   | Fuente                                  | Por qué la elegí                                                       |
+| ------------------------ | --------------------------------------- | ---------------------------------------------------------------------- |
+| `.dark` violeta          | Original del proyecto                   | Mantení el estilo que ya tenías                                        |
+| `.light`                 | shadcn convention                       | El `--background: #ffffff` y `--card: #ededed` siguen el patrón shadcn |
+| `.rosepine-dark`         | Noctalia shell (uso diario en Hyprland) | Ya tenías Rosepine en tu setup; reutilizar mantiene coherencia         |
+| `.rosepine-light` (Dawn) | Noctalia / Rosepine Dawn                | Complemento natural al dark                                            |
 
 ## 🔗 Ver también
 

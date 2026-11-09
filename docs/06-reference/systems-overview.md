@@ -1,4 +1,5 @@
 ---
+
 title: "Portfolio-v2 — Overview de sistemas y arquitectura"
 type: overview
 project: portfolio-v2
@@ -20,33 +21,33 @@ verified_with: minimax-m3
 
 ### 1. Capa de presentación
 
-| Sistema | Doc | Comunidad del grafo | Estado |
-|---|---|---|---|
-| Theming v2 | [[sistema-theming-v2]] | 5, 7, 8 | ✅ 100% documentado |
-| Motion (animaciones) | [[sistema-motion]] | 0 | ✅ 100% documentado |
-| Loading / Skeletons | [[sistema-loading-skeletons]] | 6 | ✅ 100% documentado |
-| AnimatePresence (exit anims) | [[sistema-animate-presence]] | 0 | ✅ 100% documentado |
-| UI base (atoms + molecules) | [[sistema-ui-base]] | 0, 1 | ✅ 100% documentado |
-| Modal + Form + EmailJS | [[sistema-modal-formulario-emailjs]] | 0 | ✅ 100% documentado |
-| Header / Navegación | [[sistema-header-navegacion]] | 0, 9 | ✅ 100% documentado |
+| Sistema                      | Doc                                  | Comunidad del grafo | Estado              |
+| ---------------------------- | ------------------------------------ | ------------------- | ------------------- |
+| Theming v2                   | [[sistema-theming-v2]]               | 5, 7, 8             | ✅ 100% documentado |
+| Motion (animaciones)         | [[sistema-motion]]                   | 0                   | ✅ 100% documentado |
+| Loading / Skeletons          | [[sistema-loading-skeletons]]        | 6                   | ✅ 100% documentado |
+| AnimatePresence (exit anims) | [[sistema-animate-presence]]         | 0                   | ✅ 100% documentado |
+| UI base (atoms + molecules)  | [[sistema-ui-base]]                  | 0, 1                | ✅ 100% documentado |
+| Modal + Form + EmailJS       | [[sistema-modal-formulario-emailjs]] | 0                   | ✅ 100% documentado |
+| Header / Navegación          | [[sistema-header-navegacion]]        | 0, 9                | ✅ 100% documentado |
 
 ### 2. Capa de datos
 
-| Sistema | Doc | Comunidad del grafo | Estado |
-|---|---|---|---|
-| DB + Supabase (headless CMS) | [[sistema-db-supabase]] | 3 | ✅ 100% documentado |
-| Orquestador | [[sistema-orquestador]] | 2 | ✅ 100% documentado |
-| Sistema de imágenes (dual: raster + SVG) | [[sistema-imagenes-svg]] | 4, 10 | ✅ 100% documentado |
-| i18n multi-idioma | [[sistema-i18n]] | 5 | ✅ 100% documentado |
-| Manejo de errores | [[sistema-errores]] | (cross-cutting) | ✅ 100% documentado |
+| Sistema                                  | Doc                      | Comunidad del grafo | Estado              |
+| ---------------------------------------- | ------------------------ | ------------------- | ------------------- |
+| DB + Supabase (headless CMS)             | [[sistema-db-supabase]]  | 3                   | ✅ 100% documentado |
+| Orquestador                              | [[sistema-orquestador]]  | 2                   | ✅ 100% documentado |
+| Sistema de imágenes (dual: raster + SVG) | [[sistema-imagenes-svg]] | 4, 10               | ✅ 100% documentado |
+| i18n multi-idioma                        | [[sistema-i18n]]         | 5                   | ✅ 100% documentado |
+| Manejo de errores                        | [[sistema-errores]]      | (cross-cutting)     | ✅ 100% documentado |
 
 ### 3. Capa de infra
 
-| Sistema | Doc | Comunidad del grafo | Estado |
-|---|---|---|---|
-| SEO + metadata + fuentes + ErrorBoundary | [[sistema-seo-metadata]] | 7 | ✅ 100% documentado |
-| Barrel + type helpers | [[sistema-barrel-type-helpers]] | (cross-cutting) | ✅ 100% documentado |
-| Testing / CI / Deploy (gap) | [[sistema-testing-ci-deploy]] | — | ⚠️ Documentado como gap (no existe) |
+| Sistema                                  | Doc                             | Comunidad del grafo | Estado                              |
+| ---------------------------------------- | ------------------------------- | ------------------- | ----------------------------------- |
+| SEO + metadata + fuentes + ErrorBoundary | [[sistema-seo-metadata]]        | 7                   | ✅ 100% documentado                 |
+| Barrel + type helpers                    | [[sistema-barrel-type-helpers]] | (cross-cutting)     | ✅ 100% documentado                 |
+| Testing / CI / Deploy (gap)              | [[sistema-testing-ci-deploy]]   | —                   | ⚠️ Documentado como gap (no existe) |
 
 **Total**: 14 docs individuales + 1 overview = **15 archivos** en el directorio.
 
@@ -62,6 +63,7 @@ python3 docs/graph/restore-theming-edges.py
 ```
 
 Output:
+
 - 266 nodos
 - 553 edges
 - 18 comunidades
@@ -116,18 +118,18 @@ Las comunidades reflejan los **sistemas** que detecta el clustering automático.
 
 ### Source code (50 archivos)
 
-| Directorio | Archivos | Sistema |
-|---|---|---|
-| `src/app/` | layout.tsx, page.tsx, error.tsx, loading.tsx, globals.css | SEO + loading + errorBoundary + theming |
-| `src/components/atoms/` | 12 archivos | UI base (Button, LinkButton, Span, Title1-4, IconRender, ThemeSwitcher, etc.) |
-| `src/components/molecules/` | 8 archivos | UI con lógica (NavBar, Formulary, ProjectCard, Modal, ErrorMessage, SuccessMessage, TecnologiesCard) |
-| `src/components/organims/` | 9 archivos | Secciones (Header, HeroSection, SkillsSection, ProjectsSection, AboutMeSection, ContactSection, Footer, ErrorPage, IASection, OSSection) |
-| `src/components/animations/` | 1 archivo + 1 index | Wrappers level-based (SectionReveal, StaggerGroup, etc.) |
-| `src/components/skeletons/` | 7 archivos | Skeletons (HomePageSkeleton, NavBarSkeleton, etc.) |
-| `src/components/hooks/` | 3 archivos | themeProvider, useTheme, theming.v2 (proxy types) |
-| `src/components/` | types.ts, components.ts, schemas.ts | Tipos y schemas |
-| `src/services/` | 5 archivos | Supabase clients, data/metadata services, icon-registry, Icons.tsx, supabase-image-loader |
-| `next.config.ts` | — | reactCompiler + custom image loader |
+| Directorio                   | Archivos                                                  | Sistema                                                                                                                                  |
+| ---------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/`                   | layout.tsx, page.tsx, error.tsx, loading.tsx, globals.css | SEO + loading + errorBoundary + theming                                                                                                  |
+| `src/components/atoms/`      | 12 archivos                                               | UI base (Button, LinkButton, Span, Title1-4, IconRender, ThemeSwitcher, etc.)                                                            |
+| `src/components/molecules/`  | 8 archivos                                                | UI con lógica (NavBar, Formulary, ProjectCard, Modal, ErrorMessage, SuccessMessage, TecnologiesCard)                                     |
+| `src/components/organims/`   | 9 archivos                                                | Secciones (Header, HeroSection, SkillsSection, ProjectsSection, AboutMeSection, ContactSection, Footer, ErrorPage, IASection, OSSection) |
+| `src/components/animations/` | 1 archivo + 1 index                                       | Wrappers level-based (SectionReveal, StaggerGroup, etc.)                                                                                 |
+| `src/components/skeletons/`  | 7 archivos                                                | Skeletons (HomePageSkeleton, NavBarSkeleton, etc.)                                                                                       |
+| `src/components/hooks/`      | 3 archivos                                                | themeProvider, useTheme, theming.v2 (proxy types)                                                                                        |
+| `src/components/`            | types.ts, components.ts, schemas.ts                       | Tipos y schemas                                                                                                                          |
+| `src/services/`              | 5 archivos                                                | Supabase clients, data/metadata services, icon-registry, Icons.tsx, supabase-image-loader                                                |
+| `next.config.ts`             | —                                                         | reactCompiler + custom image loader                                                                                                      |
 
 ### Vault docs (15 archivos)
 
@@ -254,15 +256,15 @@ Admin edita translations.content en Supabase Dashboard
 
 ## 🚀 Cómo extender el proyecto (guía rápida)
 
-| Necesidad | Acción |
-|---|---|
-| Agregar un nuevo idioma | INSERT en `languages` + `translations` + actualizar `LanguageToggle` |
-| Agregar un nuevo color al theme | Agregar en `globals.css` (los 4 bloques de paleta) |
-| Agregar un nuevo ícono | Agregar `<MiIcono>` en `Icons.tsx` + registrar en `ICON_REGISTRY` |
-| Agregar una nueva sección al home | Crear `<MiSeccion>` molecule + skeleton + schema Zod + agregar al orquestador |
-| Agregar un nuevo campo al form | Editar `SendEmailSchema` en `schemas.ts` + ajustar `Formulary` (UI) |
-| Cambiar contenido (texto, links) | UPDATE en Supabase Dashboard (no deploy) |
-| Cambiar diseño (color, font, spacing) | Editar `globals.css` (los 4 bloques) |
+| Necesidad                             | Acción                                                                        |
+| ------------------------------------- | ----------------------------------------------------------------------------- |
+| Agregar un nuevo idioma               | INSERT en `languages` + `translations` + actualizar `LanguageToggle`          |
+| Agregar un nuevo color al theme       | Agregar en `globals.css` (los 4 bloques de paleta)                            |
+| Agregar un nuevo ícono                | Agregar `<MiIcono>` en `Icons.tsx` + registrar en `ICON_REGISTRY`             |
+| Agregar una nueva sección al home     | Crear `<MiSeccion>` molecule + skeleton + schema Zod + agregar al orquestador |
+| Agregar un nuevo campo al form        | Editar `SendEmailSchema` en `schemas.ts` + ajustar `Formulary` (UI)           |
+| Cambiar contenido (texto, links)      | UPDATE en Supabase Dashboard (no deploy)                                      |
+| Cambiar diseño (color, font, spacing) | Editar `globals.css` (los 4 bloques)                                          |
 
 ## 🔗 Ver también
 
@@ -282,6 +284,7 @@ Admin edita translations.content en Supabase Dashboard
 **Esta es la overview final.** Cubre los 14 sistemas individuales + 1 overview. Si querés un sistema adicional (no cubierto), o un refactor de uno existente, decime. Si no, el trabajo de documentación está completo.
 
 **Estado del vault de portfolio-v2**:
+
 - 26 archivos en el directorio.
 - 15 archivos de documentación (15 de este loop + 1 overview + 1 de este turno).
 - 11 docs de sistemas + 1 testing + 1 SEO + 1 i18n + 1 AnimatePresence + 1 errores + 1 fuentes + 1 barrel.

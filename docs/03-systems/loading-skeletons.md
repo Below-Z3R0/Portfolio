@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de Loading / Skeletons"
 type: system-documentation
 project: portfolio-v2
@@ -23,16 +24,16 @@ verified_with: minimax-m3
 
 ## 📁 Archivos (6)
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/app/loading.tsx` | 100+ | **El route loader** — se renderiza mientras `app/page.tsx` está cargando |
-| `src/components/skeletons/skeletonindex.tsx` | 8 | Barrel: re-exporta los 6 skeletons |
-| `src/components/skeletons/SkeletonPulse.tsx` | 5 | **El átomo base** (`<div className="bg-muted animate-pulse">`) |
-| `src/components/skeletons/NavBarSkeleton.tsx` | 20 | Skeleton del NavBar |
-| `src/components/skeletons/FormularySkeleton.tsx` | 30 | Skeleton del Formulary (en el form) |
-| `src/components/skeletons/ProjectsCardSkeleton.tsx` | 25 | Skeleton de un ProjectCard |
-| `src/components/skeletons/TecnologiesCardSkeleton.tsx` | 10 | Skeleton de un TecnologiesCard |
-| `src/components/skeletons/HomePageSkeleton.tsx` | 100+ | **La composición completa** (replica de la home) |
+| Archivo                                                | Líneas | Rol                                                                      |
+| ------------------------------------------------------ | ------ | ------------------------------------------------------------------------ |
+| `src/app/loading.tsx`                                  | 100+   | **El route loader** — se renderiza mientras `app/page.tsx` está cargando |
+| `src/components/skeletons/skeletonindex.tsx`           | 8      | Barrel: re-exporta los 6 skeletons                                       |
+| `src/components/skeletons/SkeletonPulse.tsx`           | 5      | **El átomo base** (`<div className="bg-muted animate-pulse">`)           |
+| `src/components/skeletons/NavBarSkeleton.tsx`          | 20     | Skeleton del NavBar                                                      |
+| `src/components/skeletons/FormularySkeleton.tsx`       | 30     | Skeleton del Formulary (en el form)                                      |
+| `src/components/skeletons/ProjectsCardSkeleton.tsx`    | 25     | Skeleton de un ProjectCard                                               |
+| `src/components/skeletons/TecnologiesCardSkeleton.tsx` | 10     | Skeleton de un TecnologiesCard                                           |
+| `src/components/skeletons/HomePageSkeleton.tsx`        | 100+   | **La composición completa** (replica de la home)                         |
 
 ## 🧱 El átomo: `SkeletonPulse` (5 líneas)
 
@@ -43,6 +44,7 @@ export const SkeletonPulse = ({ className }: { className?: string }) => (
 ```
 
 **3 props**:
+
 - `bg-muted`: el color (viene del theme v2 — es un gris sutil).
 - `animate-pulse`: la animación (Tailwind utility nativa, fade in/out).
 - `rounded-md`: bordes redondeados.
@@ -84,13 +86,13 @@ Next.js hace streaming swap: skeleton → contenido real
 // src/components/skeletons/HomePageSkeleton.tsx
 const SkeletonPulse = ({ className }: { className?: string }) => (
   <div className={`bg-muted animate-pulse rounded-xl ${className}`} />
-);  // ← REDEFINIDO localmente (mismo que SkeletonPulse.tsx)
+); // ← REDEFINIDO localmente (mismo que SkeletonPulse.tsx)
 
 export function HomePageSkeleton() {
   return (
     <div className="text-foreground min-h-screen font-display bg-background">
       <NavBarSkeleton />
-      
+
       <section className="py-50 max-w-241.5 mx-auto px-5">
         <div className="gap-4 flex flex-col justify-start items-start h-full">
           <div className="flex items-center gap-3">
@@ -110,7 +112,7 @@ export function HomePageSkeleton() {
           </nav>
         </div>
       </section>
-      
+
       <section className="flex flex-col gap-8 max-w-241.5 mx-auto py-20 px-5">
         {/* Tecnologies skeleton (Frontend, Backend, DevOps) */}
         {["Frontend", "Backend", "DevOps"].map((cat) => (
@@ -124,7 +126,7 @@ export function HomePageSkeleton() {
           </div>
         ))}
       </section>
-      
+
       {/* ... Projects skeleton (2 cards), AboutMe skeleton, Contact skeleton con FormularySkeleton, Footer */}
     </div>
   );
@@ -278,6 +280,7 @@ const SkeletonPulse = ({ className }: { className?: string }) => (
 > **Issue**: DRY violation. La misma función está en `SkeletonPulse.tsx`.
 
 **Fix**: importar de `SkeletonPulse`:
+
 ```tsx
 import { SkeletonPulse } from "./SkeletonPulse";
 ```

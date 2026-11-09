@@ -1,4 +1,5 @@
 ---
+
 title: "Orquestador site.ts — RPC + cache + Zod (puente DB → UI)"
 type: system-documentation
 project: portfolio-v2
@@ -26,80 +27,103 @@ Sin él, cada componente haría su propio `await supabase.from(...)` + su propio
 
 ```ts
 // src/services/data/site.ts
-import { unstable_cache } from 'next/cache';
-import { z } from 'zod';
+import { unstable_cache } from "next/cache";
+import { z } from "zod";
 import {
-  HeroContentSchema, NavbarContentSchema, SkillsContentSchema,
-  AboutMeContentSchema, ProjectsContentSchema, ContactContentSchema,
-  FooterContentSchema, ProjectItemSchema,
-  HeroMetadataSchema, SkillsMetadataSchema, AboutMeMetadataSchema,
-  ProjectsMetadataSchema, GeneralContactsSchema,
-} from '@/components/schemas';
-import { createClient } from '@/services/supabase/server';
+  HeroContentSchema,
+  NavbarContentSchema,
+  SkillsContentSchema,
+  AboutMeContentSchema,
+  ProjectsContentSchema,
+  ContactContentSchema,
+  FooterContentSchema,
+  ProjectItemSchema,
+  HeroMetadataSchema,
+  SkillsMetadataSchema,
+  AboutMeMetadataSchema,
+  ProjectsMetadataSchema,
+  GeneralContactsSchema,
+} from "@/components/schemas";
+import { createClient } from "@/services/supabase/server";
 
 const SitePayloadSchema = z.object({
   content: z.object({
-    'section.hero': HeroContentSchema,
-    'section.navbar': NavbarContentSchema,
-    'section.skills': SkillsContentSchema,
-    'section.aboutme': AboutMeContentSchema,
-    'section.projects': ProjectsContentSchema,
-    'section.contact': ContactContentSchema,
-    'section.footer': FooterContentSchema,
-    'project.centeno-advisory': ProjectItemSchema,
-    'project.centeno-advisory-db': ProjectItemSchema,
-    'project.centeno-advisory-features': ProjectItemSchema,
-    'project.portfolio': ProjectItemSchema,
-    'project.nincy': ProjectItemSchema,
+    "section.hero": HeroContentSchema,
+    "section.navbar": NavbarContentSchema,
+    "section.skills": SkillsContentSchema,
+    "section.aboutme": AboutMeContentSchema,
+    "section.projects": ProjectsContentSchema,
+    "section.contact": ContactContentSchema,
+    "section.footer": FooterContentSchema,
+    "project.centeno-advisory": ProjectItemSchema,
+    "project.centeno-advisory-db": ProjectItemSchema,
+    "project.centeno-advisory-features": ProjectItemSchema,
+    "project.portfolio": ProjectItemSchema,
+    "project.nincy": ProjectItemSchema,
   }),
   metadata: z.object({
-    'section.hero': HeroMetadataSchema,
-    'general.contacts': GeneralContactsSchema,
-    'section.skills': SkillsMetadataSchema,
-    'section.aboutme': AboutMeMetadataSchema,
-    'project.centeno-advisory': ProjectsMetadataSchema,
-    'project.centeno-advisory-db': ProjectsMetadataSchema,
-    'project.centeno-advisory-features': ProjectsMetadataSchema,
-    'project.portfolio': ProjectsMetadataSchema,
-    'project.nincy': ProjectsMetadataSchema,
+    "section.hero": HeroMetadataSchema,
+    "general.contacts": GeneralContactsSchema,
+    "section.skills": SkillsMetadataSchema,
+    "section.aboutme": AboutMeMetadataSchema,
+    "project.centeno-advisory": ProjectsMetadataSchema,
+    "project.centeno-advisory-db": ProjectsMetadataSchema,
+    "project.centeno-advisory-features": ProjectsMetadataSchema,
+    "project.portfolio": ProjectsMetadataSchema,
+    "project.nincy": ProjectsMetadataSchema,
   }),
 });
 
 export type SitePayload = z.infer<typeof SitePayloadSchema>;
 
-const fetchPayload = async (supabase: any, lang: string): Promise<SitePayload> => {
+const fetchPayload = async (
+  supabase: any,
+  lang: string,
+): Promise<SitePayload> => {
   // Solo pedimos al RPC las keys que nuestro schema conoce (seguridad + bytes)
   const allowedKeys = [
     ...Object.keys(SitePayloadSchema.shape.content.shape),
     ...Object.keys(SitePayloadSchema.shape.metadata.shape),
   ];
 
-  const { data, error } = await supabase.rpc('get_site_payload', {
+  const { data, error } = await supabase.rpc("get_site_payload", {
     p_lang: lang,
     p_keys: allowedKeys,
   });
   if (error) throw new Error(`[site] RPC error: ${error.message}`);
 
   // Validar content bloque por bloque (te dice exactamente cuál falló)
-  for (const [key, schema] of Object.entries(SitePayloadSchema.shape.content.shape)) {
+  for (const [key, schema] of Object.entries(
+    SitePayloadSchema.shape.content.shape,
+  )) {
     const value = data?.content?.[key];
-    if (value === undefined) throw new Error(`[site] Missing content for "${key}"`);
+    if (value === undefined)
+      throw new Error(`[site] Missing content for "${key}"`);
     const result = (schema as z.ZodType).safeParse(value);
     if (!result.success) {
       console.error(`[site] Content invalid for "${key}":`, result.error);
-      console.error(`[site] Actual content for "${key}":`, JSON.stringify(value, null, 2));
-      throw new Error(`[site] Invalid content for "${key}": ${result.error.issues[0]?.message}`);
+      console.error(
+        `[site] Actual content for "${key}":`,
+        JSON.stringify(value, null, 2),
+      );
+      throw new Error(
+        `[site] Invalid content for "${key}": ${result.error.issues[0]?.message}`,
+      );
     }
   }
 
   // Metadata es opcional por bloque
-  for (const [key, schema] of Object.entries(SitePayloadSchema.shape.metadata.shape)) {
+  for (const [key, schema] of Object.entries(
+    SitePayloadSchema.shape.metadata.shape,
+  )) {
     const value = data?.metadata?.[key];
     if (value === undefined) continue;
     const result = (schema as z.ZodType).safeParse(value);
     if (!result.success) {
       console.error(`[site] Metadata invalid for "${key}":`, result.error);
-      throw new Error(`[site] Invalid metadata for "${key}": ${result.error.issues[0]?.message}`);
+      throw new Error(
+        `[site] Invalid metadata for "${key}": ${result.error.issues[0]?.message}`,
+      );
     }
   }
 
@@ -107,12 +131,14 @@ const fetchPayload = async (supabase: any, lang: string): Promise<SitePayload> =
 };
 
 // createClient() usa cookies() → debe correr FUERA del cache.
-export const getSiteData = async (lang: string = 'es'): Promise<SitePayload> => {
+export const getSiteData = async (
+  lang: string = "es",
+): Promise<SitePayload> => {
   const supabase = await createClient();
 
   return unstable_cache(
     async () => fetchPayload(supabase, lang),
-    ['site-payload', lang],
+    ["site-payload", lang],
     { revalidate: 3600, tags: [`site:${lang}`] },
   )();
 };
@@ -162,16 +188,18 @@ for (const [key, schema] of Object.entries(SitePayloadSchema.shape.content.shape
 ### Parte 4: Cache condicional (dev sin cache, prod 1 hora)
 
 ```ts
-export const getSiteData = async (lang: string = 'es'): Promise<SitePayload> => {
-  const supabase = await createClient();   // ← usa cookies() — FUERA del cache
+export const getSiteData = async (
+  lang: string = "es",
+): Promise<SitePayload> => {
+  const supabase = await createClient(); // ← usa cookies() — FUERA del cache
 
   // Cache solo en producción: en dev vas directo a la BD para ver cambios al instante.
-  const shouldCache = process.env.NODE_ENV === 'production';
+  const shouldCache = process.env.NODE_ENV === "production";
   const fetcher = async () => fetchPayload(supabase, lang);
 
   if (!shouldCache) return fetcher();
 
-  return unstable_cache(fetcher, ['site-payload', lang], {
+  return unstable_cache(fetcher, ["site-payload", lang], {
     revalidate: 3600,
     tags: [`site:${lang}`],
   })();
@@ -304,15 +332,15 @@ export default async function Home({ searchParams }: PageProps) {
 
 ## 📈 Métricas
 
-| Métrica | Antes (`getGeneralData`) | Ahora (`getSiteData` + RPC) |
-|---|---|---|
-| Queries HTTP | 17 paralelas | 1 RPC |
-| Latencia típica (Supabase) | 250-400ms | 50-150ms |
-| Cache | No | Dev: ninguno · Prod: `unstable_cache` 1 hora |
-| Round-trips cuando hay cache hit (prod) | 17 (cada request) | 0 (servido por Next.js) |
-| Líneas de código (orquestador) | 102 | 90 |
-| Archivos del sistema | 3 (`generaldata.service.ts` + 2 helpers) | 1 (`site.ts`) |
-| Validación Zod | Por bloque, dentro del orquestador | Declarativa con `z.object` anidado |
+| Métrica                                 | Antes (`getGeneralData`)                 | Ahora (`getSiteData` + RPC)                  |
+| --------------------------------------- | ---------------------------------------- | -------------------------------------------- |
+| Queries HTTP                            | 17 paralelas                             | 1 RPC                                        |
+| Latencia típica (Supabase)              | 250-400ms                                | 50-150ms                                     |
+| Cache                                   | No                                       | Dev: ninguno · Prod: `unstable_cache` 1 hora |
+| Round-trips cuando hay cache hit (prod) | 17 (cada request)                        | 0 (servido por Next.js)                      |
+| Líneas de código (orquestador)          | 102                                      | 90                                           |
+| Archivos del sistema                    | 3 (`generaldata.service.ts` + 2 helpers) | 1 (`site.ts`)                                |
+| Validación Zod                          | Por bloque, dentro del orquestador       | Declarativa con `z.object` anidado           |
 
 ## 🛠️ Cómo agregar contenido (operación cotidiana)
 
@@ -331,6 +359,7 @@ export default async function Home({ searchParams }: PageProps) {
    - Insert row en `content_blocks_metadata` si tiene metadata.
 
 2. **En `components/schemas.ts`**:
+
    ```ts
    export const TestimonialsContentSchema = z.object({
      title: z.string(),
@@ -339,6 +368,7 @@ export default async function Home({ searchParams }: PageProps) {
    ```
 
 3. **En `services/data/site.ts`** — agregar al `SitePayloadSchema`:
+
    ```ts
    content: z.object({
      // ...
@@ -347,12 +377,14 @@ export default async function Home({ searchParams }: PageProps) {
    ```
 
 4. **En `app/page.tsx`**:
+
    ```tsx
    const testimonials_data = { data: content["section.testimonials"] };
    <TestimonialsSection testimonials_data={testimonials_data} />
    ```
 
 5. **Invalidar cache en producción** (si querés ver el cambio antes de la hora):
+
    ```ts
    import { revalidateTag } from 'next/cache';
    revalidateTag('site:es');

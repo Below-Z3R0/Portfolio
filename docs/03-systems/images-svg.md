@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de assets: Imágenes raster vs SVG inline"
 type: system-documentation
 project: portfolio-v2
@@ -14,25 +15,25 @@ verified_with: minimax-m3
 
 ## 🎯 Por qué dos sistemas
 
-| Pregunta | Raster (`<Image>`) | SVG inline (`ICON_REGISTRY`) |
-|---|---|---|
-| **¿Qué renderiza?** | Fotos (CV, mockups de proyectos) | Íconos (React, Next.js, brand) |
+| Pregunta                 | Raster (`<Image>`)                            | SVG inline (`ICON_REGISTRY`)                                     |
+| ------------------------ | --------------------------------------------- | ---------------------------------------------------------------- |
+| **¿Qué renderiza?**      | Fotos (CV, mockups de proyectos)              | Íconos (React, Next.js, brand)                                   |
 | **¿Cambia con el tema?** | No (la foto del CV es la misma en dark/light) | Sí (algunos SVGs usan `currentColor` para tomar color del theme) |
-| **¿Se cachea?** | Sí, por el loader de Supabase + Next/Image | No (inline en el bundle JS) |
-| **¿Tamaño bundle?** | Bajo (lazy load, fuera del HTML) | Alto (inline = parte del bundle) |
-| **¿Lazy load?** | Sí, por default | No (vienen con el bundle) |
-| **¿Tipado seguro?** | Sí (string src) | Sí (`IconKey` type) |
-| **¿Validación Zod?** | No (es solo string) | Sí (`IconNameSchema`) |
+| **¿Se cachea?**          | Sí, por el loader de Supabase + Next/Image    | No (inline en el bundle JS)                                      |
+| **¿Tamaño bundle?**      | Bajo (lazy load, fuera del HTML)              | Alto (inline = parte del bundle)                                 |
+| **¿Lazy load?**          | Sí, por default                               | No (vienen con el bundle)                                        |
+| **¿Tipado seguro?**      | Sí (string src)                               | Sí (`IconKey` type)                                              |
+| **¿Validación Zod?**     | No (es solo string)                           | Sí (`IconNameSchema`)                                            |
 
 ## 📁 Sistema 1: Imágenes raster (custom loader)
 
 ### 3 archivos
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `next.config.ts` | 12 | Config global: activa `loader: "custom"` y `loaderFile` |
-| `src/services/assets/supabase-image-loader.ts` | 16 | El loader: añade `?width=&quality=` a la URL de Supabase |
-| (componentes que usan `<Image>`) | varios | `HeroSection`, `AboutMeSection`, `ProjectCard` |
+| Archivo                                        | Líneas | Rol                                                      |
+| ---------------------------------------------- | ------ | -------------------------------------------------------- |
+| `next.config.ts`                               | 12     | Config global: activa `loader: "custom"` y `loaderFile`  |
+| `src/services/assets/supabase-image-loader.ts` | 16     | El loader: añade `?width=&quality=` a la URL de Supabase |
+| (componentes que usan `<Image>`)               | varios | `HeroSection`, `AboutMeSection`, `ProjectCard`           |
 
 ### `next.config.ts`
 
@@ -59,7 +60,11 @@ import type { ImageLoaderProps } from "next/image";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
-export default function supabaseImageLoader({ src, width, quality }: ImageLoaderProps) {
+export default function supabaseImageLoader({
+  src,
+  width,
+  quality,
+}: ImageLoaderProps) {
   const cleanSrc = src.replace(/^\//, ""); // quita el leading slash
 
   if (cleanSrc.startsWith("http")) {
@@ -83,24 +88,24 @@ export default function supabaseImageLoader({ src, width, quality }: ImageLoader
 ```tsx
 // HeroSection.tsx (ejemplo real)
 <Image
-  src={`/${hero_data.meta.general.image_key}`}     // ej. "/ImgCV.jpg"
+  src={`/${hero_data.meta.general.image_key}`} // ej. "/ImgCV.jpg"
   alt="Foto de perfil de Emmanuel Centeno"
   width={80}
   height={80}
   priority
   className="rounded-full size-25 border border-border object-cover bg-card ring-2 ring-primary/10"
-/>
+/>;
 ```
 
 ```tsx
 // ProjectCard.tsx
 <Image
-  src={`/${project_data.meta.image_key}`}            // ej. "/centenoadvisory.png"
+  src={`/${project_data.meta.image_key}`} // ej. "/centenoadvisory.png"
   alt="icon"
   width={80}
   height={80}
   className="object-cover mask-x-to-r"
-/>
+/>;
 ```
 
 `/` al inicio = la imagen está en el bucket `project-images` de Supabase Storage.
@@ -125,19 +130,22 @@ export default function supabaseImageLoader({ src, width, quality }: ImageLoader
 
 ### 4 archivos
 
-| Archivo | Líneas | Rol |
-|---|---|---|
-| `src/services/assets/Icons.tsx` | 627 | Los 19 SVG components hardcoded |
-| `src/services/assets/icon-registry.ts` | 61 | El `ICON_REGISTRY` + `IconNameSchema` (Zod) |
-| `src/components/atoms/IconRender.tsx` | 14 | El componente que resuelve `name` → `ICON_REGISTRY[name]` |
-| (componentes consumidores) | varios | `TecnologiesCard`, `TecnologiesSection`, `ProjectCard`, `Modal`, `HeroSection` |
+| Archivo                                | Líneas | Rol                                                                            |
+| -------------------------------------- | ------ | ------------------------------------------------------------------------------ |
+| `src/services/assets/Icons.tsx`        | 627    | Los 19 SVG components hardcoded                                                |
+| `src/services/assets/icon-registry.ts` | 61     | El `ICON_REGISTRY` + `IconNameSchema` (Zod)                                    |
+| `src/components/atoms/IconRender.tsx`  | 14     | El componente que resuelve `name` → `ICON_REGISTRY[name]`                      |
+| (componentes consumidores)             | varios | `TecnologiesCard`, `TecnologiesSection`, `ProjectCard`, `Modal`, `HeroSection` |
 
 ### `ICON_REGISTRY` (el corazón)
 
 ```ts
 // icon-registry.ts
 import {
-  ReactIcon, DockerIcon, NodeIcon, SupaBaseIcon, /* ... 19 iconos */
+  ReactIcon,
+  DockerIcon,
+  NodeIcon,
+  SupaBaseIcon /* ... 19 iconos */,
 } from "@/services/assets/Icons";
 
 type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -149,12 +157,9 @@ export const ICON_REGISTRY = {
   // ... 19 total
 } as const satisfies Record<string, IconComponent>;
 
-export const IconNameSchema = z
-  .string()
-  .refine(
-    (val) => val in ICON_REGISTRY,
-    { message: "Debe ser una key del registry (react, docker...)" }
-  );
+export const IconNameSchema = z.string().refine((val) => val in ICON_REGISTRY, {
+  message: "Debe ser una key del registry (react, docker...)",
+});
 
 export type IconKey = keyof typeof ICON_REGISTRY;
 ```
@@ -185,9 +190,9 @@ export function IconRender({ name, className }: IconRendererProps) {
 ```tsx
 // TecnologiesCard.tsx
 <IconRender
-  name={skill.icon_key}              // ej. "react"
+  name={skill.icon_key} // ej. "react"
   className="size-full text-(--tech-color) filter drop-shadow-[0_0_12px_var(--tech-color)]/50"
-/>
+/>;
 ```
 
 ### Flujo completo
@@ -208,22 +213,22 @@ export function IconRender({ name, className }: IconRendererProps) {
 
 ## 🆚 Comparación: ¿cuándo usar cada uno?
 
-| Caso | Usar |
-|---|---|
-| Foto del CV, mockups de proyectos, screenshots | **`<Image>` con Supabase loader** |
-| Logos de marcas (React, Next.js, Docker) | **`<IconRender>` con `icon_key` en la BD** |
-| Iconos UI (close, hamburger, language) | **`<IconRender>` con `icon_key` hardcoded en `IconRender` o import directo** (como en `Modal.tsx`, `ProjectCard.tsx`) |
-| Backgrounds o imágenes decorativas grandes | **`<Image>` con Supabase loader** |
+| Caso                                           | Usar                                                                                                                  |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Foto del CV, mockups de proyectos, screenshots | **`<Image>` con Supabase loader**                                                                                     |
+| Logos de marcas (React, Next.js, Docker)       | **`<IconRender>` con `icon_key` en la BD**                                                                            |
+| Iconos UI (close, hamburger, language)         | **`<IconRender>` con `icon_key` hardcoded en `IconRender` o import directo** (como en `Modal.tsx`, `ProjectCard.tsx`) |
+| Backgrounds o imágenes decorativas grandes     | **`<Image>` con Supabase loader**                                                                                     |
 
 ## 📊 Métricas y comparativa de bundle
 
-| Métrica | `<Image>` con Supabase | `<IconRender>` (SVG inline) |
-|---|---|---|
-| Bundle JS | 0 KB (lazy) | ~37 KB (todo `Icons.tsx` inline) |
-| Bundle inicial (First Load) | Bajo | **+37 KB** |
-| Requests HTTP | 1 por imagen visible (lazy) | 0 (inline) |
-| Re-renders al cambiar tema | No | Sí (algunos SVGs usan `currentColor`) |
-| Tipado | `string` (URL) | `IconKey` (union literal) + Zod |
+| Métrica                     | `<Image>` con Supabase      | `<IconRender>` (SVG inline)           |
+| --------------------------- | --------------------------- | ------------------------------------- |
+| Bundle JS                   | 0 KB (lazy)                 | ~37 KB (todo `Icons.tsx` inline)      |
+| Bundle inicial (First Load) | Bajo                        | **+37 KB**                            |
+| Requests HTTP               | 1 por imagen visible (lazy) | 0 (inline)                            |
+| Re-renders al cambiar tema  | No                          | Sí (algunos SVGs usan `currentColor`) |
+| Tipado                      | `string` (URL)              | `IconKey` (union literal) + Zod       |
 
 ## ⚠️ Issues conocidas
 
@@ -232,6 +237,7 @@ export function IconRender({ name, className }: IconRendererProps) {
 Los 19 SVGs están **inline en `Icons.tsx`** (37 KB). Si un usuario entra a `/home` y nunca ve "FigmaIcon", igual se descargó.
 
 **Fix planeado** (no implementado):
+
 - Opción A: **`React.lazy()` con un archivo por icono** (19 archivos).
 - Opción B: **SVG sprite map** (un archivo `sprite.svg` con `<symbol>`s, usado con `<use href="/sprite.svg#react" />`).
 - Opción C: **SVGO en build** para minificar los paths de los SVGs.
@@ -279,6 +285,7 @@ return ProjectsMetadataSchema.parse(data.content);
 ### Agregar un ícono
 
 1. Agregar el componente SVG en `src/services/assets/Icons.tsx`:
+
    ```ts
    export const MiIcono = (props: React.SVGProps<SVGSVGElement>) => (
      <svg {...props}>
@@ -289,6 +296,7 @@ return ProjectsMetadataSchema.parse(data.content);
    ```
 
 2. Registrar en `icon-registry.ts`:
+
    ```ts
    import { MiIcono } from "@/services/assets/Icons";
    export const ICON_REGISTRY = {
@@ -298,6 +306,7 @@ return ProjectsMetadataSchema.parse(data.content);
    ```
 
 3. Usar en cualquier componente:
+
    ```tsx
    <IconRender name="mi_icono" className="..." />
    ```

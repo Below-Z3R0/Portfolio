@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de manejo de errores (data layer + ErrorBoundary)"
 type: system-documentation
 project: portfolio-v2
@@ -20,6 +21,7 @@ verified_with: minimax-m3
 2. **Capa 2 (ErrorBoundary)**: captura el throw, renderiza un componente de error con un botón "Reintentar".
 
 **No hay**:
+
 - Try/catch con fallback (ej. "si falla, muestra datos estáticos de fallback").
 - Loading state (el usuario no ve "cargando..." mientras la promesa está pendiente).
 - Retry exponencial.
@@ -29,14 +31,14 @@ verified_with: minimax-m3
 
 ## 📁 Archivos
 
-| Archivo | Rol |
-|---|---|
-| `src/services/Data/data.service.ts` | `getData<T>(block_key, lang, supabase, schema)` con throw en error |
-| `src/services/Data/metadata.service.ts` | `getMetaData<T>` con throw en error |
-| `src/services/generaldata.service.ts` | Orquestador que hace 17 queries, **sin try/catch** |
-| `src/app/error.tsx` | ErrorBoundary raíz |
-| `src/components/organims/ErrorPage.tsx` | Molecule que renderiza el error UI |
-| `src/components/molecules/ErrorMessage.tsx` | Modal de error para el form (distinto) |
+| Archivo                                     | Rol                                                                |
+| ------------------------------------------- | ------------------------------------------------------------------ |
+| `src/services/Data/data.service.ts`         | `getData<T>(block_key, lang, supabase, schema)` con throw en error |
+| `src/services/Data/metadata.service.ts`     | `getMetaData<T>` con throw en error                                |
+| `src/services/generaldata.service.ts`       | Orquestador que hace 17 queries, **sin try/catch**                 |
+| `src/app/error.tsx`                         | ErrorBoundary raíz                                                 |
+| `src/components/organims/ErrorPage.tsx`     | Molecule que renderiza el error UI                                 |
+| `src/components/molecules/ErrorMessage.tsx` | Modal de error para el form (distinto)                             |
 
 ## 🔍 El throw en `data.service.ts`
 
@@ -60,11 +62,12 @@ export const getData = async <Schema extends z.ZodType>(
       `Error fetching data for block_key ${block_key} and language ${lang}: ${error.message}`,
     );
 
-  return schema.parse(data.content);  // ← también puede throw
+  return schema.parse(data.content); // ← también puede throw
 };
 ```
 
 **3 throw points**:
+
 1. `supabase.from(...).single()` falla si no encuentra rows (PostgREST error 406).
 2. `data` es `null` si el query devuelve 0 rows.
 3. `schema.parse(data.content)` falla si la validación Zod no matchea.
@@ -88,6 +91,7 @@ const [
 > **Si UNA sola query falla, las 17 fallan al mismo tiempo** (porque `Promise.all` rechaza en la primera). El usuario ve el error global, **no las que sí funcionaron**.
 
 **Fix planeado** (no implementado):
+
 ```ts
 const results = await Promise.allSettled([
   getData("section.hero", ...),
@@ -131,6 +135,7 @@ export default function Err({
 ```
 
 **3 partes**:
+
 1. `useEffect` loguea el error en consola (debug).
 2. `reset` es la función que Next.js pasa para reintentar el render.
 3. `ErrorPage` molecule (en `organims/`) renderiza el UI.
@@ -151,6 +156,7 @@ export default function Err({
 ```
 
 **Estructura**:
+
 - Card centrada (max-w-md).
 - Icon de error (la X con `motion`).
 - Title2 + Paragraph con el mensaje.
@@ -201,6 +207,7 @@ const data = await getData(...).catch(() => FALLBACK_DATA[block_key]);
 > **Issue**: si Supabase está caído, la página se rompe aunque tengas un fallback hardcoded. No hay fallback.
 
 **Fix planeado**:
+
 ```ts
 // src/services/Data/fallbacks.ts (nuevo)
 export const FALLBACKS: Record<string, any> = {
@@ -246,6 +253,7 @@ error: Error & { digest?: string };
 > Next.js provee un `digest` único (hash) que se puede usar para tracking server-side errors. El proyecto lo ignora.
 
 **Fix**: loguear el `digest` para buscar en Vercel logs:
+
 ```ts
 useEffect(() => {
   console.error("Error crítico en la HomePage:", error, error.digest);
@@ -262,21 +270,24 @@ message={`Hubo un problema al conectar con el servidor. ${error.message ?? "Unkn
 > **Issue**: `error.message` puede tener info del SQL (ej. `relation "translations" does not exist`). **Riesgo de seguridad en producción**.
 
 **Fix**: sanitizar el mensaje o no exponerlo:
+
 ```ts
-const safeMessage = error.message.includes("relation") ? "Error de base de datos" : error.message;
+const safeMessage = error.message.includes("relation")
+  ? "Error de base de datos"
+  : error.message;
 ```
 
 ### 6. **No hay distinción entre tipos de error**
 
 Todos los errores se manejan igual (throw + ErrorBoundary). Pero hay diferencias importantes:
 
-| Tipo | Comportamiento actual | Debería ser |
-|---|---|---|
-| Supabase timeout (network) | Throw → ErrorBoundary | Loading + retry, después ErrorBoundary |
-| Supabase 404 (no existe) | Throw → ErrorBoundary | Fallback a datos hardcoded |
-| Zod validation fail | Throw → ErrorBoundary | ErrorBoundary + log con el schema que falló |
-| `lang` no existe en BD | Throw → ErrorBoundary | Fallback a `lang=es` (default) |
-| `block_key` no existe | Throw → ErrorBoundary | Fallback a un bloque vacío |
+| Tipo                       | Comportamiento actual | Debería ser                                 |
+| -------------------------- | --------------------- | ------------------------------------------- |
+| Supabase timeout (network) | Throw → ErrorBoundary | Loading + retry, después ErrorBoundary      |
+| Supabase 404 (no existe)   | Throw → ErrorBoundary | Fallback a datos hardcoded                  |
+| Zod validation fail        | Throw → ErrorBoundary | ErrorBoundary + log con el schema que falló |
+| `lang` no existe en BD     | Throw → ErrorBoundary | Fallback a `lang=es` (default)              |
+| `block_key` no existe      | Throw → ErrorBoundary | Fallback a un bloque vacío                  |
 
 > **Ideal**: cada tipo de error tiene su propio handler.
 
@@ -397,11 +408,11 @@ export default function Err({ error, reset }) {
 }
 ```
 
-| Campo | Dev | Prod (build con `bun run build`) |
-|---|---|---|
-| `error.digest` | `undefined` | Hash tipo `1234567890abcdef` (único por error) |
-| `error.message` | Real ("Debe ser una key del registry…") | **`undefined`** (redactado por seguridad) |
-| `error.stack` | Real | **`undefined`** |
+| Campo           | Dev                                     | Prod (build con `bun run build`)               |
+| --------------- | --------------------------------------- | ---------------------------------------------- |
+| `error.digest`  | `undefined`                             | Hash tipo `1234567890abcdef` (único por error) |
+| `error.message` | Real ("Debe ser una key del registry…") | **`undefined`** (redactado por seguridad)      |
+| `error.stack`   | Real                                    | **`undefined`**                                |
 
 → El `message` final en prod queda `"Hubo un problema al conectar con el servidor. Unknown error"`. Sin contexto, sin identificador, sin manera de correlacionar con logs de Vercel.
 
@@ -430,8 +441,8 @@ export default function Err({
     // Log explícito del digest para correlacionar con Vercel logs.
     console.error("[portfolio-v2] Error capturado por ErrorBoundary:", {
       digest: error.digest,
-      message: error.message,    // En prod es undefined (redactado por Next.js).
-      stack: error.stack,        // En prod también es undefined.
+      message: error.message, // En prod es undefined (redactado por Next.js).
+      stack: error.stack, // En prod también es undefined.
       env: process.env.NODE_ENV,
     });
   }, [error]);
@@ -454,6 +465,7 @@ export default function Err({
 ```
 
 **Por qué este shape**:
+
 - **Prod**: usuario ve `Código de incidente: 1a2b3c4d` (8 chars del digest, suficiente para identificar en Vercel logs). Sin filtrar info sensible.
 - **Dev**: usuario ve el error real (útil para debug local).
 - **Console del servidor (Vercel)**: siempre logueamos digest + env, así se puede cruzar con logs de Vercel.
@@ -465,8 +477,14 @@ export default function Err({
 const result = (schema as z.ZodType).safeParse(value);
 if (!result.success) {
   const failId = `db-${Date.now().toString(36)}-${key.replace(/[^a-z0-9]/gi, "")}`;
-  console.error(`[site] [${failId}] Content invalid for "${key}":`, result.error);
-  console.error(`[site] [${failId}] Actual content for "${key}":`, JSON.stringify(value, null, 2));
+  console.error(
+    `[site] [${failId}] Content invalid for "${key}":`,
+    result.error,
+  );
+  console.error(
+    `[site] [${failId}] Actual content for "${key}":`,
+    JSON.stringify(value, null, 2),
+  );
   throw new Error(`[${failId}] ${result.error.issues[0]?.message}`);
 }
 ```
@@ -474,6 +492,7 @@ if (!result.success) {
 **Por qué**: el `failId` se filtra al cliente vía `error.message` solo en dev (prod lo redacta), pero queda en los logs de Vercel con el prefijo `[db-l8kqm1-projectcentro...]`. Fácil de buscar.
 
 Mismo tratamiento para el otro throw (metadata):
+
 ```ts
 throw new Error(`[${failId}] ${result.error.issues[0]?.message}`);
 ```
@@ -496,24 +515,24 @@ Nueva entrada `[0.1.2]` con bullets `Fixed: mensajes de error en prod muestran d
 
 ### 📂 Archivos tocados cuando se implemente
 
-| Archivo | Tipo de cambio |
-|---|---|
-| `src/app/error.tsx` | patch (no rewrite) |
-| `src/services/data/site.ts` | patch (agregar failId al log + throw) |
-| `docs/05-issues/issues.md` | marcar #4 + #5 como DONE, agregar #030 |
-| `CHANGELOG.md` | nueva entrada `[0.1.2]` |
+| Archivo                     | Tipo de cambio                         |
+| --------------------------- | -------------------------------------- |
+| `src/app/error.tsx`         | patch (no rewrite)                     |
+| `src/services/data/site.ts` | patch (agregar failId al log + throw)  |
+| `docs/05-issues/issues.md`  | marcar #4 + #5 como DONE, agregar #030 |
+| `CHANGELOG.md`              | nueva entrada `[0.1.2]`                |
 
 ### 🔭 Posibles ampliaciones (fuera del scope mínimo)
 
 Si después de implementar el mínimo querés más, las opciones son:
 
-| # | Ampliación | Esfuerzo | Valor |
-|---|---|---|---|
-| A | Fallback hardcoded por bloque (Supabase caído → mostrar último conocido estático) | 2-3h | Alto (UX degradada pero la página no se rompe) |
-| B | Retry exponencial en cliente (reintentar 2-3 veces antes de mostrar error) | 30min | Medio (cubre glitches de red) |
-| C | Endpoint `POST /api/log-error` (server endpoint al que el cliente reporta el digest → guardar en Supabase o enviarte un mail) | 1h | Medio (auditoría de errores sin Sentry) |
-| D | Sentry / Datadog (tracking real con stack traces completos, alertas, métricas) | 3-4h + cuenta + keys | Alto (producción madura) |
-| E | Clasificar el tipo de error (data vs network vs validation) y dispatch a UI distinta | 1h | Bajo (cosmético) |
+| #   | Ampliación                                                                                                                    | Esfuerzo             | Valor                                          |
+| --- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------- | ---------------------------------------------- |
+| A   | Fallback hardcoded por bloque (Supabase caído → mostrar último conocido estático)                                             | 2-3h                 | Alto (UX degradada pero la página no se rompe) |
+| B   | Retry exponencial en cliente (reintentar 2-3 veces antes de mostrar error)                                                    | 30min                | Medio (cubre glitches de red)                  |
+| C   | Endpoint `POST /api/log-error` (server endpoint al que el cliente reporta el digest → guardar en Supabase o enviarte un mail) | 1h                   | Medio (auditoría de errores sin Sentry)        |
+| D   | Sentry / Datadog (tracking real con stack traces completos, alertas, métricas)                                                | 3-4h + cuenta + keys | Alto (producción madura)                       |
+| E   | Clasificar el tipo de error (data vs network vs validation) y dispatch a UI distinta                                          | 1h                   | Bajo (cosmético)                               |
 
 La opción A es la más valiosa para un portfolio público (Supabase free-tier tiene límites y puede dormirse). D es la más profesional. B es rápida. C es el "pobre man's Sentry" sin pagar.
 

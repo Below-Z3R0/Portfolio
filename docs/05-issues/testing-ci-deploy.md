@@ -1,4 +1,5 @@
 ---
+
 title: "Sistema de Testing, CI y Deploy (gap importante)"
 type: system-documentation
 project: portfolio-v2
@@ -40,14 +41,14 @@ El proyecto es un **portfolio personal** de un solo dev. En la práctica:
 }
 ```
 
-| Script | Cuándo usarlo |
-|---|---|
-| `bun run dev` | Levanta el server local (Turbopack + Next.js 16) |
-| `bun run build` | Build de producción (genera `.next/`) |
-| `bun run start` | Sirve el build de producción |
-| `bun run lint` | Biome check (lint) |
-| `bun run format` | Biome format (auto-fix) |
-| `bun run gen-types` | Regenera `src/types` desde Supabase |
+| Script              | Cuándo usarlo                                    |
+| ------------------- | ------------------------------------------------ |
+| `bun run dev`       | Levanta el server local (Turbopack + Next.js 16) |
+| `bun run build`     | Build de producción (genera `.next/`)            |
+| `bun run start`     | Sirve el build de producción                     |
+| `bun run lint`      | Biome check (lint)                               |
+| `bun run format`    | Biome format (auto-fix)                          |
+| `bun run gen-types` | Regenera `src/types` desde Supabase              |
 
 ### `next.config.ts` (config mínima)
 
@@ -55,7 +56,7 @@ El proyecto es un **portfolio personal** de un solo dev. En la práctica:
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,    // React Compiler habilitado
+  reactCompiler: true, // React Compiler habilitado
   images: {
     loader: "custom",
     loaderFile: "./src/services/assets/supabase-image-loader.ts",
@@ -66,6 +67,7 @@ export default nextConfig;
 ```
 
 **Solo 2 configs**:
+
 - `reactCompiler: true` (optimización de React).
 - Custom image loader (Supabase).
 
@@ -76,6 +78,7 @@ export default nextConfig;
 **Estado**: 0 archivos de test. `find . -name "*.test.*"` devuelve vacío.
 
 **Herramientas que encajarían** (en orden de prioridad):
+
 - **Vitest** + **React Testing Library** para unit tests de components.
 - **Playwright** o **Cypress** para E2E (simula el flujo "abrir `/` → ver home → click en un proyecto → ver modal").
 - **MSW (Mock Service Worker)** para mockear Supabase en unit tests.
@@ -89,11 +92,21 @@ import { SendEmailSchema } from "@/components/schemas";
 
 describe("SendEmailSchema", () => {
   it("rejects short name", () => {
-    const result = SendEmailSchema.safeParse({ name: "a", user_email: "a@b.com", title: "valid title", message: "valid message" });
+    const result = SendEmailSchema.safeParse({
+      name: "a",
+      user_email: "a@b.com",
+      title: "valid title",
+      message: "valid message",
+    });
     expect(result.success).toBe(false);
   });
   it("accepts valid input", () => {
-    const result = SendEmailSchema.safeParse({ name: "John", user_email: "John@x.com", title: "Hello", message: "World" });
+    const result = SendEmailSchema.safeParse({
+      name: "John",
+      user_email: "John@x.com",
+      title: "Hello",
+      message: "World",
+    });
     expect(result.success).toBe(true);
   });
 });
@@ -155,16 +168,16 @@ jobs:
 
 ## 📊 Gap analysis (qué falta para producción)
 
-| Sistema | Estado actual | Esfuerzo para producir | Impacto |
-|---|---|---|---|
-| Unit tests (schemas, services) | ❌ 0 | 1-2 días | Medio (regresiones) |
-| E2E test (home → modal) | ❌ 0 | 1 día | Alto (UX) |
-| CI (GitHub Actions) | ❌ 0 | 30 min | Bajo (no PRs aún) |
-| Deploy config (Vercel) | ❌ Default | 15 min | Bajo (auto-detect funciona) |
-| Monitoring (Sentry, LogRocket) | ❌ 0 | 1 día | Alto (debugging) |
-| Lighthouse CI | ❌ 0 | 30 min | Alto (Core Web Vitals) |
-| Storybook (component library) | ❌ 0 | 1 día | Bajo (no es una lib) |
-| Chromatic (visual regression) | ❌ 0 | 30 min setup | Medio |
+| Sistema                        | Estado actual | Esfuerzo para producir | Impacto                     |
+| ------------------------------ | ------------- | ---------------------- | --------------------------- |
+| Unit tests (schemas, services) | ❌ 0          | 1-2 días               | Medio (regresiones)         |
+| E2E test (home → modal)        | ❌ 0          | 1 día                  | Alto (UX)                   |
+| CI (GitHub Actions)            | ❌ 0          | 30 min                 | Bajo (no PRs aún)           |
+| Deploy config (Vercel)         | ❌ Default    | 15 min                 | Bajo (auto-detect funciona) |
+| Monitoring (Sentry, LogRocket) | ❌ 0          | 1 día                  | Alto (debugging)            |
+| Lighthouse CI                  | ❌ 0          | 30 min                 | Alto (Core Web Vitals)      |
+| Storybook (component library)  | ❌ 0          | 1 día                  | Bajo (no es una lib)        |
+| Chromatic (visual regression)  | ❌ 0          | 30 min setup           | Medio                       |
 
 **Total estimado para producción-ready**: ~4-5 días.
 
@@ -235,7 +248,9 @@ import { test, expect } from "@playwright/test";
 
 test("home loads with hero section", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("Emmanuel Centeno | Full Stack Developer")).toBeVisible();
+  await expect(
+    page.getByText("Emmanuel Centeno | Full Stack Developer"),
+  ).toBeVisible();
 });
 ```
 
@@ -244,6 +259,7 @@ test("home loads with hero section", async ({ page }) => {
 Crear `.github/workflows/ci.yml` (mínimo viable, mostrado arriba).
 
 **Para deploy automático en merge a main**, agregar:
+
 ```yaml
 # .github/workflows/deploy.yml
 on:

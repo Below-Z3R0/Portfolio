@@ -1,4 +1,5 @@
 ---
+
 title: "DEPRECATED — getData / getMetaData / getGeneralData (Promise.all de 17 queries)"
 type: system-documentation
 project: portfolio-v2
@@ -20,15 +21,15 @@ verified_with: minimax-m3
 
 ## 🎯 Por qué se deprecó
 
-| Aspecto | Antes (este patrón) | Ahora (`site.ts` + RPC) |
-|---|---|---|
-| Queries HTTP por request | 17 paralelas | 1 RPC |
-| Cache de server | No | `unstable_cache` 1 hora |
-| Round-trips en cache hit | 17 (no había cache) | 0 |
-| Validación Zod | Manual, destructuring posicional | Declarativa con `z.object` anidado |
-| Filtrado de keys | No (se transferían todas) | Sí (SQL filtra con `p_keys`) |
-| Líneas del orquestador | 102 | 90 |
-| Archivos del sistema | 3 (`generaldata.service.ts` + 2 helpers) | 1 (`site.ts`) |
+| Aspecto                  | Antes (este patrón)                      | Ahora (`site.ts` + RPC)            |
+| ------------------------ | ---------------------------------------- | ---------------------------------- |
+| Queries HTTP por request | 17 paralelas                             | 1 RPC                              |
+| Cache de server          | No                                       | `unstable_cache` 1 hora            |
+| Round-trips en cache hit | 17 (no había cache)                      | 0                                  |
+| Validación Zod           | Manual, destructuring posicional         | Declarativa con `z.object` anidado |
+| Filtrado de keys         | No (se transferían todas)                | Sí (SQL filtra con `p_keys`)       |
+| Líneas del orquestador   | 102                                      | 90                                 |
+| Archivos del sistema     | 3 (`generaldata.service.ts` + 2 helpers) | 1 (`site.ts`)                      |
 
 ## 📁 Archivos del patrón deprecado
 
@@ -44,7 +45,7 @@ export const getData = async <Schema extends z.ZodType>(
   block_key: string,
   lang: string,
   supabase: PortfolioClient,
-  schema: Schema
+  schema: Schema,
 ): Promise<z.infer<Schema>> => {
   const { data, error } = await supabase
     .from("translations")
@@ -56,7 +57,7 @@ export const getData = async <Schema extends z.ZodType>(
 
   if (error || !data)
     throw new Error(
-      `Error fetching data for block_key ${block_key} and language ${lang}: ${error.message}`
+      `Error fetching data for block_key ${block_key} and language ${lang}: ${error.message}`,
     );
 
   return schema.parse(data.content);
@@ -74,7 +75,7 @@ import type { PortfolioClient } from "../supabase/types/types.helper";
 export const getMetaData = async <Schema extends z.ZodType>(
   block_key: string,
   supabase: PortfolioClient,
-  schema: Schema
+  schema: Schema,
 ): Promise<z.infer<Schema>> => {
   const { data, error } = await supabase
     .from("content_blocks_metadata")
@@ -85,7 +86,7 @@ export const getMetaData = async <Schema extends z.ZodType>(
 
   if (error || !data)
     throw new Error(
-      `Error fetching metadata for block_key ${block_key}: ${error.message}`
+      `Error fetching metadata for block_key ${block_key}: ${error.message}`,
     );
 
   return schema.parse(data.content);
@@ -110,52 +111,119 @@ import { getData } from "./Data/data.service";
 import { getMetaData } from "./Data/metadata.service";
 import { createClient } from "./supabase/server";
 
-export const getGeneralData = async (lang: string = "es"): Promise<GeneralData> => {
+export const getGeneralData = async (
+  lang: string = "es",
+): Promise<GeneralData> => {
   const supabase = await createClient();
 
   // 1) 8 queries de content (paralelo)
   const [
-    hero_section, navbar_section, skills_section, projects_section,
-    aboutme_section, contact_section, footer_section,
-    centenoadvisory, centenoadvisory_db, centenoadvisory_features,
-    portfolio, nincy,
+    hero_section,
+    navbar_section,
+    skills_section,
+    projects_section,
+    aboutme_section,
+    contact_section,
+    footer_section,
+    centenoadvisory,
+    centenoadvisory_db,
+    centenoadvisory_features,
+    portfolio,
+    nincy,
   ] = await Promise.all([
     getData("section.hero", lang, supabase, CONTENT_SCHEMAS["section.hero"]),
-    getData("section.navbar", lang, supabase, CONTENT_SCHEMAS["section.navbar"]),
-    getData("section.skills", lang, supabase, CONTENT_SCHEMAS["section.skills"]),
-    getData("section.projects", lang, supabase, CONTENT_SCHEMAS["section.projects"]),
-    getData("section.aboutme", lang, supabase, CONTENT_SCHEMAS["section.aboutme"]),
-    getData("section.contact", lang, supabase, CONTENT_SCHEMAS["section.contact"]),
-    getData("section.footer", lang, supabase, CONTENT_SCHEMAS["section.footer"]),
+    getData(
+      "section.navbar",
+      lang,
+      supabase,
+      CONTENT_SCHEMAS["section.navbar"],
+    ),
+    getData(
+      "section.skills",
+      lang,
+      supabase,
+      CONTENT_SCHEMAS["section.skills"],
+    ),
+    getData(
+      "section.projects",
+      lang,
+      supabase,
+      CONTENT_SCHEMAS["section.projects"],
+    ),
+    getData(
+      "section.aboutme",
+      lang,
+      supabase,
+      CONTENT_SCHEMAS["section.aboutme"],
+    ),
+    getData(
+      "section.contact",
+      lang,
+      supabase,
+      CONTENT_SCHEMAS["section.contact"],
+    ),
+    getData(
+      "section.footer",
+      lang,
+      supabase,
+      CONTENT_SCHEMAS["section.footer"],
+    ),
 
     getData("project.centeno-advisory", lang, supabase, PROJECT_ITEM_SCHEMA),
     getData("project.centeno-advisory-db", lang, supabase, PROJECT_ITEM_SCHEMA),
-    getData("project.centeno-advisory-features", lang, supabase, PROJECT_ITEM_SCHEMA),
+    getData(
+      "project.centeno-advisory-features",
+      lang,
+      supabase,
+      PROJECT_ITEM_SCHEMA,
+    ),
     getData("project.portfolio", lang, supabase, PROJECT_ITEM_SCHEMA),
     getData("project.nincy", lang, supabase, PROJECT_ITEM_SCHEMA),
   ]);
 
   // 2) 9 queries de metadata (paralelo)
   const [
-    hero_meta, skills_section_meta, aboutme_section_meta,
-    centenoadvisory_meta, centenoadvisory_db_meta, centenoadvisory_features_meta,
-    portfolio_meta, nincy_meta, contacts_meta,
+    hero_meta,
+    skills_section_meta,
+    aboutme_section_meta,
+    centenoadvisory_meta,
+    centenoadvisory_db_meta,
+    centenoadvisory_features_meta,
+    portfolio_meta,
+    nincy_meta,
+    contacts_meta,
   ] = await Promise.all([
     getMetaData("section.hero", supabase, METADATA_SCHEMAS["section.hero"]),
     getMetaData("section.skills", supabase, METADATA_SCHEMAS["section.skills"]),
-    getMetaData("section.aboutme", supabase, METADATA_SCHEMAS["section.aboutme"]),
+    getMetaData(
+      "section.aboutme",
+      supabase,
+      METADATA_SCHEMAS["section.aboutme"],
+    ),
     getMetaData("project.centeno-advisory", supabase, PROJECT_METADATA_SCHEMA),
-    getMetaData("project.centeno-advisory-db", supabase, PROJECT_METADATA_SCHEMA),
-    getMetaData("project.centeno-advisory-features", supabase, PROJECT_METADATA_SCHEMA),
+    getMetaData(
+      "project.centeno-advisory-db",
+      supabase,
+      PROJECT_METADATA_SCHEMA,
+    ),
+    getMetaData(
+      "project.centeno-advisory-features",
+      supabase,
+      PROJECT_METADATA_SCHEMA,
+    ),
     getMetaData("project.portfolio", supabase, PROJECT_METADATA_SCHEMA),
     getMetaData("project.nincy", supabase, PROJECT_METADATA_SCHEMA),
     getMetaData("general.contacts", supabase, GeneralContactsSchema),
   ]);
 
-  const contacts_meta_array: ContactSectionMetadata = Object.values(contacts_meta);
+  const contacts_meta_array: ContactSectionMetadata =
+    Object.values(contacts_meta);
 
   return {
-    hero_section: { data: hero_section, meta: { general: hero_meta, contacts: contacts_meta } },
+    hero_section: {
+      data: hero_section,
+      meta: { general: hero_meta, contacts: contacts_meta },
+    },
     navbar_section: { data: navbar_section.data },
     skills_section: { data: skills_section, meta: skills_section_meta },
     aboutme_section: { data: aboutme_section, meta: aboutme_section_meta },
@@ -165,7 +233,11 @@ export const getGeneralData = async (lang: string = "es"): Promise<GeneralData> 
     projects_array: [
       { key: 1, data: centenoadvisory, meta: centenoadvisory_meta },
       { key: 2, data: centenoadvisory_db, meta: centenoadvisory_db_meta },
-      { key: 3, data: centenoadvisory_features, meta: centenoadvisory_features_meta },
+      {
+        key: 3,
+        data: centenoadvisory_features,
+        meta: centenoadvisory_features_meta,
+      },
       { key: 4, data: portfolio, meta: portfolio_meta },
       { key: 5, data: nincy, meta: nincy_meta },
     ],
