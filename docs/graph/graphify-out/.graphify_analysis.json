@@ -1,54 +1,42 @@
 {
   "communities": {
     "0": [
-      "app_error",
-      "app_error_err",
-      "components_animations_animations_loadingdots",
-      "components_animations_animationsindex",
-      "components_atoms_button",
-      "components_atoms_button_button",
-      "components_atoms_languageswitcher",
-      "components_atoms_languageswitcher_languageswitcher",
-      "components_atoms_languagetoggle",
-      "components_atoms_languagetoggle_languagetoggle",
-      "components_atoms_paragraph",
-      "components_atoms_span",
-      "components_atoms_span_span",
-      "components_atoms_themeswitcher",
-      "components_atoms_themeswitcher_themeswitcher",
-      "components_atoms_themetoggle",
-      "components_atoms_themetoggle_themetoggle",
-      "components_atoms_title1",
-      "components_atoms_title1_title1",
-      "components_atoms_title2",
-      "components_atoms_title3",
-      "components_atoms_title4",
-      "components_components",
-      "components_hooks_usetheme",
-      "components_hooks_usetheme_theme",
-      "components_hooks_usetheme_themedata",
-      "components_hooks_usetheme_usetheme",
-      "components_molecules_errormessage",
-      "components_molecules_errormessage_errormessage",
-      "components_molecules_formulary",
-      "components_molecules_formulary_formulary",
-      "components_molecules_navbar",
-      "components_molecules_navbar_navbar",
-      "components_molecules_successmessage",
-      "components_molecules_successmessage_successmessage",
-      "components_organims_errorpage_errorpage",
-      "components_organims_header",
-      "components_organims_header_header",
-      "components_organims_header_headerprops",
-      "components_schemas_sendemail",
-      "components_schemas_sendemailschema",
-      "components_types_errormessageprops",
-      "components_types_formstatus",
-      "components_types_successmessageprops",
-      "components_types_titleprops"
+      "components_schemas",
+      "components_schemas_aboutmecontent",
+      "components_schemas_aboutmecontentschema",
+      "components_schemas_aboutmemetadataschema",
+      "components_schemas_contactcontentschema",
+      "components_schemas_contactitemschema",
+      "components_schemas_contactlist",
+      "components_schemas_contactlistschema",
+      "components_schemas_contactsectionmetadata",
+      "components_schemas_contactsectionmetadataschema",
+      "components_schemas_footercontentschema",
+      "components_schemas_formschema",
+      "components_schemas_generalcontacts",
+      "components_schemas_generalcontactsschema",
+      "components_schemas_generaldata",
+      "components_schemas_generalthemes",
+      "components_schemas_generalthemesschema",
+      "components_schemas_herocontentschema",
+      "components_schemas_herometadataschema",
+      "components_schemas_navbarcontentschema",
+      "components_schemas_navbaritem",
+      "components_schemas_projectblock",
+      "components_schemas_projectitemschema",
+      "components_schemas_projectscontent",
+      "components_schemas_projectscontentschema",
+      "components_schemas_projectsmetadataschema",
+      "components_schemas_projectssection",
+      "components_schemas_skillscontentschema",
+      "components_schemas_skillsmetadataschema",
+      "services_data_site",
+      "services_data_site_sitepayload",
+      "services_data_site_sitepayloadschema"
     ],
     "1": [
       "app_page",
+      "app_page_home",
       "app_page_pageprops",
       "components_animations_animations",
       "components_animations_animations_easeout",
@@ -70,7 +58,7 @@
       "components_atoms_paragraph_paragraph",
       "components_atoms_title2_title2",
       "components_atoms_title3_title3",
-      "components_atoms_title4_title4",
+      "components_molecules_formulary_formulary",
       "components_molecules_modal",
       "components_molecules_modal_modal",
       "components_molecules_projectcard",
@@ -92,23 +80,20 @@
       "components_organims_projectssection_projectssection",
       "components_organims_skillssection",
       "components_organims_skillssection_skillssection",
-      "components_types_projectssectionprops"
+      "components_types_modalprops",
+      "components_types_projectssectionprops",
+      "services_data_site_fetchpayload",
+      "services_data_site_getsitedata"
     ],
     "2": [
-      "app_page_home",
-      "components_schemas_contactsectionmetadata",
-      "components_schemas_content_schemas",
-      "components_schemas_generalcontactsschema",
-      "components_schemas_generaldata",
-      "components_schemas_metadata_schemas",
-      "components_schemas_project_item_schema",
-      "components_schemas_project_metadata_schema",
-      "services_data_data_service",
-      "services_data_data_service_getdata",
-      "services_data_metadata_service",
-      "services_data_metadata_service_getmetadata",
-      "services_generaldata_service",
-      "services_generaldata_service_getgeneraldata",
+      "services_assets_supabase_image_loader",
+      "services_assets_supabase_image_loader_supabaseimageloader",
+      "services_env",
+      "services_env_emailjsenv",
+      "services_env_ensure",
+      "services_env_missingenverror",
+      "services_env_missingenverror_constructor",
+      "services_env_supabaseenv",
       "services_supabase_client",
       "services_supabase_client_createclient",
       "services_supabase_server",
@@ -131,63 +116,10 @@
       "services_supabase_types_types_json",
       "services_supabase_types_types_tables",
       "services_supabase_types_types_tablesinsert",
-      "services_supabase_types_types_tablesupdate"
+      "services_supabase_types_types_tablesupdate",
+      "supabase_js"
     ],
     "3": [
-      "components_organims_errorpage",
-      "components_schemas_aboutmemetadata",
-      "components_schemas_contactcontent",
-      "components_schemas_contactsection",
-      "components_schemas_footercontent",
-      "components_schemas_herocontent",
-      "components_schemas_herometadata",
-      "components_schemas_navbarcontent",
-      "components_schemas_projectscontent",
-      "components_schemas_projectslist",
-      "components_schemas_projectssection",
-      "components_schemas_skillscontent",
-      "components_schemas_skillsmetadata",
-      "components_types",
-      "components_types_animationprops",
-      "components_types_contactsectionprops",
-      "components_types_errorstateprops",
-      "components_types_fieldconfig",
-      "components_types_language",
-      "components_types_modalprops",
-      "components_types_popprops",
-      "components_types_slideprops",
-      "components_types_spanprops",
-      "components_types_theme",
-      "components_types_title"
-    ],
-    "4": [
-      "components_schemas",
-      "components_schemas_aboutmecontent",
-      "components_schemas_aboutmecontentschema",
-      "components_schemas_aboutmemetadataschema",
-      "components_schemas_contact",
-      "components_schemas_contactcontentschema",
-      "components_schemas_contactitemschema",
-      "components_schemas_contactlist",
-      "components_schemas_contactlistschema",
-      "components_schemas_contactsectionmetadataschema",
-      "components_schemas_footercontentschema",
-      "components_schemas_formschema",
-      "components_schemas_generalcontacts",
-      "components_schemas_generalthemes",
-      "components_schemas_generalthemesschema",
-      "components_schemas_herocontentschema",
-      "components_schemas_herometadataschema",
-      "components_schemas_navbarcontentschema",
-      "components_schemas_navbaritem",
-      "components_schemas_projectblock",
-      "components_schemas_projectitemschema",
-      "components_schemas_projectscontentschema",
-      "components_schemas_projectsmetadataschema",
-      "components_schemas_skillscontentschema",
-      "components_schemas_skillsmetadataschema"
-    ],
-    "5": [
       "services_assets_icon_registry",
       "services_assets_icon_registry_iconcomponent",
       "services_assets_icon_registry_iconnameschema",
@@ -196,6 +128,7 @@
       "services_assets_icons_dayandnighticon",
       "services_assets_icons_dockericon",
       "services_assets_icons_figmaicon",
+      "services_assets_icons_framericon",
       "services_assets_icons_githubicon",
       "services_assets_icons_giticon",
       "services_assets_icons_hamburnavicon",
@@ -204,6 +137,8 @@
       "services_assets_icons_languageicon",
       "services_assets_icons_linkedinicon",
       "services_assets_icons_mailicon",
+      "services_assets_icons_motionbadgeicon",
+      "services_assets_icons_motionicon",
       "services_assets_icons_nexticon",
       "services_assets_icons_nodeicon",
       "services_assets_icons_noisetextureprops",
@@ -212,9 +147,128 @@
       "services_assets_icons_refreshcwicon",
       "services_assets_icons_supabaseicon",
       "services_assets_icons_tailwindicon",
-      "services_assets_icons_typescripticon"
+      "services_assets_icons_typescripticon",
+      "services_assets_icons_zodicon"
+    ],
+    "4": [
+      "app_loading",
+      "app_loading_loading",
+      "app_loading_skeletonpulse",
+      "components_skeletons_formularyskeleton",
+      "components_skeletons_formularyskeleton_formularyskeleton",
+      "components_skeletons_homepageskeleton",
+      "components_skeletons_homepageskeleton_homepageskeleton",
+      "components_skeletons_homepageskeleton_skeletonpulse",
+      "components_skeletons_navbarskeleton",
+      "components_skeletons_navbarskeleton_navbarskeleton",
+      "components_skeletons_projectscardskeleton",
+      "components_skeletons_projectscardskeleton_projectcardskeleton",
+      "components_skeletons_skeletonindex",
+      "components_skeletons_skeletonpulse",
+      "components_skeletons_skeletonpulse_skeletonpulse",
+      "components_skeletons_tecnologiescardskeleton",
+      "components_skeletons_tecnologiescardskeleton_tecnologiescardskeleton"
+    ],
+    "5": [
+      "components_atoms_iconrender",
+      "components_atoms_iconrender_iconrender",
+      "components_atoms_linkbutton",
+      "components_molecules_tecnologiescard",
+      "components_types_buttonprops",
+      "components_types_iconrendererprops",
+      "components_types_linkbuttonprops",
+      "components_types_tecnologiesconfig",
+      "services_assets_icon_registry_icon_registry",
+      "services_assets_icon_registry_iconkey"
     ],
     "6": [
+      "components_schemas_aboutmemetadata",
+      "components_schemas_contact",
+      "components_schemas_contactcontent",
+      "components_schemas_contactsection",
+      "components_schemas_footercontent",
+      "components_schemas_footersection",
+      "components_schemas_form",
+      "components_schemas_herocontent",
+      "components_schemas_herometadata",
+      "components_schemas_herosection",
+      "components_schemas_modalcontent",
+      "components_schemas_navbarcontent",
+      "components_schemas_projectslist",
+      "components_schemas_skillscontent",
+      "components_schemas_skillsmetadata",
+      "components_schemas_skillssection",
+      "components_types",
+      "components_types_animationprops",
+      "components_types_contactsectionprops",
+      "components_types_data",
+      "components_types_fieldconfig",
+      "components_types_footerprops",
+      "components_types_formularyprops",
+      "components_types_herosectionprops",
+      "components_types_language",
+      "components_types_popprops",
+      "components_types_slideprops",
+      "components_types_spanprops",
+      "components_types_tecnologiessectionprops",
+      "components_types_theme",
+      "components_types_title"
+    ],
+    "7": [
+      "app_error",
+      "app_error_err",
+      "components_animations_animations_loadingdots",
+      "components_animations_animationsindex",
+      "components_atoms_button",
+      "components_atoms_button_button",
+      "components_atoms_languageswitcher",
+      "components_atoms_languageswitcher_languageswitcher",
+      "components_atoms_languagetoggle",
+      "components_atoms_languagetoggle_languagetoggle",
+      "components_atoms_paragraph",
+      "components_atoms_span",
+      "components_atoms_span_span",
+      "components_atoms_themeswitcher",
+      "components_atoms_themeswitcher_themeswitcher",
+      "components_atoms_themetoggle",
+      "components_atoms_themetoggle_themetoggle",
+      "components_atoms_title1",
+      "components_atoms_title1_title1",
+      "components_atoms_title2",
+      "components_atoms_title3",
+      "components_atoms_title4",
+      "components_atoms_title4_title4",
+      "components_components",
+      "components_hooks_usetheme",
+      "components_hooks_usetheme_theme",
+      "components_hooks_usetheme_themedata",
+      "components_hooks_usetheme_usetheme",
+      "components_molecules_errormessage",
+      "components_molecules_errormessage_errormessage",
+      "components_molecules_formulary",
+      "components_molecules_navbar",
+      "components_molecules_navbar_navbar",
+      "components_molecules_successmessage",
+      "components_molecules_successmessage_successmessage",
+      "components_organims_errorpage",
+      "components_organims_errorpage_errorpage",
+      "components_organims_header",
+      "components_organims_header_header",
+      "components_organims_header_headerprops",
+      "components_schemas_sendemail",
+      "components_schemas_sendemailschema",
+      "components_types_errormessageprops",
+      "components_types_errorstateprops",
+      "components_types_formstatus",
+      "components_types_successmessageprops",
+      "components_types_titleprops"
+    ],
+    "8": [
+      "components_schemas_projectitem",
+      "components_schemas_projectsmetadata",
+      "components_types_projectcardprops"
+    ],
+    "9": [
       "app_globals.css",
       "app_layout",
       "app_layout_geistmono",
@@ -234,94 +288,36 @@
       "components_hooks_theming_v2_themingconventions",
       "services_assets_icons_noisetexture"
     ],
-    "7": [
-      "app_loading",
-      "app_loading_loading",
-      "app_loading_skeletonpulse",
-      "components_skeletons_formularyskeleton",
-      "components_skeletons_formularyskeleton_formularyskeleton",
-      "components_skeletons_homepageskeleton",
-      "components_skeletons_homepageskeleton_homepageskeleton",
-      "components_skeletons_homepageskeleton_skeletonpulse",
-      "components_skeletons_navbarskeleton",
-      "components_skeletons_navbarskeleton_navbarskeleton",
-      "components_skeletons_projectscardskeleton",
-      "components_skeletons_projectscardskeleton_projectcardskeleton",
-      "components_skeletons_skeletonindex",
-      "components_skeletons_skeletonpulse",
-      "components_skeletons_skeletonpulse_skeletonpulse",
-      "components_skeletons_tecnologiescardskeleton",
-      "components_skeletons_tecnologiescardskeleton_tecnologiescardskeleton"
-    ],
-    "8": [
-      "components_atoms_iconrender",
-      "components_atoms_iconrender_iconrender",
-      "components_atoms_linkbutton",
-      "components_molecules_tecnologiescard",
-      "components_types_buttonprops",
-      "components_types_iconrendererprops",
-      "components_types_linkbuttonprops",
-      "components_types_tecnologiesconfig",
-      "services_assets_icon_registry_icon_registry",
-      "services_assets_icon_registry_iconkey"
-    ],
-    "9": [
-      "components_schemas_projectitem",
-      "components_schemas_projectsmetadata",
-      "components_types_projectcardprops"
-    ],
     "10": [
       "components_schemas_aboutmesection",
       "components_types_aboutmesectionprops"
     ],
     "11": [
-      "components_schemas_footersection",
-      "components_types_footerprops"
+      "app_pending_current_lang",
+      "app_pending_general_data",
+      "app_pending_ia_section",
+      "app_pending_os_section",
+      "app_pending_section_reveal"
     ],
     "12": [
-      "components_schemas_form",
-      "components_types_formularyprops"
-    ],
-    "13": [
-      "components_schemas_herosection",
-      "components_types_herosectionprops"
-    ],
-    "14": [
-      "components_schemas_modalcontent",
-      "components_types_data"
-    ],
-    "15": [
       "components_schemas_navbarsection",
       "components_types_navbarprops"
-    ],
-    "16": [
-      "components_schemas_skillssection",
-      "components_types_tecnologiessectionprops"
-    ],
-    "17": [
-      "services_assets_supabase_image_loader",
-      "services_assets_supabase_image_loader_supabaseimageloader"
     ]
   },
   "cohesion": {
-    "0": 0.07272727272727272,
-    "1": 0.10101010101010101,
-    "2": 0.07357357357357357,
-    "3": 0.09666666666666666,
-    "4": 0.08,
-    "5": 0.14666666666666667,
-    "6": 0.13725490196078433,
-    "7": 0.23529411764705882,
-    "8": 0.26666666666666666,
-    "9": 0.6666666666666666,
+    "0": 0.08870967741935484,
+    "1": 0.0858843537414966,
+    "2": 0.07862903225806452,
+    "3": 0.12561576354679804,
+    "4": 0.23529411764705882,
+    "5": 0.26666666666666666,
+    "6": 0.08172043010752689,
+    "7": 0.07215541165587419,
+    "8": 0.6666666666666666,
+    "9": 0.13725490196078433,
     "10": 1.0,
-    "11": 1.0,
-    "12": 1.0,
-    "13": 1.0,
-    "14": 1.0,
-    "15": 1.0,
-    "16": 1.0,
-    "17": 1.0
+    "11": 0.7,
+    "12": 1.0
   },
   "gods": [
     {
@@ -342,12 +338,7 @@
     {
       "id": "components_atoms_title3_title3",
       "label": "Title3()",
-      "degree": 9
-    },
-    {
-      "id": "components_atoms_linkbutton_linkbutton",
-      "label": "LinkButton()",
-      "degree": 7
+      "degree": 8
     },
     {
       "id": "components_types_projectssectionprops",
@@ -360,32 +351,37 @@
       "degree": 6
     },
     {
-      "id": "components_atoms_title4_title4",
-      "label": "Title4()",
-      "degree": 6
-    },
-    {
-      "id": "services_generaldata_service_getgeneraldata",
-      "label": "getGeneralData()",
+      "id": "components_atoms_linkbutton_linkbutton",
+      "label": "LinkButton()",
       "degree": 6
     },
     {
       "id": "components_types_titleprops",
       "label": "TitleProps",
       "degree": 5
+    },
+    {
+      "id": "components_molecules_projectcard_projectcard",
+      "label": "ProjectCard()",
+      "degree": 5
+    },
+    {
+      "id": "components_skeletons_skeletonpulse_skeletonpulse",
+      "label": "SkeletonPulse()",
+      "degree": 5
     }
   ],
   "surprises": [
     {
       "source": "Home()",
-      "target": "getGeneralData()",
+      "target": "getSiteData()",
       "source_files": [
         "app/page.tsx",
-        "services/generaldata.service.ts"
+        "services/data/site.ts"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
-      "why": "connects across different repos/directories; peripheral node `Home()` unexpectedly reaches hub `getGeneralData()`"
+      "why": "connects across different repos/directories; peripheral node `Home()` unexpectedly reaches hub `getSiteData()`"
     },
     {
       "source": "ButtonProps",
@@ -435,38 +431,38 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `Button()` connect `components.ts` to `Animations.tsx`, `components/types.ts`?",
-      "why": "High betweenness centrality (0.012) - this node is a cross-community bridge."
+      "question": "Why does `Button()` connect `components.ts` to `Animations.tsx`?",
+      "why": "High betweenness centrality (0.014) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `getGeneralData()` connect `generaldata.service.ts` to `Animations.tsx`?",
-      "why": "High betweenness centrality (0.006) - this node is a cross-community bridge."
+      "question": "Why does `getSiteData()` connect `Animations.tsx` to `schemas.ts`, `types/types.ts`?",
+      "why": "High betweenness centrality (0.004) - this node is a cross-community bridge."
     },
     {
       "type": "isolated_nodes",
-      "question": "What connects `HeaderProps`, `PageProps`, `CompositeTypes` to the rest of the system?",
-      "why": "58 weakly-connected nodes found - possible documentation gaps or missing edges."
+      "question": "What connects `ContactList`, `ContactSectionMetadata`, `GeneralContacts` to the rest of the system?",
+      "why": "51 weakly-connected nodes found - possible documentation gaps or missing edges."
     },
     {
       "type": "low_cohesion",
-      "question": "Should `components.ts` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.07272727272727272 - nodes in this community are weakly interconnected."
+      "question": "Should `schemas.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08870967741935484 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",
       "question": "Should `Animations.tsx` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.10101010101010101 - nodes in this community are weakly interconnected."
+      "why": "Cohesion score 0.0858843537414966 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",
-      "question": "Should `generaldata.service.ts` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.07357357357357357 - nodes in this community are weakly interconnected."
+      "question": "Should `types/types.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07862903225806452 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",
-      "question": "Should `components/types.ts` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.09666666666666666 - nodes in this community are weakly interconnected."
+      "question": "Should `icon-registry.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.12561576354679804 - nodes in this community are weakly interconnected."
     }
   ]
 }

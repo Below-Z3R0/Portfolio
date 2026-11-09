@@ -274,26 +274,14 @@
       "components_schemas_aboutmesection",
       "components_types_aboutmesectionprops"
     ],
-    "11": [
-      "components_schemas_footersection",
-      "components_types_footerprops"
-    ],
-    "12": [
-      "components_schemas_form",
-      "components_types_formularyprops"
-    ],
+    "11": ["components_schemas_footersection", "components_types_footerprops"],
+    "12": ["components_schemas_form", "components_types_formularyprops"],
     "13": [
       "components_schemas_herosection",
       "components_types_herosectionprops"
     ],
-    "14": [
-      "components_schemas_modalcontent",
-      "components_types_data"
-    ],
-    "15": [
-      "components_schemas_navbarsection",
-      "components_types_navbarprops"
-    ],
+    "14": ["components_schemas_modalcontent", "components_types_data"],
+    "15": ["components_schemas_navbarsection", "components_types_navbarprops"],
     "16": [
       "components_schemas_skillssection",
       "components_types_tecnologiessectionprops"
@@ -379,10 +367,7 @@
     {
       "source": "Home()",
       "target": "getGeneralData()",
-      "source_files": [
-        "app/page.tsx",
-        "services/generaldata.service.ts"
-      ],
+      "source_files": ["app/page.tsx", "services/generaldata.service.ts"],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "connects across different repos/directories; peripheral node `Home()` unexpectedly reaches hub `getGeneralData()`"
@@ -412,10 +397,7 @@
     {
       "source": "ProjectsSectionProps",
       "target": "ProjectsList",
-      "source_files": [
-        "components/types.ts",
-        "components/schemas.ts"
-      ],
+      "source_files": ["components/types.ts", "components/schemas.ts"],
       "confidence": "EXTRACTED",
       "relation": "references",
       "why": "bridges separate communities"
@@ -423,10 +405,7 @@
     {
       "source": "ProjectsSectionProps",
       "target": "ProjectsSection",
-      "source_files": [
-        "components/types.ts",
-        "components/schemas.ts"
-      ],
+      "source_files": ["components/types.ts", "components/schemas.ts"],
       "confidence": "EXTRACTED",
       "relation": "references",
       "why": "bridges separate communities"
