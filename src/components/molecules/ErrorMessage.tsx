@@ -76,11 +76,11 @@ export function ErrorMessage({
                 </m.h3>
 
                 <m.h2
-                id="error-message"
-                initial={{ opacity: 0, y: 5}}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="text-xl text-foreground tracking-tight"
+                  id="error-message"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="text-xl text-foreground tracking-tight"
                 >
                   {message}
                 </m.h2>

@@ -19,20 +19,20 @@ export * from "./hooks/useTheme";
 // --- Molecules (Atomic Components) ---
 export * from "./molecules/ErrorMessage";
 export * from "./molecules/Formulary";
+export * from "./molecules/Modal";
 export * from "./molecules/NavBar";
 //export * from "./molecules/ProjectCard"; error con SSR en ProyectsSection
 export * from "./molecules/SuccessMessage";
 export * from "./molecules/TecnologiesCard";
-export * from "./molecules/Modal"
 // --- Organisms (Atomic Components) ---
 export * from "./organims/AboutMeSection";
 export * from "./organims/ErrorPage";
 export * from "./organims/Footer";
 export * from "./organims/Header";
 export * from "./organims/HeroSection";
-export * from "./organims/ProjectsSection";
-export * from "./organims/OSSection";
 export * from "./organims/IASection";
+export * from "./organims/OSSection";
+export * from "./organims/ProjectsSection";
 export * from "./organims/SkillsSection";
 
 // --- Skeletons ---

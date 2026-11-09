@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import type {
   ButtonHTMLAttributes,
   HTMLInputTypeAttribute,
@@ -10,6 +10,7 @@ import type {
 // TIPOS INFERIDOS DE SCHEMAS.TS (tipos de dominio de la BD)
 // =============================================================================
 
+import type { IconKey } from "@/services/assets/icon-registry";
 import type {
   AboutMeContent,
   AboutMeMetadata,
@@ -35,7 +36,6 @@ import type {
   SkillsMetadata,
   SkillsSection,
 } from "./schemas";
-import type { IconKey } from "@/services/assets/icon-registry";
 
 // =============================================================================
 // GLOBALES
@@ -65,7 +65,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export type TitleProps = {
   txt: string | undefined;
   className?: string;
-}
+};
 
 export interface LinkButtonProps extends ButtonProps {
   link: string | null;
@@ -92,23 +92,23 @@ export interface SpanProps extends Title {
 // =============================================================================
 
 export interface NavBarProps {
-nav_data: NavbarSection;
-name?: boolean;
-GeneralOrganization?: string;
-LinksOrganization?: string;
-ThemeMenuOrganization?: string;
+  nav_data: NavbarSection;
+  name?: boolean;
+  GeneralOrganization?: string;
+  LinksOrganization?: string;
+  ThemeMenuOrganization?: string;
 }
 
 export interface ProjectsSectionProps {
-project_section_data: ProjectsSection;
-projects_array_data: ProjectsList;
-currentLang: string;
+  project_section_data: ProjectsSection;
+  projects_array_data: ProjectsList;
+  currentLang: string;
 }
 
 export interface ProjectCardProps {
-project_data: { meta: ProjectsMetadata; data: ProjectItem };
-labels_data: { featured: string; in_construction: string };
-category: string | undefined;
+  project_data: { meta: ProjectsMetadata; data: ProjectItem };
+  labels_data: { featured: string; in_construction: string };
+  category: string | undefined;
 }
 
 type data = ModalContent & {
@@ -116,9 +116,7 @@ type data = ModalContent & {
   title: string;
 };
 
-
-
-export interface ModalProps  {
+export interface ModalProps {
   img: string | undefined;
   in_construction: string;
   data: data;
@@ -126,8 +124,7 @@ export interface ModalProps  {
   setActivetxt: (txt: string) => void;
   open: boolean;
   onClose: () => void;
-};
-
+}
 
 export interface TecnologiesConfig {
   svg: IconKey | string;
@@ -229,31 +226,29 @@ export interface PopProps extends AnimationProps {
 // =============================================================================
 
 // Tipos de sección (SectionBlock tipados)
-export type {
-  HeroSection,
-  NavbarSection,
-  SkillsSection,
-  AboutMeSection,
-  ProjectsSection,
-  ContactSection,
-  FooterSection,
-  ProjectsList,
-};
-
 // Tipos de content
-export type {
-  HeroContent,
-  NavbarContent,
-  SkillsContent,
-  AboutMeContent,
-  ProjectsContent,
-  ContactContent,
-  FooterContent,
-  ProjectItem,
-};
-
 // Tipos de metadata
-export type { HeroMetadata, SkillsMetadata, AboutMeMetadata, ProjectsMetadata };
-
 // Tipos auxiliares
-export type { Contact };
+export type {
+  AboutMeContent,
+  AboutMeMetadata,
+  AboutMeSection,
+  Contact,
+  ContactContent,
+  ContactSection,
+  FooterContent,
+  FooterSection,
+  HeroContent,
+  HeroMetadata,
+  HeroSection,
+  NavbarContent,
+  NavbarSection,
+  ProjectItem,
+  ProjectsContent,
+  ProjectsList,
+  ProjectsMetadata,
+  ProjectsSection,
+  SkillsContent,
+  SkillsMetadata,
+  SkillsSection,
+};

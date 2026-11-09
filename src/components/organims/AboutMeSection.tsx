@@ -15,9 +15,7 @@ export function AboutMeSection({ aboutme_data }: AboutMeSectionProps) {
       >
         {/* Títulos */}
         <EyebrowReveal>
-          <Title3
-            txt={aboutme_data.data.title_sm}
-          />
+          <Title3 txt={aboutme_data.data.title_sm} />
         </EyebrowReveal>
         <Title2 txt={aboutme_data.data.title_lg} />
 

@@ -27,9 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth scrollbar-thumb-accent scrollbar-thin scrollbar-gutter-stable`}
       suppressHydrationWarning
     >
-      <body
-        className="min-h-full text-[18px] leading-[145%] tracking-[0.18px] zoom-110 text-foreground bg-background font-display"
-      >
+      <body className="min-h-full text-[18px] leading-[145%] tracking-[0.18px] zoom-110 text-foreground bg-background font-display">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

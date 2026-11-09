@@ -30,9 +30,7 @@ export function TecnologiesCard({
         )}
       </div>
 
-      {name && (
-        <Title4 txt={name}/>
-      )}
+      {name && <Title4 txt={name} />}
 
       {bar && (
         <div

@@ -5,7 +5,12 @@ import { useEffect, useState } from "react";
 
 export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light";
 
-export const ThemeData: string[] = ["Light", "Dark", "Rosepine-Dark", "Rosepine-Light"];
+export const ThemeData: string[] = [
+  "Light",
+  "Dark",
+  "Rosepine-Dark",
+  "Rosepine-Light",
+];
 
 export function useTheme() {
   const { setTheme: setNextTheme, resolvedTheme } = useNextTheme();
@@ -16,7 +21,11 @@ export function useTheme() {
   }, []);
 
   const currentTheme: Theme =
-    mounted && (resolvedTheme === "dark" || resolvedTheme === "light" || resolvedTheme === "rosepine-dark" || resolvedTheme === "rosepine-light")
+    mounted &&
+    (resolvedTheme === "dark" ||
+      resolvedTheme === "light" ||
+      resolvedTheme === "rosepine-dark" ||
+      resolvedTheme === "rosepine-light")
       ? resolvedTheme
       : "rosepine-dark";
 

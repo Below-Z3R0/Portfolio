@@ -2,13 +2,15 @@ import { z } from "zod";
 import { IconNameSchema } from "../services/assets/icon-registry";
 
 export const SendEmailSchema = z.object({
-  name: z.string().min(2, 'Name to short!!').max(80, 'Name to large'),
-  user_email: z.email('Invalid email!!').transform(v => v.toLowerCase().trim()),
-  title: z.string().min(3, 'Subject to short!!'),
-  message: z.string().min(8, 'Message to short!!')
-})
+  name: z.string().min(2, "Name to short!!").max(80, "Name to large"),
+  user_email: z
+    .email("Invalid email!!")
+    .transform((v) => v.toLowerCase().trim()),
+  title: z.string().min(3, "Subject to short!!"),
+  message: z.string().min(8, "Message to short!!"),
+});
 
-export type SendEmail = z.infer<typeof SendEmailSchema>
+export type SendEmail = z.infer<typeof SendEmailSchema>;
 
 // =============================================================================
 // SCHEMAS COMPARTIDOS
@@ -102,18 +104,20 @@ export const ProjectItemSchema = z.object({
       description: z.string(),
     }),
   ),
-  modal: z.object({
-    img_key: z.string().optional(),
-    paragraph: z.string(),
-    tecnologies: z.array(
-    z.object({
-      icon_key: IconNameSchema,
-      name: z.string(),
-      color: z.string(),
-      description: z.string(),
-    }),
-  ),
-  }).optional(),
+  modal: z
+    .object({
+      img_key: z.string().optional(),
+      paragraph: z.string(),
+      tecnologies: z.array(
+        z.object({
+          icon_key: IconNameSchema,
+          name: z.string(),
+          color: z.string(),
+          description: z.string(),
+        }),
+      ),
+    })
+    .optional(),
 });
 
 export const FormSchema = z.object({

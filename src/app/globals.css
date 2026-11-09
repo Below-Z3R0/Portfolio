@@ -111,13 +111,13 @@
   --primary-container-foreground: #ffffff;
 
   /* Nuevos roles para expandir — valores derivados de la paleta original */
-  --secondary: #111113;             /* alias de popover */
+  --secondary: #111113; /* alias de popover */
   --secondary-foreground: #fafafa;
 
-  --tertiary: #060a13;              /* alias de tu bg-muted original */
+  --tertiary: #060a13; /* alias de tu bg-muted original */
   --tertiary-foreground: #fafafa;
 
-  --muted: #111113;                 /* alias de popover */
+  --muted: #111113; /* alias de popover */
   --muted-foreground: #b8b8c8;
 
   --accent: #8b5cf6;
@@ -418,7 +418,7 @@
     ellipse 80% 70% at 50% 45%,
     transparent 0%,
     rgba(0, 0, 0, 0.05) 30%,
-    rgba(0, 0, 0, 0.20) 60%,
+    rgba(0, 0, 0, 0.2) 60%,
     rgba(0, 0, 0, 0.45) 85%,
     rgba(0, 0, 0, 0.55) 100%
   );

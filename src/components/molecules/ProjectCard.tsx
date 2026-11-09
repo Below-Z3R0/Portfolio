@@ -1,4 +1,5 @@
 "use client";
+import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import {
   Button,
@@ -10,13 +11,18 @@ import {
   Title4,
 } from "../components";
 import type { ProjectCardProps } from "../types";
-import { AnimatePresence } from "motion/react";
 
-export function ProjectCard({ project_data, labels_data, category }: ProjectCardProps) {
+export function ProjectCard({
+  project_data,
+  labels_data,
+  category,
+}: ProjectCardProps) {
   const [activeTxt, setActiveTxt] = useState(project_data.data.paragraph);
-  const [activeModalTxt, setActiveModalTxt] = useState(project_data.data.modal?.paragraph);
+  const [activeModalTxt, setActiveModalTxt] = useState(
+    project_data.data.modal?.paragraph,
+  );
   const handleReset = () => setActiveTxt(project_data.data.paragraph);
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const in_construction = project_data.meta.is_in_construction
     ? "opacity-65 cursor-not-allowed pointer-events-none "
     : "";
@@ -47,10 +53,7 @@ export function ProjectCard({ project_data, labels_data, category }: ProjectCard
           className="text-primary/80! mt-1 text-3xl!"
         />
 
-        <Paragraph
-          className="h-full text-[0.97rem]!"
-          txt={activeTxt}
-        />
+        <Paragraph className="h-full text-[0.97rem]!" txt={activeTxt} />
 
         <div className="flex flex-col gap-2 w-full">
           {/* Links GitHub / Live Demo — ahora con underline + iconos */}
@@ -73,7 +76,13 @@ export function ProjectCard({ project_data, labels_data, category }: ProjectCard
               {project_data.data.tecnologies.map((item) => (
                 <Button
                   buttonBody={`size-10 cursor-pointer ${in_construction}`}
-                  onClick={() => setActiveTxt(activeTxt === item.description ? project_data.data.paragraph : item.description)}
+                  onClick={() =>
+                    setActiveTxt(
+                      activeTxt === item.description
+                        ? project_data.data.paragraph
+                        : item.description,
+                    )
+                  }
                   key={item.name}
                   aria-label={item.name}
                 >
@@ -99,7 +108,9 @@ export function ProjectCard({ project_data, labels_data, category }: ProjectCard
 
       {project_data.meta.image_key && (
         <div className="relative group qw:w-[47.9%] qw:h-full h-auto ">
-          <div className={`absolute inset-0 opacity-0 group-hover:blur-lg group-hover:opacity-65 z-0 ${project_data.meta.is_in_construction ? "group-hover:bg-destructive" : "group-hover:bg-accent"}`} />
+          <div
+            className={`absolute inset-0 opacity-0 group-hover:blur-lg group-hover:opacity-65 z-0 ${project_data.meta.is_in_construction ? "group-hover:bg-destructive" : "group-hover:bg-accent"}`}
+          />
           <Button
             buttonBody={`rounded-xl size-full overflow-hidden border border-border hover:border-accent cursor-pointer ${in_construction}`}
             img={project_data.meta.image_key}
@@ -113,7 +124,11 @@ export function ProjectCard({ project_data, labels_data, category }: ProjectCard
         {project_data.meta.image_key && project_data.data.modal && isOpen && (
           <Modal
             img={project_data.meta.image_key}
-            data={{ ...project_data.data.modal, title: project_data.meta.title, category: category }}
+            data={{
+              ...project_data.data.modal,
+              title: project_data.meta.title,
+              category: category,
+            }}
             in_construction={in_construction}
             activeTxt={activeModalTxt}
             setActivetxt={setActiveModalTxt}

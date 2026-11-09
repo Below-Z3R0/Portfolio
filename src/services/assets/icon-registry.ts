@@ -53,15 +53,9 @@ export const ICON_REGISTRY = {
   framer: FramerIcon,
 } as const satisfies Record<string, IconComponent>;
 
-export const IconNameSchema = z
-  .string()
-  .refine(
-    (val) => val in ICON_REGISTRY,
-    {
-      message:
-        "Debe ser una key del registry (react, docker...)",
-    },
-  );
+export const IconNameSchema = z.string().refine((val) => val in ICON_REGISTRY, {
+  message: "Debe ser una key del registry (react, docker...)",
+});
 
 // Helper para usar en componentes
 export type IconKey = keyof typeof ICON_REGISTRY;

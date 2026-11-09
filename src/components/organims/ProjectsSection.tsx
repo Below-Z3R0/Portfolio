@@ -13,15 +13,10 @@ export function ProjectsSection({
       {/* Cabecera de la sección */}
       <div className="flex items-start flex-col gap-4">
         <EyebrowReveal>
-          <Title3
-            txt={project_section_data.title_sm}
-          />
+          <Title3 txt={project_section_data.title_sm} />
         </EyebrowReveal>
         <Title2 txt={project_section_data.title_lg} />
-        <Paragraph
-          className="max-w-2xl"
-          txt={project_section_data.paragraph}
-        />
+        <Paragraph className="max-w-2xl" txt={project_section_data.paragraph} />
       </div>
 
       {/* Grid de Proyectos con SectionReveal stagger */}

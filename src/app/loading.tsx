@@ -6,9 +6,7 @@ import {
 } from "../components/skeletons/skeletonindex";
 
 const SkeletonPulse = ({ className }: { className?: string }) => (
-  <div
-    className={`bg-muted animate-pulse rounded-xl ${className}`}
-  />
+  <div className={`bg-muted animate-pulse rounded-xl ${className}`} />
 );
 export default function Loading() {
   return (

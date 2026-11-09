@@ -7,13 +7,8 @@ type HeaderProps = {
   nav_data: NavBarProps["nav_data"];
 };
 
-export function Header({
-  nav_data,
-}: HeaderProps) {
-  const [
-    isOpen,
-    setIsOpen,
-  ] = useState(false);
+export function Header({ nav_data }: HeaderProps) {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <header>
       <NavBar

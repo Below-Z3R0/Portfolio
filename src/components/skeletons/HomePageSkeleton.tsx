@@ -6,9 +6,7 @@ import {
 } from "./skeletonindex"; // Asegúrate de exportarlos desde donde los guardaste
 
 const SkeletonPulse = ({ className }: { className?: string }) => (
-  <div
-    className={`bg-muted animate-pulse rounded-xl ${className}`}
-  />
+  <div className={`bg-muted animate-pulse rounded-xl ${className}`} />
 );
 
 export function HomePageSkeleton() {

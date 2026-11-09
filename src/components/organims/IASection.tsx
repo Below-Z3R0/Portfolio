@@ -18,10 +18,7 @@ export function IASection({
 
         <Title2 txt={project_section_data.title_lg} className="text-pine!" />
 
-        <Paragraph
-          className="max-w-2xl"
-          txt={project_section_data.paragraph}
-        />
+        <Paragraph className="max-w-2xl" txt={project_section_data.paragraph} />
       </div>
 
       {/* Grid de Proyectos con SectionReveal stagger */}

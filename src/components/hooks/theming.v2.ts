@@ -10,7 +10,7 @@
  * Sistema de theming v2 de portfolio-v2.
  *
  * 4 paletas: .dark, .light, .rosepine-dark, .rosepine-light
- * 36 variables CSS por paleta: ver raw/globals-css-theming-v2.md y Knowledge/theming-v2-flow.md
+ * 36 variables CSS por paleta: ver docs/03-systems/theming-v2-flow.md y Knowledge/learning/projects/portfolio-v2/architecture/theming-v2-flow.md
  *
  * Archivos del sistema:
  *   - src/app/globals.css                 → 36 vars × 4 paletas + @theme + utility classes
@@ -21,11 +21,7 @@
  *   - src/app/layout.tsx                  → monta <ThemeProvider> en el layout raíz
  */
 
-export type Theme =
-  | "light"
-  | "dark"
-  | "rosepine-dark"
-  | "rosepine-light";
+export type Theme = "light" | "dark" | "rosepine-dark" | "rosepine-light";
 
 export type ThemeToken =
   // Backgrounds (jerarquía shadcn: en dark bg<card<pop; en light pop<card<bg)
@@ -176,7 +172,8 @@ export const themingConventions = {
   textSkeleton: "text-muted-foreground",
   badgePrimary: "bg-primary-soft text-primary ring-1 ring-primary/40",
   badgeWarning: "bg-warning-soft text-warning ring-1 ring-warning/40",
-  badgeDestructive: "bg-destructive-soft text-destructive ring-1 ring-destructive/40",
+  badgeDestructive:
+    "bg-destructive-soft text-destructive ring-1 ring-destructive/40",
   badgeSuccess: "bg-success-soft text-success ring-1 ring-success/40",
 } as const;
 

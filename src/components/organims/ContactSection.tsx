@@ -15,11 +15,12 @@ export function ContactSection({ contact_data }: ContactSectionProps) {
 
         <div className="qw:w-[50%] w-full flex flex-col max-ww:px-5 max-ww:pt-5 qw:justify-between justify-center qw:items-start items-center gap-4 relative z-10">
           <div className="w-full flex flex-col items-start gap-4 pb-10">
-            <Title3
-              txt={contact_data.data.title_sm}
+            <Title3 txt={contact_data.data.title_sm} />
+            <Title2 txt={contact_data.data.title_lg} />
+            <Paragraph
+              className="text-muted-foreground"
+              txt={contact_data.data.paragraph}
             />
-            <Title2 txt={contact_data.data.title_lg}/>
-            <Paragraph className="text-muted-foreground" txt={contact_data.data.paragraph} />
           </div>
 
           <div className="flex flex-wrap gap-4">
@@ -39,9 +40,7 @@ export function ContactSection({ contact_data }: ContactSectionProps) {
         {/* Columna del Formulario */}
         <div className="qw:w-[45%] w-full relative max-ww:px-2 max-ww:pb-2">
           {contact_data.data.form && (
-            <Formulary
-              form_data={contact_data.data.form}
-            />
+            <Formulary form_data={contact_data.data.form} />
           )}
         </div>
       </div>

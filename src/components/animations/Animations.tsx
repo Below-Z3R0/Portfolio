@@ -308,4 +308,4 @@ export function LoadingDots({
 }
 
 // Re-export LazyMotion and domAnimation for app-level setup
-export { LazyMotion, domAnimation };
+export { domAnimation, LazyMotion };
